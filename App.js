@@ -1,6 +1,7 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Text } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
+import { AdMobBanner } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
 export default class App extends React.Component {
@@ -11,17 +12,27 @@ export default class App extends React.Component {
     render() {
         if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
             return (
-                <AppLoading
-                    startAsync={this._loadResourcesAsync}
-                    onError={this._handleLoadingError}
-                    onFinish={this._handleFinishLoading}
-                />
+                <View style={styles.container}>
+                    <AppLoading
+                        startAsync={this._loadResourcesAsync}
+                        onError={this._handleLoadingError}
+                        onFinish={this._handleFinishLoading}
+                    />
+                </View>
             );
         }
         else {
             return (
                 <View style={styles.container}>
-                    {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                    <StatusBar hidden/>
+                    {/* Remove in paid version */}
+                    <View style={styles.adContainer}>
+                        {/* <AdMobBanner
+                            bannerSize="smartBannerPortrait"
+                            adUnitID="ca-app-pub-5830175342552944/7130625883"
+                            testDeviceID="EMULATOR"
+                        /> */}
+                    </View>
                     <AppNavigator />
                 </View>
             );
@@ -54,4 +65,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  adContainer: {
+    width: '100%',
+    height: 'auto',
+    margin: 0,
+    backgroundColor: 'black'
+  }
 });

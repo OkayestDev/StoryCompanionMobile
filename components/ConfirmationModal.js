@@ -1,63 +1,61 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Modal from 'react-native-modal';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions} from 'react-native';
 
 export default class ConfirmationModal extends Component {
     render() {
         return (
             <Modal
-                style={styles.confirmationModal}
-                isVisible={this.props.isConfirmationModalOpen}
-                animationIn="fadeIn"
-                animationOut="fadeOut"
-                animationInTiming={10}
-                animationOutTiming={10}
+                style={styles.modal}
+                visible={this.props.isConfirmationModalOpen}
                 onRequestClose={() => this.props.closeConfirmationModal()}
-                onBackButtonPress={() => this.props.closeConfirmationModal()}
-                onBackdropPress={() => this.props.closeConfirmationModal()}
-                children={
-                    <View style={styles.modalContent}>
-                        <View style={styles.textContainer}>
-                            <Text style={styles.modalText}>
-                                Delete {this.props.entityType}?
-                            </Text>
-                        </View>
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity
-                                style={styles.cancelButton}
-                                onPress={() => this.props.closeConfirmationModal()}
-                            >
-                                <Text style={styles.buttonText}>
-                                    Cancel
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.confirmButton}
-                                onPress={() => this.props.onConfirm()}
-                            >
-                                <Text style={styles.buttonText}>
-                                    Confirm
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                transparent={true}
+            >
+                <View style={styles.modalContent}>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.modalText}>
+                            Delete {this.props.entityType}?
+                        </Text>
                     </View>
-                }
-            />
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={() => this.props.closeConfirmationModal()}
+                        >
+                            <Text style={styles.buttonText}>
+                                Cancel
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.confirmButton}
+                            onPress={() => this.props.onConfirm()}
+                        >
+                            <Text style={styles.buttonText}>
+                                Confirm
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    confirmationModal: {
-        flex: 1
-    },
     modalContent: {
-        width: '80%',
+        backgroundColor: "white",
+        position: 'absolute',
+        top: "25%",
+        left: "10%",
         height: 175,
-        marginLeft: '10%',
-        marginTop: 20,
-        backgroundColor: 'white',
-        borderRadius: 4,
+        width: .8 * Dimensions.get('window').width,
+        padding: 20,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: '#CCCCCC',
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     buttonContainer: {
         display: 'flex',

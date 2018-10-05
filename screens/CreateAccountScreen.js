@@ -12,14 +12,33 @@ import { PATTERNS } from '../config/Patterns.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import UserRequests from '../utils/UserRequests.js';
 
+const screenX = Dimensions.get('window').width;
+
 const invalidInput = {
     borderColor: 'red',
+}
+
+const headerTitle = {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#2f95dc',
+    paddingLeft: 20,
 }
 
 // @TODO check if email is of correct pattern
 export default class CreateAccountScreen extends Component {
     static navigationOptions = {
         title: 'Create Account',
+        headerTitle: (
+            <View style={headerTitle}>
+                <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    Create Account
+                </Text>
+            </View>
+        ),
         headerStyle: { backgroundColor: '#2f95dc' },
         headerTitleStyle: { color: 'white' },
     };
@@ -253,17 +272,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: Dimensions.get('window').width,
+        width: screenX,
         marginBottom: 20,
     },
     createAccountInputLabel: {
         color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
-        width: .3 * Dimensions.get('window').width,
+        width: .3 * screenX,
     },
     createAccountInput: {
-        width: .6 * Dimensions.get('window').width,
+        width: .6 * screenX,
         height: 60,
         borderRadius: 4,
         borderWidth: 2,
@@ -276,7 +295,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2f95dc',
         display: 'flex',
         height: 50,
-        width: .8 * Dimensions.get('window').width,
+        width: .8 * screenX,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,

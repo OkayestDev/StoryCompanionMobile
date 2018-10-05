@@ -14,26 +14,40 @@ import ChapterRequests from '../utils/ChapterRequests.js';
 import EditEntity from '../components/EditEntity.js';
 import { Icon } from 'react-native-elements';
 
+const headerTitle = {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#2f95dc',
+    paddingLeft: 20,
+}
+
 export default class ChaptersScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Chapters',
-            headerTitle: <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 20}}>Chapters</Text>,
-            headerStyle: { backgroundColor: '#2f95dc', },
-            headerTitleStyle: { color: 'white', marginHorizontal: 0, },
-            headerLeft: (
-                <TouchableOpacity 
-                    style={{paddingLeft: 8}}
-                    onPress={() => navigation.navigate("StoriesTab")}
-                >
-                    <Icon
-                        color="white"
-                        name="arrow-left"
-                        type="font-awesome"
-                        size={20}
-                    />
-                </TouchableOpacity>
+            headerTitle: (
+                <View style={headerTitle}>
+                    <TouchableOpacity 
+                        style={{marginRight: 15}}
+                        onPress={() => navigation.navigate("StoriesTab")}
+                    >
+                        <Icon
+                            color="white"
+                            name="arrow-left"
+                            type="font-awesome"
+                            size={28}
+                        />
+                    </TouchableOpacity>
+                    <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                        Chapters
+                    </Text>
+                </View>
             ),
+            headerStyle: { backgroundColor: '#2f95dc' },
+            headerTitleStyle: { color: 'white' },
         }
     };
 
@@ -43,7 +57,7 @@ export default class ChaptersScreen extends Component {
             name: '',
             number: '',
             description: '',
-            chapters: {},
+            chapters: null,
             selectedChapterId: null,
 
             globalAlertVisible: false,
@@ -58,23 +72,24 @@ export default class ChaptersScreen extends Component {
         this.getChapters();
     }
 
-    sortChaptersByChapterNumber = (chapters) => {
-        let sortedChapters = {};
+    sortIdsByChapterNumber = (chapters) => {
         let chapterIds = Object.keys(chapters);
-        for (let i = 0; i < chapterIds.length; i++) {
-            let minChapterNumber = chapters[chaptersIds[i]].number;
-            let indexOfMinChapterNumber = i;
-            for (let j = 0; j < chapterIds.length; j++) {
-                if ()
-            }
-        }
+        chapterIds.sort(function(a, b) {
+            return chapters[a].number - chapters[b].number;
+        })
+        return chapterIds;
     }
 
     getChapters = (story = null) => {
         if (story !== null) {
             this.ChapterRequests.getChapters(story).then((res) => {
                 if ('error' in res) {
-
+                    this.setState({
+                        selectedChapterId: null,
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
                 }
                 else {
                     this.setState({chapters: res.success})
@@ -153,7 +168,7 @@ export default class ChaptersScreen extends Component {
                 this.setState({
                     chapters: tempChapters,
                     name: '',
-                    nubmer: '',
+                    number: '',
                     description: '',
                     selectedChapterId: null,
                 })
@@ -165,6 +180,7 @@ export default class ChaptersScreen extends Component {
         this.ChapterRequests.deleteChapter(this.state.selectedChapterId).then((res) => {
             if ('error' in res) {
                 this.setState({
+                    selectedChapterId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'warning',
                     globalAlertMessage: res.error,
@@ -185,10 +201,14 @@ export default class ChaptersScreen extends Component {
     }
 
     renderChapters = () => {
-        let ids = Object.keys(this.state.chapters);
+        // @TODO loading screen
+        if (this.state.chapters === null) {
+            return null;
+        }
+        let sortedChapterIds = this.sortIdsByChapterNumber(this.state.chapters);
         let chapterView = [];
-        if (ids.length > 0) {
-            ids.forEach((id) => {
+        if (sortedChapterIds.length > 0) {
+            sortedChapterIds.forEach((id) => {
                 chapterView.push(
                     <TouchableOpacity
                         key={id}
@@ -320,5 +340,5 @@ const styles = StyleSheet.create({
         fontSize: 36,
         color: '#CCCCCC',
         fontWeight: 'bold',
-    }
+    },
 });

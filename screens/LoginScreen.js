@@ -13,9 +13,28 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import GlobalAlert from '../components/GlobalAlert.js';
 import UserRequest from '../utils/UserRequests.js';
 
+const screenX = Dimensions.get('window').width;
+
+const headerTitle = {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#2f95dc',
+    paddingLeft: 20,
+}
+
 export default class LoginScreen extends Component {
     static navigationOptions = {
         title: 'Login',
+        headerTitle: (
+            <View style={headerTitle}>
+                <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    Login
+                </Text>
+            </View>
+        ),
         headerStyle: { backgroundColor: '#2f95dc' },
         headerTitleStyle: { color: 'white' },
     };
@@ -25,7 +44,6 @@ export default class LoginScreen extends Component {
         this.state = {
             email: 'isjustgamedev@gmail.com',
             password: 'encounter1',
-
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
@@ -163,17 +181,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: Dimensions.get('window').width,
+        width: screenX,
         marginBottom: 20,
     },
     loginInputLabel: {
         color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
-        width: .3 * Dimensions.get('window').width,
+        width: .3 * screenX,
     },
     loginInput: {
-        width: .6 * Dimensions.get('window').width,
+        width: .6 * screenX,
         height: 60,
         borderRadius: 4,
         borderWidth: 2,
@@ -186,7 +204,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2f95dc',
         display: 'flex',
         height: 50,
-        width: .8 * Dimensions.get('window').width,
+        width: .8 * screenX,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
@@ -194,5 +212,5 @@ const styles = StyleSheet.create({
     loginButtonText: {
         color: 'white',
         fontSize: 24,
-    }
+    },
 });

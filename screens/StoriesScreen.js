@@ -13,9 +13,29 @@ import EditEntity from '../components/EditEntity.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import StoryRequests from '../utils/StoryRequests.js';
 
+const headerTitle = {
+    flex: 1,
+    position: 'absolute',
+    top: 0,
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#2f95dc',
+    paddingLeft: 20,
+}
+
 export default class StoriesScreen extends React.Component {
     static navigationOptions = {
         title: 'Stories',
+        headerTitle: (
+            <View style={headerTitle}>
+                <Text style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    Stories
+                </Text>
+            </View>
+        ),
         headerStyle: { backgroundColor: '#2f95dc' },
         headerTitleStyle: { color: 'white' },
     };
@@ -25,7 +45,7 @@ export default class StoriesScreen extends React.Component {
         this.state = {
             name: '',
             description: '',
-            stories: {},
+            stories: null,
             selectedStoryId: null,
 
             globalAlertVisible: false,
@@ -161,6 +181,10 @@ export default class StoriesScreen extends React.Component {
     }
 
     renderStories = () => {
+        // @TODO add loading screen
+        if (this.state.stories === null) {
+            return null;
+        }
         let stories = [];
         let ids = Object.keys(this.state.stories);
         if (ids.length > 0) {
