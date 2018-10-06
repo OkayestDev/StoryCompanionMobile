@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    TouchableOpacity, 
+    AsyncStorage, 
+    ScrollView 
+} from 'react-native';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
@@ -93,7 +100,6 @@ export default class PlotsScreen extends Component {
         this.PlotRequests.createPlot(this.state.name, this.state.description, this.state.plotParent, this.selectedStoryId).then((res) => {
             if ('error' in res) {
                 this.setState({
-                    selectedPlotId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
                     globalAlertMessage: res.error,
@@ -261,10 +267,10 @@ export default class PlotsScreen extends Component {
             return (
                 <View style={styles.noPlotsContainer}>
                     <Text style={styles.noPlotsText}>
-                        Looks like you haven't created any stories yet.
+                        Looks like you haven't created any plots yet.
                     </Text>
                     <Text style={styles.noPlotsText}>
-                        Press on the + to create a story!
+                        Press on the + to create a plot!
                     </Text>
                 </View>
             )
@@ -281,7 +287,9 @@ export default class PlotsScreen extends Component {
                         type={this.state.globalAlertType}
                         closeAlert={() => this.setState({globalAlertVisible: false})}
                     />
-                    {this.renderPlots()}
+                    <ScrollView>
+                        {this.renderPlots()}
+                    </ScrollView>
                     <FloatingAddButton onPress={() => this.setState({selectedPlotId: 'new'})}/>
                 </View>
             )

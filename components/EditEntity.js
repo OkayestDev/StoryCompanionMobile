@@ -1,11 +1,19 @@
 import React,  { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import {
+    View, 
+    Text, 
+    StyleSheet, 
+    TextInput,
+    TouchableOpacity,
+    Image,
+} from 'react-native';
 import FloatingCancelButton from '../components/FloatingCancelButton.js';
 import FloatingSaveButton from '../components/FloatingSaveButton.js';
 import FloatingDeleteButton from '../components/FloatingDeleteButton.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import ModalPicker from '../components/ModalPicker.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Constants, ImagePicker, Permissions } from 'expo';
 
 export default class EditEntity extends Component {
     constructor(props) {
@@ -14,6 +22,72 @@ export default class EditEntity extends Component {
             isConfirmationModalOpen: false,
             isModalPickerOpen: false,
         }
+    }
+
+    openImagePicker = () => {
+        let imagePickerResult = ImagePicker.launchImageLibraryAsync({
+            allowEditing: true,
+        });
+        imagePickerResult.then((image) => {
+            console.info(image);
+            if (!image.cancelled) {
+                this.props.imagePickerOnChange(image);
+            }
+        });
+    }
+
+    renderImage = () => {
+        if ('image' in this.props) {
+            // Display empty area to upload an image
+            if (this.props.image === '') {
+                return (
+                    <View style={styles.imageViewContainer}>
+                        <TouchableOpacity 
+                            style={styles.noImageSelectedView}
+                            onPress={() => this.openImagePicker()}
+                        >
+                            <Text style={styles.noImageSelectedText}>
+                                Add An Image
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                )
+            }
+            else {
+                // Render currently uploaded but not saved file
+                if (this.props.image instanceof Object) {
+                    return (
+                        <View style={styles.imageViewContainer}>
+                            <TouchableOpacity
+                                onPress={() => this.openImagePicker()}
+                            >
+                                <Image
+                                    source={{uri: this.props.image.uri}}
+                                    style={styles.selectedImage}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+                // Render image already stored on s3 - image is the url to S3
+                else {
+                    return (
+                        <View style={styles.imageViewContainer}>
+                            <TouchableOpacity
+                                onPress={() => this.openImagePicker()}
+                            >
+                                <Image 
+                                    source={{uri: this.props.image}}
+                                    style={{width: 200, height: 200}}
+                                    style={styles.selectedImage}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }
+            }
+        }
+        return null;
     }
 
     render() {
@@ -49,7 +123,9 @@ export default class EditEntity extends Component {
                     enableOnAndroid={true}
                     keyboardShouldPersistTaps="handled"
                     scrollEnabled={true}
+                    extraHeight={100}
                 >
+                    {this.renderImage()}
                     {
                         'inputOne' in this.props &&
                         <View style={styles.entityInputAndLabel}>
@@ -109,6 +185,19 @@ export default class EditEntity extends Component {
                         </View>
                     }
                     {
+                        'inputFour' in this.props &&
+                        <View style={styles.entityInputAndLabel}>
+                            <TextInput
+                                placeholder={this.props.inputFourName}
+                                multiline={true}
+                                style={styles.entityDescription}
+                                value={this.props.inputFour}
+                                onChangeText={(newDescription) => this.props.inputFourOnChange(newDescription)}
+                                underlineColorAndroid='rgba(0,0,0,0)'
+                            />
+                        </View>
+                    }
+                    {
                         'selectEntity' in this.props && this.props.selectedEntityId !== 'new' &&
                         <TouchableOpacity
                             style={styles.selectEntityButton}
@@ -135,6 +224,35 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
+    },
+    imageViewContainer: {
+        marginTop: 10,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    noImageSelectedView: {
+        width: 200,
+        height: 200,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#CCCCCC',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    noImageSelectedText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#CCCCCC',
+    },
+    selectedImage: {
+        width: 200,
+        height: 200,
+        borderWidth: 2,
+        borderColor: '#CCCCCC',
+        borderRadius: 4,
     },
     entityInputAndLabel: {
         display: 'flex',
