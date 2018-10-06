@@ -30,6 +30,7 @@ export default class PlotRequests {
             description: description,
             plotParent: plotParent,
         };
+        console.info(`editPlot paramsObject`, paramsObject);
         return postRequestWithFormData(paramsObject, 'plot/edit', {}).then(res => res);
     }
 

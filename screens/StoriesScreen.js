@@ -195,7 +195,10 @@ export default class StoriesScreen extends React.Component {
                         style={styles.selectStoryButton}
                         onPress={() => this.selectStory(id)}
                     >
-                        <Text style={styles.selectStoryButtonText}>
+                        <Text 
+                            numberOfLines={1}
+                            style={styles.selectStoryButtonText}
+                        >
                             {this.state.stories[id].name}
                         </Text>
                     </TouchableOpacity>

@@ -5,7 +5,6 @@ export default class ConfirmationModal extends Component {
     render() {
         return (
             <Modal
-                style={styles.modal}
                 visible={this.props.isConfirmationModalOpen}
                 onRequestClose={() => this.props.closeConfirmationModal()}
                 transparent={true}
@@ -15,6 +14,12 @@ export default class ConfirmationModal extends Component {
                         <Text style={styles.modalText}>
                             Delete {this.props.entityType}?
                         </Text>
+                        {
+                            'note' in this.props && this.props.note !== null &&
+                            <Text style={styles.noteText}>
+                                {this.props.note}
+                            </Text>
+                        }
                     </View>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
@@ -92,6 +97,12 @@ const styles = StyleSheet.create({
     },
     modalText: {
         fontSize: 24,
+        color: '#CCCCCC',
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    noteText: {
+        fontSize: 16,
         color: '#CCCCCC',
         fontWeight: 'bold',
         textAlign: 'center'

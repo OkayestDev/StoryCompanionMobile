@@ -4,6 +4,7 @@ import FloatingCancelButton from '../components/FloatingCancelButton.js';
 import FloatingSaveButton from '../components/FloatingSaveButton.js';
 import FloatingDeleteButton from '../components/FloatingDeleteButton.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
+import ModalPicker from '../components/ModalPicker.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class EditEntity extends Component {
@@ -11,6 +12,7 @@ export default class EditEntity extends Component {
         super(props);
         this.state = {
             isConfirmationModalOpen: false,
+            isModalPickerOpen: false,
         }
     }
 
@@ -28,6 +30,18 @@ export default class EditEntity extends Component {
                             this.props.deleteEntity();
                             this.setState({isConfirmationModalOpen: false});
                         }}
+                        note={'deleteNote' in this.props ? this.props.deleteNote : null}
+                    />
+                }
+                {
+                    'modalPicker' in this.props &&
+                    <ModalPicker
+                        isModalPickerOpen={this.state.isModalPickerOpen}
+                        closeModalPicker={() => this.setState({isModalPickerOpen: false})}
+                        selectedValue={this.props.modalPickerSelectedValue}
+                        list={this.props.modalPickerList}
+                        onChange={(newValue) => this.props.modalPickerOnChange(newValue)}
+                        removeIdFromList={'removeSelfFromList' in this.props ? this.props.removeSelfFromList : false}
                     />
                 }
                 <KeyboardAwareScrollView
@@ -63,6 +77,22 @@ export default class EditEntity extends Component {
                                 onChangeText={(newNumber) => this.props.inputTwoOnChange(newNumber)}
                                 underlineColorAndroid='rgba(0,0,0,0)'
                             />
+                        </View>
+                    }
+                    {
+                        'modalPicker' in this.props &&
+                        <View style={styles.entityInputAndLabel}>
+                            <Text style={styles.entityInputLabel}>
+                                {this.props.modalPicker}
+                            </Text>
+                            <TouchableOpacity
+                                style={styles.modalPickerOpenButton}
+                                onPress={() => this.setState({isModalPickerOpen: true})}
+                            >
+                                <Text style={styles.modalPickerButtonText}>
+                                    {this.props.modalPickerDisplayValue}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     }
                     {
@@ -155,5 +185,19 @@ const styles = StyleSheet.create({
     selectEntityButtonText: {
         color: 'white',
         fontSize: 20,
+    },
+    modalPickerOpenButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        width: '50%',
+        height: 60,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderColor: '#CCCCCC',
+        padding: 10,
+    },
+    modalPickerButtonText: {
+        fontSize: 16,
     }
 });

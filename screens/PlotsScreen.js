@@ -48,8 +48,7 @@ export default class PlotsScreen extends Component {
         this.state = {
             name: '',
             description: '',
-            plot: null,
-            plotParent: '',
+            plotParent: null,
             selectedPlotId: null,
             plots: null,
 
@@ -105,7 +104,7 @@ export default class PlotsScreen extends Component {
                     plots: res.success,
                     description: '',
                     name: '',
-                    plotParent: '',
+                    plotParent: null,
                     selectedPlotId: null,
                 })
             }
@@ -116,7 +115,12 @@ export default class PlotsScreen extends Component {
     editPlot = () => {
         this.PlotRequests.editPlot(this.state.selectedPlotId, this.state.name, this.state.description, this.state.plotParent).then((res) => {
             if ('error' in res) {
-
+                this.setState({
+                    selectedPlotId: null,
+                    globalAlertVisible: true,
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                });
             }
             else {
                 let tempPlots = this.state.plots;
@@ -124,7 +128,7 @@ export default class PlotsScreen extends Component {
                 this.setState({
                     plots: tempPlots,
                     name: '',
-                    plotParent: '',
+                    plotParent: null,
                     description: '',
                     selectedPlotId: null,
                 });
@@ -149,7 +153,7 @@ export default class PlotsScreen extends Component {
                     plots: tempPlots,
                     name: '',
                     description: '',
-                    plotParent: '',
+                    plotParent: null,
                     selectedPlotId: null,
                 });
             }
@@ -166,22 +170,105 @@ export default class PlotsScreen extends Component {
         });
     }
 
+    selectPlot = (id) => {
+        this.setState({
+            plotParent: this.state.plots[id].plot,
+            description: this.state.plots[id].description,
+            name: this.state.plots[id].name,
+            selectedPlotId: id,
+        });
+    }
+
+    addChildPlot = (parentId) => {
+        this.setState({
+            plotParent: parentId,
+            description: '',
+            name: '',
+            selectedPlotId: 'new',
+        })
+    }
+
+    returnPlot = (styleName = 'parentPlots', id, addIcon = true) => {
+        let plot = (
+            <View 
+                key={id}
+                style={styles.plotContainer}
+            >
+                <TouchableOpacity
+                    onPress={() => this.selectPlot(id)}
+                    style={styles[styleName]}
+                >
+                    <Text 
+                        numberOfLines={1}
+                        style={styles.plotsText}
+                    >
+                        {this.state.plots[id].name}
+                    </Text>
+                    
+                </TouchableOpacity>
+                {
+                    addIcon &&
+                    <View style={styles.plotIconContainer}>
+                        <Icon
+                            onPress={() => this.addChildPlot(id)}
+                            name="plus"
+                            type="font-awesome"
+                            color="#2f95dc"
+                            size={20}
+                        />
+                    </View>
+                }
+            </View>
+        );
+        return plot;
+    }
+
     renderPlots = () => {
         if (this.state.plots === null) {
             return null;
         }
         let plots = [];
         let plotIds = Object.keys(this.state.plots);
-        plotIds.forEach((id) => {
-            plots.push(
-                <View>
-                    <Text>
-                        {this.state.plots[id].name}
+        if (plotIds.length > 0) {
+            plotIds.forEach((id) => {
+                if (this.state.plots[id].plot !== '') {
+                    return;
+                }
+                else {
+                    plots.push(this.returnPlot('parentPlots', id));
+                    let parentOneId = id;
+                    // Render childrenOne
+                    plotIds.forEach((id) => {
+                        if (this.state.plots[id].plot == parentOneId) {
+                            plots.push(this.returnPlot('childOnePlots', id));
+                            // Render childrenTwo
+                            let parentTwoId = id;
+                            plotIds.forEach((id) => {
+                                if (this.state.plots[id].plot == parentTwoId) {
+                                    plots.push(this.returnPlot('childTwoPlots', id, false));
+                                }
+                            })
+                        }
+                        else {
+                            return;
+                        }
+                    })
+                }
+            });
+            return plots;
+        }
+        else {
+            return (
+                <View style={styles.noPlotsContainer}>
+                    <Text style={styles.noPlotsText}>
+                        Looks like you haven't created any stories yet.
+                    </Text>
+                    <Text style={styles.noPlotsText}>
+                        Press on the + to create a story!
                     </Text>
                 </View>
-            );
-        });
-        return plots;
+            )
+        }
     }
 
     render() {
@@ -211,6 +298,7 @@ export default class PlotsScreen extends Component {
                     <EditEntity
                         selectedEntityId={this.state.selectedPlotId}
                         entityType="Plot"
+                        deleteNote="Note: all children will be deleted"
 
                         inputOne={this.state.name}
                         inputOneName="Plot Name"
@@ -219,6 +307,17 @@ export default class PlotsScreen extends Component {
                         inputThree={this.state.description}
                         inputThreeName="Description"
                         inputThreeOnChange={(newValue) => this.setState({description: newValue})}
+
+                        // modalPicker={"Plot Parent"}
+                        // modalPickerSelectedValue={this.state.plotParent}
+                        // modalPickerDisplayValue={
+                        //     this.state.plotParent in this.state.plots
+                        //         ? this.state.plots[this.state.plotParent].name
+                        //         : "Select a plot parent"
+                        // }
+                        // modalPickerList={this.state.plots}
+                        // removeSelfFromList={this.state.selectedPlotId}
+                        // modalPickerOnChange={(newValue) => this.setState({plotParent: newValue})}
 
                         createEntity={() => this.createPlot()}
                         editEntity={() => this.editPlot()}
@@ -235,5 +334,56 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
+    },
+    plotContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        height: 50,
+    },
+    parentPlots: {
+        width: '87.5%',
+        marginLeft: '2.5%',
+        height: 50,
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    childOnePlots: {
+        width: '82.5%',
+        marginLeft: '7.5%',
+        height: 50,
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    childTwoPlots: {
+        width: '77.5%',
+        marginLeft: '12.5%',
+        height: 50,
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    plotsText: {
+        color: '#CCCCCC',
+        fontWeight: 'bold',
+        fontSize: 28,
+    },
+    plotIconContainer: {
+        display: 'flex',
+        width: '10%',
+        justifyContent: 'center',
+    },
+    noPlotsContainer: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noPlotsText: {
+        marginTop: 30,
+        textAlign: 'center',
+        fontSize: 36,
+        color: '#CCCCCC',
+        fontWeight: 'bold',
     }
 });
