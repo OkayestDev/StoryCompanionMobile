@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
@@ -58,11 +58,11 @@ export default class PlotsScreen extends Component {
         }
         this.PlotRequests = new PlotRequests();
         //@PROD
-        // this.selectedStoryId = null;
-        // this.getPlots();
+        this.selectedStoryId = null;
+        this.getPlots();
         // @DEV
-        this.selectedStoryId = 1;
-        this.getPlots(1);
+        // this.selectedStoryId = 1;
+        // this.getPlots(1);
     }
 
     getPlots = (story = null) => {

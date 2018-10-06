@@ -97,7 +97,7 @@ SettingsStack.navigationOptions = {
 
 export default createBottomTabNavigator({
     // ChapterScreenStack,
-    PlotsScreenStack,
+    // PlotsScreenStack,
     CharactersScreenStack,
     NotesScreenStack,
     SettingsStack,

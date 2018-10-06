@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
 import { Icon } from 'react-native-elements';
+import GlobalAlert from '../components/GlobalAlert.js';
+import EditEntity from '../components/EditEntity.js';
+import CharacterRequests from '../utils/CharacterRequests.js';
 
 const headerTitle = {
     display: 'flex',
@@ -39,12 +42,77 @@ export default class CharactersScreen extends Component {
         }
     };
 
-    render() {
-        return (
-            <View style={styles.container}>
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: '',
+            description: '',
+            attribute: '',
+            image: '',
+            characters: null,
+            selectedCharacterId: null,
 
-            </View>
-        )
+            globalAlertVisible: false,
+            globalAlertType: '',
+            globalAlertMessage: '',
+        };
+        this.CharacterRequests = new CharacterRequests();
+        //@PROD
+        // this.selectedStoryId = null;
+        // this.getCharacters();
+        // @DEV
+        this.selectedStoryId = 1;
+        this.getCharacters(1);
+    }
+
+    getCharacters = (story = null) => {
+        if (story !== null) {
+            this.CharacterRequests.getCharacters(story).then((res) => {
+                if ('error' in res) {
+                    this.setState({
+                        selectedPlotId: null,
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                }
+                else {
+                    this.setState({characters: res.success});
+                }
+            })
+        }
+        else {
+            AsyncStorage.getItem('selectedStoryId').then((res) => {
+                this.selectedStoryId = res;
+                this.getCharacters(res);
+            })
+        }
+    }
+
+    renderChapters = () => {
+
+    }
+
+    render() {
+        if (this.state.selectedCharacterId === null) {
+            return (
+                <View style={styles.container}>
+                    <GlobalAlert
+                        visible={this.state.globalAlertVisible}
+                        message={this.state.globalAlertMessage}
+                        type={this.state.globalAlertType}
+                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                    />
+                </View>
+            )
+        }
+        else {
+            return (
+                <EditEntity
+
+                />
+            )
+        }
     }
 }
 
