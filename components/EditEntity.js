@@ -29,7 +29,6 @@ export default class EditEntity extends Component {
             allowEditing: true,
         });
         imagePickerResult.then((image) => {
-            console.info(image);
             if (!image.cancelled) {
                 this.props.imagePickerOnChange(image);
             }
@@ -119,11 +118,10 @@ export default class EditEntity extends Component {
                     />
                 }
                 <KeyboardAwareScrollView
-                    style={styles.container}
                     enableOnAndroid={true}
                     keyboardShouldPersistTaps="handled"
                     scrollEnabled={true}
-                    extraHeight={100}
+                    extraScrollHeight={120}
                 >
                     {this.renderImage()}
                     {
@@ -227,6 +225,7 @@ const styles = StyleSheet.create({
     },
     imageViewContainer: {
         marginTop: 10,
+        marginBottom: 20,
         width: '100%',
         display: 'flex',
         alignItems: 'center',

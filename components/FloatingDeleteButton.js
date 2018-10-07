@@ -1,11 +1,47 @@
 import React,  { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Dimensions, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Dimensions, View, Keyboard } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export default class FloatingAddButton extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            buttonPosition: {
+                bottom: 10,
+                right: 10,
+            }
+        }
+    }
+
+    componentDidMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+    }
+
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
+
+    keyboardDidHide = () => {
+        this.setState({
+            buttonPosition: {
+                bottom: 10,
+            }
+        });
+    }
+
+    keyboardDidShow = () => {
+        this.setState({
+            buttonPosition: {
+                top: 0,
+            }
+        });
+    }
+
     render() {
         return (
-            <View style={styles.floatingDeleteButtonContainer}>
+            <View style={[styles.floatingDeleteButtonContainer, this.state.buttonPosition]}>
                 <TouchableOpacity 
                     style={styles.floatingDeleteButton}
                     onPress={() => this.props.onPress()}
@@ -28,7 +64,6 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width,
         display: 'flex',
         position: 'absolute',
-        bottom: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
