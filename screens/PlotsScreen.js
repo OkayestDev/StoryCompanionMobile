@@ -90,6 +90,10 @@ export default class PlotsScreen extends Component {
         }
         else {
             AsyncStorage.getItem('selectedStoryId').then((res) => {
+                // Unable to load story - log user out
+                if (!res) {
+                    this.props.navigation.navigate("LoginTab");
+                }
                 this.selectedStoryId = res;
                 this.getPlots(res);
             })

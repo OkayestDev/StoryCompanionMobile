@@ -66,11 +66,11 @@ export default class CharactersScreen extends Component {
         };
         this.CharacterRequests = new CharacterRequests();
         //@PROD
-        // this.selectedStoryId = null;
-        // this.getCharacters();
+        this.selectedStoryId = null;
+        this.getCharacters();
         // @DEV
-        this.selectedStoryId = 1;
-        this.getCharacters(1);
+        // this.selectedStoryId = 1;
+        // this.getCharacters(1);
     }
 
     getCharacters = (story = null) => {
@@ -94,6 +94,10 @@ export default class CharactersScreen extends Component {
         }
         else {
             AsyncStorage.getItem('selectedStoryId').then((res) => {
+                // Unable to load story - log user out
+                if (!res) {
+                    this.props.navigation.navigate("LoginTab");
+                }
                 this.selectedStoryId = res;
                 this.getCharacters(res);
             })

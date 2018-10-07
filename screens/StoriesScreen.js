@@ -77,6 +77,10 @@ export default class StoriesScreen extends React.Component {
         }
         else {
             AsyncStorage.getItem('id').then((res) => {
+                // Unable to load story - log user out
+                if (!res) {
+                    this.props.navigation.navigate("LoginTab");
+                }
                 if (res !== null) {
                     this.userId = res;
                     this.getStories(res);

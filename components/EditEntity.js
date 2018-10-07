@@ -6,6 +6,7 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
+    Keyboard
 } from 'react-native';
 import FloatingCancelButton from '../components/FloatingCancelButton.js';
 import FloatingSaveButton from '../components/FloatingSaveButton.js';
@@ -13,7 +14,7 @@ import FloatingDeleteButton from '../components/FloatingDeleteButton.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import ModalPicker from '../components/ModalPicker.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Constants, ImagePicker, Permissions } from 'expo';
+import { ImagePicker } from 'expo';
 
 export default class EditEntity extends Component {
     constructor(props) {
@@ -21,7 +22,26 @@ export default class EditEntity extends Component {
         this.state = {
             isConfirmationModalOpen: false,
             isModalPickerOpen: false,
+            scrollViewVerticalPadding: 0,
         }
+    }
+
+    componentDidMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+    }
+
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
+
+    keyboardDidShow = () => {
+        this.setState({scrollViewVerticalPadding: 60});
+    }
+
+    keyboardDidHide = () => {
+        this.setState({scrollViewVerticalPadding: 0});
     }
 
     openImagePicker = () => {
@@ -122,6 +142,7 @@ export default class EditEntity extends Component {
                     keyboardShouldPersistTaps="handled"
                     scrollEnabled={true}
                     extraScrollHeight={120}
+                    contentContainerStyle={{paddingVertical: this.state.scrollViewVerticalPadding}}
                 >
                     {this.renderImage()}
                     {
