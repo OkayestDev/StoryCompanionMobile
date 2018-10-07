@@ -7,7 +7,7 @@ import ChaptersScreen from '../screens/ChaptersScreen.js';
 import PlotsScreen from '../screens/PlotsScreen.js';
 import NotesScreen from '../screens/NotesScreen.js';
 import CharactersScreen from '../screens/CharactersScreen.js';
-import SettingsScreen from '../screens/SettingsScreen';
+import LogoutScreen from '../screens/LogoutScreen.js';
 
 const ChapterScreenStack = createStackNavigator({
     Chapters: ChaptersScreen,
@@ -81,24 +81,9 @@ NotesScreenStack.navigationOptions = {
     ),
 };
 
-const SettingsStack = createStackNavigator({
-    Settings: SettingsScreen,
-});
-
-SettingsStack.navigationOptions = {
-    tabBarLabel: 'Settings',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon
-            focused={focused}
-            name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
-        />
-    ),
-};
-
 export default createBottomTabNavigator({
-    ChapterScreenStack,
-    PlotsScreenStack,
-    CharactersScreenStack,
+    // ChapterScreenStack,
+    // PlotsScreenStack,
+    // CharactersScreenStack,
     NotesScreenStack,
-    SettingsStack,
 });

@@ -1,31 +1,49 @@
-import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions} from 'react-native';
+import React from 'react';
+import { View, StyleSheet, AsyncStorage, Text, TouchableOpacity, Dimensions } from 'react-native';
 
-export default class ConfirmationModal extends Component {
-    
+const headerTitle = {
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: '#2f95dc',
+    paddingLeft: 20,
+}
+
+export default class LogoutScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Stories',
+        headerTitle: (
+            <View style={headerTitle}>
+                <Text style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    Logout
+                </Text>
+            </View>
+        ),
+        headerStyle: { backgroundColor: '#2f95dc' },
+        headerTitleStyle: { color: 'white' },
+    };
+
+    logout = () => {
+        AsyncStorage.clear().then((res) => {
+            this.props.navigation.navigate("LoginTab");
+        });
+    }
+
     render() {
         return (
-            <Modal
-                visible={this.props.isConfirmationModalOpen}
-                onRequestClose={() => this.props.closeConfirmationModal()}
-                transparent={true}
-            >
+            <View style={styles.container}>
                 <View style={styles.modalContent}>
                     <View style={styles.textContainer}>
                         <Text style={styles.modalText}>
-                            {this.props.confirmationTitle}
+                            Logout?
                         </Text>
-                        {
-                            'note' in this.props && this.props.note !== null &&
-                            <Text style={styles.noteText}>
-                                {this.props.note}
-                            </Text>
-                        }
                     </View>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             style={styles.cancelButton}
-                            onPress={() => this.props.closeConfirmationModal()}
+                            onPress={() => this.props.navigation.navigate("Stories")}
                         >
                             <Text style={styles.buttonText}>
                                 Cancel
@@ -33,7 +51,7 @@ export default class ConfirmationModal extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.confirmButton}
-                            onPress={() => this.props.onConfirm()}
+                            onPress={() => this.logout()}
                         >
                             <Text style={styles.buttonText}>
                                 Confirm
@@ -41,12 +59,16 @@ export default class ConfirmationModal extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </Modal>
+            </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
     modalContent: {
         backgroundColor: "white",
         position: 'absolute',
@@ -112,4 +134,4 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
     },
-})
+});

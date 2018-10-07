@@ -91,6 +91,13 @@ export default class CharactersScreen extends Component {
                     });
                 }
             })
+            .catch((error) => {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: "Unable to get response from server",
+                });
+            });
         }
         else {
             AsyncStorage.getItem('selectedStoryId').then((res) => {
@@ -108,7 +115,7 @@ export default class CharactersScreen extends Component {
         let image = this.state.image;
         // check if new image has been uploaded
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadCharacterImageToS3(this.state.image, this.selectedStoryId); //@TODO add await
+            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.selectedStoryId); //@TODO add await
         }
         let paramsObject = {
             story: this.selectedStoryId,
@@ -135,13 +142,20 @@ export default class CharactersScreen extends Component {
                     selectedCharacterId: null,
                 });
             }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
         });
     }
 
     editCharacter = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadCharacterImageToS3(this.state.image, this.selectedStoryId); // @TODO add await
+            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.selectedStoryId); // @TODO add await
         }
         let paramsObject = {
             character: this.state.selectedCharacterId,
@@ -171,6 +185,13 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
+        });
     }
 
     deleteCharacter = () => {
@@ -195,6 +216,13 @@ export default class CharactersScreen extends Component {
                     selectedCharacterId: null,
                 });
             }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
         })
     } 
 

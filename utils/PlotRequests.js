@@ -19,7 +19,6 @@ export default class PlotRequests {
             plotParent: plotParent,
             story: story,
         };
-        console.info(paramsObject);
         return postRequestWithFormData(paramsObject, 'plot/creation', {}).then(res => res);
     }
 
@@ -30,7 +29,6 @@ export default class PlotRequests {
             description: description,
             plotParent: plotParent,
         };
-        console.info(`editPlot paramsObject`, paramsObject);
         return postRequestWithFormData(paramsObject, 'plot/edit', {}).then(res => res);
     }
 

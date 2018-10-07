@@ -87,6 +87,13 @@ export default class PlotsScreen extends Component {
                     this.setState({plots: res.success});
                 }
             })
+            .catch((error) => {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: "Unable to get response from server",
+                });
+            })
         }
         else {
             AsyncStorage.getItem('selectedStoryId').then((res) => {
@@ -119,7 +126,13 @@ export default class PlotsScreen extends Component {
                 })
             }
         })
-
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
+        });
     }
 
     editPlot = () => {
@@ -143,6 +156,13 @@ export default class PlotsScreen extends Component {
                     selectedPlotId: null,
                 });
             }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
         });
     }
 
@@ -167,6 +187,13 @@ export default class PlotsScreen extends Component {
                     selectedPlotId: null,
                 });
             }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
         })
     }
 

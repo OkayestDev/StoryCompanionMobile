@@ -42,8 +42,8 @@ export default class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'isjustgamedev@gmail.com',
-            password: 'encounter1',
+            email: '',
+            password: '',
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
@@ -56,8 +56,8 @@ export default class LoginScreen extends Component {
     }
 
     checkIfUserIsAlreadyLoggedIn = () => {
-        AsyncStorage.multiGet(['email', 'id']).then((res) => {
-            if (res[0][1] !== null && res[1][1] !== null) {
+        AsyncStorage.multiGet(['email', 'id', 'apiKey']).then((res) => {
+            if (res[0][1] !== null && res[1][1] !== null && res[2][1] !== null) {
                 this.props.navigation.navigate("StoriesTab");
             }
         });
@@ -65,7 +65,6 @@ export default class LoginScreen extends Component {
 
     login = () => {
         this.UserRequest.login(this.state.email, this.state.password).then((res) => {
-            console.info(res);
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -74,7 +73,7 @@ export default class LoginScreen extends Component {
                 });
             }
             else {
-                AsyncStorage.multiSet([['email', String(res.success.email)], ['id', String(res.success.id)]]).then((res) => {
+                AsyncStorage.multiSet([['email', String(res.success.email)], ['id', String(res.success.id)], ['apiKey', String(res.success.apiKey)]]).then((res) => {
                     this.props.navigation.navigate("StoriesTab");
                 })
                 .catch((error) => {

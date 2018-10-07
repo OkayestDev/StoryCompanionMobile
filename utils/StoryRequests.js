@@ -1,38 +1,28 @@
 import { 
     postRequestWithFormData,
-    getData,
 } from './HelperFunctions.js';
+import Utilities from './Utilities.js';
 
-export default class StoryRequests {
+export default class StoryRequests extends Utilities {
     getStories = (userId) => {
-        let paramObject = {
+        let paramsObject = {
             user: userId
         };
-        return postRequestWithFormData(paramObject, 'story/view', {}).then(res => res);
+        return postRequestWithFormData(paramsObject, 'story/view', {}).then(res => res);
     }
 
-    createStory = (name, description, userId) => {
-        let paramObject = {
-            name: name,
-            description: description,
-            user: userId
-        };
-        return postRequestWithFormData(paramObject, 'story/creation', {}).then(res => res);
+    createStory = (paramsObject) => {
+        return postRequestWithFormData(paramsObject, 'story/creation', {}).then(res => res);
     }
 
-    editStory = (storyId, name, description) => {
-        let paramObject = {
-            story: storyId,
-            name: name,
-            description: description
-        };
-        return postRequestWithFormData(paramObject, 'story/edit', {}).then(res => res);
+    editStory = (paramsObject) => {
+        return postRequestWithFormData(paramsObject, 'story/edit', {}).then(res => res);
     }
 
     deleteStory = (storyId) => {
-        let paramObject = {
+        let paramsObject = {
             story: storyId
         };
-        return postRequestWithFormData(paramObject, 'story/delete', {}).then(res => res);
+        return postRequestWithFormData(paramsObject, 'story/delete', {}).then(res => res);
     }
 }

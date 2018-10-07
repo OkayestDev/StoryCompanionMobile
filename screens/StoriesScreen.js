@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     ScrollView,
     AsyncStorage,
+    Image,
 } from 'react-native';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
@@ -45,6 +46,7 @@ export default class StoriesScreen extends React.Component {
         this.state = {
             name: '',
             description: '',
+            image: '',
             stories: null,
             selectedStoryId: null,
 
@@ -54,6 +56,15 @@ export default class StoriesScreen extends React.Component {
         }
         this.userId = null;
         this.StoryRequests = new StoryRequests();
+    }
+
+    resetStory = () => {
+        return {
+            name: '',
+            description: '',
+            image: '',
+            selectedStoryId: null,
+        };
     }
 
     componentDidMount() {
@@ -73,6 +84,13 @@ export default class StoriesScreen extends React.Component {
                 else {
                     this.setState({stories: res.success});
                 }
+            })
+            .catch((error) => {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: "Unable to get response from server",
+                });
             });
         }
         else {
@@ -90,11 +108,7 @@ export default class StoriesScreen extends React.Component {
     }
 
     cancelStoryEdit = () => {
-        this.setState({
-            name: '',
-            description: '',
-            selectedStoryId: null,
-        })
+        this.setState(this.resetStory());
     }
 
     selectStory = (id) => {
@@ -102,11 +116,23 @@ export default class StoriesScreen extends React.Component {
             selectedStoryId: id,
             name: this.state.stories[id].name,
             description: this.state.stories[id].description,
+            image: this.state.stories[id].image,
         });
     }
 
-    createStory = () => {
-        this.StoryRequests.createStory(this.state.name, this.state.description, this.userId).then(res => {
+    createStory = async () => {
+        let image = this.state.image;
+        if (image instanceof Object) {
+            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
+        }
+        let paramsObject = {
+            name: this.state.name, 
+            description: this.state.description, 
+            user: this.userId,
+            image: image,
+        }
+        console.info(paramsObject);
+        this.StoryRequests.createStory(paramsObject).then(res => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -120,6 +146,7 @@ export default class StoriesScreen extends React.Component {
                     name: '',
                     stories: res.success,
                     description: '',
+                    image: '',
                     selectedStoryId: null,
                 });
             }
@@ -133,8 +160,18 @@ export default class StoriesScreen extends React.Component {
         });
     }
 
-    editStory = () => {
-        this.StoryRequests.editStory(this.state.selectedStoryId, this.state.name, this.state.description).then((res) => {
+    editStory = async () => {
+        let image = this.state.image;
+        if (image instanceof Object) {
+            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
+        }
+        let paramsObject = {
+            story: this.state.selectedStoryId,
+            description: this.state.description, 
+            user: this.userId,
+            image: image,
+        }
+        this.StoryRequests.editStory(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -148,10 +185,18 @@ export default class StoriesScreen extends React.Component {
                 this.setState({
                     name: '',
                     description: '',
+                    image: '',
                     stories: tempStories,
                     selectedStoryId: null,
                 });
             }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
         })
     }
 
@@ -173,8 +218,16 @@ export default class StoriesScreen extends React.Component {
                     name: '',
                     description: '',
                     selectedStoryId: null,
+                    image: '',
                 })
             }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
         })
     }
 
@@ -196,15 +249,28 @@ export default class StoriesScreen extends React.Component {
                 stories.push(
                     <TouchableOpacity
                         key={id}
-                        style={styles.selectStoryButton}
                         onPress={() => this.selectStory(id)}
+                        style={styles.storyContainer}
                     >
-                        <Text 
-                            numberOfLines={1}
-                            style={styles.selectStoryButtonText}
-                        >
-                            {this.state.stories[id].name}
-                        </Text>
+                        <View style={styles.storyPictureAndName}>
+                            <View styles={styles.storyPictureContainer}>
+                            {
+                                this.state.stories[id].image !== '' && 
+                                <Image
+                                    source={{uri: this.state.stories[id].image}}
+                                    style={styles.storyPicture}
+                                />
+                            }
+                            </View>
+                            <View style={styles.storyNameAndDescription}>
+                                <Text numberOfLines={1} style={styles.storyName}>
+                                    {this.state.stories[id].name}
+                                </Text>
+                                <Text numberOfLines={2} style={styles.storyDescription}>
+                                    {this.state.stories[id].description}
+                                </Text>
+                            </View>
+                        </View>
                     </TouchableOpacity>
                 );
             });
@@ -254,6 +320,10 @@ export default class StoriesScreen extends React.Component {
                         selectedEntityId={this.state.selectedStoryId}
                         entityType="Story"
 
+                        image={this.state.image}
+                        imagePickerTitle="Add an image to this story"
+                        imagePickerOnChange={(newImage) => this.setState({image: newImage})}
+
                         inputOne={this.state.name}
                         inputOneName="Story Name"
                         inputOneOnChange={(newValue) => this.setState({name: newValue})}
@@ -280,6 +350,34 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    storyContainer: {
+        width: '100%',
+        padding: 10,
+        height: 125,
+        borderBottomWidth: 2,
+        borderBottomColor: '#CCCCCC',
+    },
+    storyPictureAndName: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    storyPicture: {
+        width: 100,
+        height: 100,
+    },
+    storyNameContainer: {
+    },
+    storyName: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#CCCCCC',
+    },
+    storyDescription: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#CCCCCC',
     },
     storyLabelAndInputContainer: {
         display: 'flex',
