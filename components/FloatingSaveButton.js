@@ -1,5 +1,5 @@
 import React,  { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, TouchableOpacity, Keyboard, Dimensions, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export default class FloatingSaveButton extends Component {
@@ -8,7 +8,6 @@ export default class FloatingSaveButton extends Component {
         this.state = {
             buttonPosition: {
                 bottom: 10,
-                right: 10,
             }
         }
     }
@@ -27,7 +26,6 @@ export default class FloatingSaveButton extends Component {
         this.setState({
             buttonPosition: {
                 bottom: 10,
-                right: 10,
             }
         });
     }
@@ -36,33 +34,42 @@ export default class FloatingSaveButton extends Component {
         this.setState({
             buttonPosition: {
                 top: 0,
-                right: 10,
             }
         });
     }
 
     render() {
         return (
-            <TouchableOpacity
-                style={[styles.floatingSaveButtonContainer, this.state.buttonPosition]}
-                onPress={() => this.props.onPress()}
-            >
-                <Icon
-                    name='check'
-                    type='font-awesome'
-                    color='green'
-                    reverse={true}
-                />
-            </TouchableOpacity>
+            <View style={[styles.floatingSaveButtonContainer, this.state.buttonPosition]}>
+                <TouchableOpacity
+                    style={styles.floatingSaveButton}
+                    onPress={() => this.props.onPress()}
+                >
+                    <Icon
+                        name='check'
+                        type='font-awesome'
+                        color='green'
+                        reverse={true}
+                    />
+                </TouchableOpacity>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     floatingSaveButtonContainer: {
+        height: 60,
+        width: Dimensions.get('window').width,
+        display: 'flex',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+    },
+    floatingSaveButton: {
         width: 60,  
         height: 60,   
-        borderRadius: 30,            
-        position: 'absolute',
+        borderRadius: 30,  
+        marginRight: 4,          
     }
 });

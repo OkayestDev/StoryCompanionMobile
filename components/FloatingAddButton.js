@@ -1,5 +1,5 @@
 import React,  { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, TouchableOpacity, Keyboard, Dimensions, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 export default class FloatingAddButton extends Component {
@@ -8,7 +8,6 @@ export default class FloatingAddButton extends Component {
         this.state = {
             buttonPosition: {
                 bottom: 10,
-                right: 10,
             }
         }
     }
@@ -27,7 +26,6 @@ export default class FloatingAddButton extends Component {
         this.setState({
             buttonPosition: {
                 bottom: 10,
-                right: 10,
             }
         });
     }
@@ -36,33 +34,42 @@ export default class FloatingAddButton extends Component {
         this.setState({
             buttonPosition: {
                 top: 0,
-                right: 10,
             }
         });
     }
 
     render() {
         return (
-            <TouchableOpacity 
-                style={[styles.floatingAddButtonContainer, this.state.buttonPosition]}
-                onPress={() => this.props.onPress()}
-            >
-                <Icon
-                    name='plus'
-                    type='font-awesome'
-                    color='#2f95dc'
-                    reverse={true}
-                />
-            </TouchableOpacity>
+            <View style={[styles.floatingAddButtonContainer, this.state.buttonPosition]}>
+                <TouchableOpacity 
+                    style={styles.floatingAddButton}
+                    onPress={() => this.props.onPress()}
+                >
+                    <Icon
+                        name='plus'
+                        type='font-awesome'
+                        color='#2f95dc'
+                        reverse={true}
+                    />
+                </TouchableOpacity>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     floatingAddButtonContainer: {
+        height: 60,
+        width: Dimensions.get('window').width,
+        display: 'flex',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+    },
+    floatingAddButton: {
         width: 60,  
         height: 60,   
-        borderRadius: 30,            
-        position: 'absolute',                                          
+        borderRadius: 30,
+        marginRight: 4,         
     },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, Text } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View,  } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { AdMobBanner } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
@@ -24,14 +24,14 @@ export default class App extends React.Component {
         else {
             return (
                 <View style={styles.container}>
+                    {/* Remove status and ad in paid version */}
                     <StatusBar hidden/>
-                    {/* Remove in paid version */}
                     <View style={styles.adContainer}>
-                        {/* <AdMobBanner
+                        <AdMobBanner
                             bannerSize="smartBannerPortrait"
                             adUnitID="ca-app-pub-5830175342552944/7130625883"
                             testDeviceID="EMULATOR"
-                        /> */}
+                        />
                     </View>
                     <AppNavigator />
                 </View>
@@ -41,9 +41,6 @@ export default class App extends React.Component {
 
     _loadResourcesAsync = async () => {
         return Promise.all([
-            Asset.loadAsync([
-
-            ]),
             Font.loadAsync({
                 ...Icon.Ionicons.font,
                 'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
@@ -52,7 +49,7 @@ export default class App extends React.Component {
     };
 
     _handleLoadingError = error => {
-        console.warn(error);
+        
     };
 
     _handleFinishLoading = () => {

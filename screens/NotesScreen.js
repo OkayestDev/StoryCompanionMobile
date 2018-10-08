@@ -64,11 +64,11 @@ export default class NotesScreen extends Component {
         }
         this.NoteRequests = new NoteRequests();
         // @PROD
-        // this.selectedStoryId = null;
-        // this.getNotes();
+        this.selectedStoryId = null;
+        this.getNotes();
         // @DEV
-        this.selectedStoryId = 3;
-        this.getNotes(3);
+        // this.selectedStoryId = 3;
+        // this.getNotes(3);
     }
 
     getNotes = (story = null) => {

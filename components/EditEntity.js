@@ -140,7 +140,6 @@ export default class EditEntity extends Component {
                 <KeyboardAwareScrollView
                     enableOnAndroid={true}
                     keyboardShouldPersistTaps="handled"
-                    scrollEnabled={true}
                     contentContainerStyle={{marginTop: this.state.scrollViewVerticalPadding}}
                 >
                     <View style={{marginBottom: 100}}>
