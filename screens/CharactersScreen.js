@@ -78,7 +78,7 @@ export default class CharactersScreen extends Component {
             this.CharacterRequests.getCharacters(story).then((res) => {
                 if ('error' in res) {
                     this.setState({
-                        selectedPlotId: null,
+                        selectedCharacterId: null,
                         globalAlertVisible: true,
                         globalAlertType: 'danger',
                         globalAlertMessage: res.error,
@@ -198,7 +198,6 @@ export default class CharactersScreen extends Component {
         this.CharacterRequests.deleteCharacter(this.state.selectedCharacterId).then((res) => {
             if ('error' in res) {
                 this.setState({
-                    selectedCharacterId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'warning',
                     globalAlertMessage: res.error,
@@ -369,17 +368,12 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
     },
-    characterNameContainer: {
-    },
     characterName: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     characterDescription: {
         fontSize: 18,
-        fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     noCharactersContainer: {
         flex: 1,

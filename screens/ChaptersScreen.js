@@ -201,7 +201,6 @@ export default class ChaptersScreen extends Component {
     }
 
     renderChapters = () => {
-        // @TODO loading screen
         if (this.state.chapters === null) {
             return null;
         }
@@ -314,13 +313,10 @@ const styles = StyleSheet.create({
     chapterNumber: {
         fontSize: 48,
         fontWeight: 'bold',
-        color: '#CCCCCC',
         marginRight: 10,
     },
     chapterName: {
         fontSize: 24,
-        fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     chapterEditIcon: {
         flex: 2,

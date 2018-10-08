@@ -403,7 +403,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     plotsText: {
-        color: '#CCCCCC',
         fontWeight: 'bold',
         fontSize: 28,
     },

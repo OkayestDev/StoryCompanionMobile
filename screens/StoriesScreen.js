@@ -367,17 +367,12 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
     },
-    storyNameContainer: {
-    },
     storyName: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     storyDescription: {
         fontSize: 18,
-        fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     storyLabelAndInputContainer: {
         display: 'flex',

@@ -3,13 +3,6 @@ import {
 } from './HelperFunctions.js';
 import Utilities from './Utilities.js';
 
-const supportedImageTypes = [
-    'image/gif',
-    'image/jpeg',
-    'image/png',
-    // @TODO add more
-];
-
 // Character is referred to as Person in the back-end. Character is a reserved word in mysql
 export default class CharacterRequests extends Utilities {
     getCharacters = (storyId) => {
