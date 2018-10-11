@@ -71,7 +71,7 @@ export default class StoriesScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.getStories(1);
+        this.getStories();
     }
 
     getStories = (user = null) => {
