@@ -215,17 +215,6 @@ export default class EditEntity extends Component {
                                 />
                             </View>
                         }
-                        {
-                            'selectEntity' in this.props && this.props.selectedEntityId !== 'new' &&
-                            <TouchableOpacity
-                                style={styles.selectEntityButton}
-                                onPress={() => this.props.selectEntity()}
-                            >
-                                <Text style={styles.selectEntityButtonText}>
-                                    {this.props.selectEntityButtonText}
-                                </Text>
-                            </TouchableOpacity>
-                        }
                     </View>
                 </KeyboardAwareScrollView>
                 <FloatingSaveButton onPress={() => this.props.selectedEntityId === 'new' ? this.props.createEntity() : this.props.editEntity()}/>
@@ -309,20 +298,6 @@ const styles = StyleSheet.create({
         padding: 10,
         textAlignVertical: 'top',
         fontSize: 16,
-    },
-    selectEntityButton: {
-        height: 60,
-        width: '80%',
-        marginLeft: '10%',
-        borderRadius: 4,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#2f95dc',
-    },
-    selectEntityButtonText: {
-        color: 'white',
-        fontSize: 20,
     },
     modalPickerOpenButton: {
         display: 'flex',

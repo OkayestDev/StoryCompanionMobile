@@ -188,6 +188,7 @@ export default class CreateAccountScreen extends Component {
                             </Text>
                             <TextInput
                                 autoCapitalize="none"
+                                keyboardType="email-address"
                                 style={[styles.createAccountInput, (this.doEmailsMatch() ? "" : invalidInput), (this.isEmailValid(this.state.email) ? "" : invalidInput)]}
                                 underlineColorAndroid='rgba(0,0,0,0)'
                                 value={this.state.email}
@@ -200,6 +201,7 @@ export default class CreateAccountScreen extends Component {
                             </Text>
                             <TextInput
                                 autoCapitalize="none"
+                                keyboardType="email-address"
                                 style={[styles.createAccountInput, (this.doEmailsMatch() ? "" : invalidInput), (this.isEmailValid(this.state.confirmEmail) ? "" : invalidInput)]}
                                 underlineColorAndroid='rgba(0,0,0,0)'
                                 value={this.state.confirmEmail}

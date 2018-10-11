@@ -120,6 +120,7 @@ export default class LoginScreen extends Component {
                                 </Text>
                                 <TextInput
                                     autoCapitalize="none"
+                                    keyboardType="email-address"
                                     style={styles.loginInput}
                                     underlineColorAndroid='rgba(0,0,0,0)'
                                     value={this.state.email}

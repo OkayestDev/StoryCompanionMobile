@@ -54,8 +54,11 @@ export default class StoriesScreen extends React.Component {
             globalAlertType: '',
             globalAlertMessage: '',
         }
-        this.userId = null;
         this.StoryRequests = new StoryRequests();
+        // @PROD
+        this.userId = null;
+        // @DEV
+        // this.userId = 1;
     }
 
     resetStory = () => {
@@ -68,7 +71,7 @@ export default class StoriesScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.getStories();
+        this.getStories(1);
     }
 
     getStories = (user = null) => {
@@ -123,7 +126,7 @@ export default class StoriesScreen extends React.Component {
     createStory = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
+            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.userId);
         }
         let paramsObject = {
             name: this.state.name, 
@@ -168,6 +171,7 @@ export default class StoriesScreen extends React.Component {
         let paramsObject = {
             story: this.state.selectedStoryId,
             description: this.state.description, 
+            name: this.state.name,
             user: this.userId,
             image: image,
         }
@@ -252,24 +256,34 @@ export default class StoriesScreen extends React.Component {
                         onPress={() => this.selectStory(id)}
                         style={styles.storyContainer}
                     >
-                        <View style={styles.storyPictureAndName}>
-                            <View styles={styles.storyPictureContainer}>
-                            {
-                                this.state.stories[id].image !== '' && 
-                                <Image
-                                    source={{uri: this.state.stories[id].image}}
-                                    style={styles.storyPicture}
-                                />
-                            }
+                        <View>
+                            <View style={styles.storyPictureAndName}>
+                                <View styles={styles.storyPictureContainer}>
+                                {
+                                    this.state.stories[id].image !== '' && 
+                                    <Image
+                                        source={{uri: this.state.stories[id].image}}
+                                        style={styles.storyPicture}
+                                    />
+                                }
+                                </View>
+                                <View style={styles.storyNameAndDescription}>
+                                    <Text numberOfLines={1} style={styles.storyName}>
+                                        {this.state.stories[id].name}
+                                    </Text>
+                                    <Text numberOfLines={2} style={styles.storyDescription}>
+                                        {this.state.stories[id].description}
+                                    </Text>
+                                </View>
                             </View>
-                            <View style={styles.storyNameAndDescription}>
-                                <Text numberOfLines={1} style={styles.storyName}>
-                                    {this.state.stories[id].name}
+                            <TouchableOpacity
+                                style={styles.editStoryPropsButton}
+                                onPress={() => {this.selectStoryToEdit(id)}}
+                            >
+                                <Text style={styles.editStoryPropsButtonText}>
+                                    Edit Chapters, Characters, etc.
                                 </Text>
-                                <Text numberOfLines={2} style={styles.storyDescription}>
-                                    {this.state.stories[id].description}
-                                </Text>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     </TouchableOpacity>
                 );
@@ -336,9 +350,6 @@ export default class StoriesScreen extends React.Component {
                         editEntity={() => this.editStory()}
                         deleteEntity={() => this.deleteStory()}
                         cancelEntityEdit={() => this.cancelStoryEdit()}
-
-                        selectEntity={() => this.selectStoryToEdit(this.state.selectedStoryId)}
-                        selectEntityButtonText="Edit Chapters, Characters, etc"
                     />
                 </View>
             )
@@ -354,7 +365,7 @@ const styles = StyleSheet.create({
     storyContainer: {
         width: '100%',
         padding: 10,
-        height: 125,
+        height: 180,
         borderBottomWidth: 2,
         borderBottomColor: '#CCCCCC',
     },
@@ -362,10 +373,19 @@ const styles = StyleSheet.create({
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
+        marginBottom: 7,
+    },
+    storyPictureContainer: {
+        width: '29%',
+        marginRight: '1%',
     },
     storyPicture: {
         width: 100,
         height: 100,
+    },
+    storyNameAndDescription: {
+        width: '67%',
+        marginLeft: '3%',
     },
     storyName: {
         fontSize: 28,
@@ -389,6 +409,21 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 36,
         color: '#CCCCCC',
+        fontWeight: 'bold',
+    },
+    editStoryPropsButton: {
+        backgroundColor: '#2f95dc',
+        height: 50,
+        borderRadius: 4,
+        width: '80%',
+        marginLeft: '10%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    editStoryPropsButtonText: {
+        fontSize: 20,
+        color: 'white',
         fontWeight: 'bold',
     }
 });

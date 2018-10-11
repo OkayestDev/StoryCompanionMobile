@@ -364,6 +364,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
     },
+    characterPictureContainer: {
+        width: '29%',
+        marginRight: '1%',
+    },
+    characterNameAndDescription: {
+        width: '67%',
+        marginLeft: '3%',
+    },
     characterPicture: {
         width: 100,
         height: 100,
