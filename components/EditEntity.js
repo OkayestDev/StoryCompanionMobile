@@ -117,7 +117,7 @@ export default class EditEntity extends Component {
                     <ConfirmationModal
                         isConfirmationModalOpen={this.state.isConfirmationModalOpen}
                         closeConfirmationModal={() => this.setState({isConfirmationModalOpen: false})}
-                        confirmationTitle={"Delete" + this.props.entityType + "?"}
+                        confirmationTitle={"Delete " + this.props.entityType + "?"}
                         entityDescription={this.props.entityDescription}
                         onConfirm={() => {
                             this.props.deleteEntity();
