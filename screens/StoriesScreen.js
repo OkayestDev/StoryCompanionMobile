@@ -259,10 +259,15 @@ export default class StoriesScreen extends React.Component {
                             <View style={styles.storyPictureAndName}>
                                 <View styles={styles.storyPictureContainer}>
                                 {
-                                    this.state.stories[id].image !== '' && 
+                                    this.state.stories[id].image !== ''
+                                    ?
                                     <Image
                                         source={{uri: this.state.stories[id].image}}
                                         style={styles.storyPicture}
+                                    />
+                                    :
+                                    <View
+                                        style={styles.noPicture}
                                     />
                                 }
                                 </View>
@@ -270,19 +275,17 @@ export default class StoriesScreen extends React.Component {
                                     <Text numberOfLines={1} style={styles.storyName}>
                                         {this.state.stories[id].name}
                                     </Text>
-                                    <Text numberOfLines={2} style={styles.storyDescription}>
-                                        {this.state.stories[id].description}
-                                    </Text>
+                                    <TouchableOpacity
+                                        style={styles.editStoryPropsButton}
+                                        onPress={() => {this.selectStoryToEdit(id)}}
+                                    >
+                                        <Text style={styles.editStoryPropsButtonText}>
+                                            Edit Components
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-                            <TouchableOpacity
-                                style={styles.editStoryPropsButton}
-                                onPress={() => {this.selectStoryToEdit(id)}}
-                            >
-                                <Text style={styles.editStoryPropsButtonText}>
-                                    Edit Chapters, Characters, etc.
-                                </Text>
-                            </TouchableOpacity>
+                            
                         </View>
                     </TouchableOpacity>
                 );
@@ -364,7 +367,7 @@ const styles = StyleSheet.create({
     storyContainer: {
         width: '100%',
         padding: 10,
-        height: 180,
+        height: 125,
         borderBottomWidth: 2,
         borderBottomColor: '#CCCCCC',
     },
@@ -383,6 +386,13 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 4,
     },
+    noPicture: {
+        width: 100,
+        height: 100,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#CCCCCC',
+    },
     storyNameAndDescription: {
         width: '67%',
         marginLeft: '3%',
@@ -390,6 +400,7 @@ const styles = StyleSheet.create({
     storyName: {
         fontSize: 28,
         fontWeight: 'bold',
+        marginBottom: 10,
     },
     storyDescription: {
         fontSize: 18,
@@ -415,8 +426,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2f95dc',
         height: 50,
         borderRadius: 4,
-        width: '80%',
-        marginLeft: '10%',
+        width: '97%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

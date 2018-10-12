@@ -263,11 +263,14 @@ export default class CharactersScreen extends Component {
                         <View style={styles.characterPictureAndName}>
                             <View styles={styles.characterPictureContainer}>
                             {
-                                this.state.characters[id].image !== '' && 
+                                this.state.characters[id].image !== ''
+                                ?
                                 <Image
                                     source={{uri: this.state.characters[id].image}}
                                     style={styles.characterPicture}
                                 />
+                                :
+                                <View style={styles.noPicture}/>
                             }
                             </View>
                             <View style={styles.characterNameAndDescription}>
@@ -375,6 +378,14 @@ const styles = StyleSheet.create({
     characterPicture: {
         width: 100,
         height: 100,
+        borderRadius: 4,
+    },
+    noPicture: {
+        width: 100,
+        height: 100,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderColor: '#CCCCCC',
     },
     characterName: {
         fontSize: 28,
