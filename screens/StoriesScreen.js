@@ -56,9 +56,9 @@ export default class StoriesScreen extends React.Component {
         }
         this.StoryRequests = new StoryRequests();
         // @PROD
-        this.userId = null;
+        // this.userId = null;
         // @DEV
-        // this.userId = 1;
+        this.userId = 1;
     }
 
     resetStory = () => {
@@ -134,7 +134,6 @@ export default class StoriesScreen extends React.Component {
             user: this.userId,
             image: image,
         }
-        console.info(paramsObject);
         this.StoryRequests.createStory(paramsObject).then(res => {
             if ('error' in res) {
                 this.setState({
@@ -236,7 +235,7 @@ export default class StoriesScreen extends React.Component {
     }
 
     selectStoryToEdit = (storyId) => {
-        AsyncStorage.setItem('selectedStoryId', String(storyId)).then((res) => {
+        AsyncStorage.multiSet([['selectedStoryId', String(storyId)],['selectedStoryName', String(this.state.stories[storyId].name)]]).then((res) => {
             this.props.navigation.navigate("StoryTab");
         });
     }
@@ -382,6 +381,7 @@ const styles = StyleSheet.create({
     storyPicture: {
         width: 100,
         height: 100,
+        borderRadius: 4,
     },
     storyNameAndDescription: {
         width: '67%',

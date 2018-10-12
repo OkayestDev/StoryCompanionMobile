@@ -40,8 +40,8 @@ export default class CharactersScreen extends Component {
                             size={28}
                         />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                        Characters
+                    <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                        {navigation.getParam('title')}
                     </Text>
                 </View>
             ),
@@ -100,14 +100,14 @@ export default class CharactersScreen extends Component {
             });
         }
         else {
-            AsyncStorage.getItem('selectedStoryId').then((res) => {
-                // Unable to load story - log user out
+            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
                 if (!res) {
                     this.props.navigation.navigate("LoginTab");
                 }
-                this.selectedStoryId = res;
-                this.getCharacters(res);
-            })
+                this.selectedStoryId = parseInt(res[0][1]);
+                this.props.navigation.setParams({title: res[1][1]})
+                this.getCharacters(res[0][1]);
+            });
         }
     }
 

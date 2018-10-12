@@ -40,8 +40,8 @@ export default class PlotsScreen extends Component {
                             size={28}
                         />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                        Plots
+                    <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                        {navigation.getParam('title')}
                     </Text>
                 </View>
             ),
@@ -96,13 +96,14 @@ export default class PlotsScreen extends Component {
             })
         }
         else {
-            AsyncStorage.getItem('selectedStoryId').then((res) => {
+            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
                 // Unable to load story - log user out
                 if (!res) {
                     this.props.navigation.navigate("LoginTab");
                 }
-                this.selectedStoryId = res;
-                this.getPlots(res);
+                this.selectedStoryId = res[0][1];
+                this.props.navigation.setParams({title: res[1][1]});
+                this.getPlots(res[0][1]);
             })
         }
     }

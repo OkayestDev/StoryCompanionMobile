@@ -31,7 +31,7 @@ export default class LoginScreen extends Component {
         headerTitle: (
             <View style={headerTitle}>
                 <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                    Login
+                    Story Companion
                 </Text>
             </View>
         ),

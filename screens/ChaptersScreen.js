@@ -41,8 +41,8 @@ export default class ChaptersScreen extends Component {
                             size={28}
                         />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                        Chapters
+                    <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                        {navigation.getParam('title')}
                     </Text>
                 </View>
             ),
@@ -73,6 +73,9 @@ export default class ChaptersScreen extends Component {
     }
 
     sortIdsByChapterNumber = (chapters) => {
+        if (typeof chapters === 'undefined') {
+            return [];
+        }
         let chapterIds = Object.keys(chapters);
         chapterIds.sort(function(a, b) {
             return chapters[a].number - chapters[b].number;
@@ -95,11 +98,23 @@ export default class ChaptersScreen extends Component {
                     this.setState({chapters: res.success})
                 }
             })
+            .catch((error) => {
+                this.setState({
+                    selectedChapterId: null,
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: "Unable to get Chapters at this time.",
+                })
+            })
         }
         else {
-            AsyncStorage.getItem('selectedStoryId').then((res) => {
-                this.selectedStoryId = res;
-                this.getChapters(res);
+            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
+                if (!res) {
+                    this.props.navigation.navigate("LoginTab");
+                }
+                this.selectedStoryId = parseInt(res[0][1]);
+                this.props.navigation.setParams({title: res[1][1]});
+                this.getChapters(this.selectedStoryId);
             })
         }
     }
