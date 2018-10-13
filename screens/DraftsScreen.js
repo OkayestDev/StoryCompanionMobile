@@ -74,9 +74,9 @@ export default class DraftsScreen extends Component {
         }
         this.DraftRequests = new DraftRequests();
         // @PROD
-        // this.selectedStoryId = null;
+        this.selectedStoryId = null;
         // @DEV
-        this.selectedStoryId = 1;
+        // this.selectedStoryId = 1;
         this.getDrafts();
     }
 
