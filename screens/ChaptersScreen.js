@@ -169,7 +169,13 @@ export default class ChaptersScreen extends Component {
     }
 
     editChapter = () => {
-        this.ChapterRequests.editChapter(this.state.selectedChapterId, this.state.name, this.state.number, this.state.description).then((res) => {
+        let paramsObject = {
+            chapter: this.state.selectedChapterId,
+            name: this.state.name,
+            number: this.state.number,
+            description: this.state.description,
+        }
+        this.ChapterRequests.editChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,

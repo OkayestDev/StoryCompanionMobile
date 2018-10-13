@@ -5,7 +5,7 @@ import {
     StyleSheet, 
     TouchableOpacity, 
     TextInput, 
-    AsyncStorage 
+    AsyncStorage,
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import DraftRequests from '../utils/DraftRequests.js'
@@ -41,6 +41,19 @@ export default class DraftsScreen extends Component {
                     <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
                         {navigation.getParam('title')}
                     </Text>
+                    {
+                        'params' in navigation.state && 'onDraftSave' in navigation.state.params &&
+                        <TouchableOpacity
+                            onPress={() => navigation.state.params.onDraftSave()}
+                        >
+                            <Icon
+                                color="white"
+                                name="check"
+                                type="font-awesome"
+                                size={28}
+                            />
+                        </TouchableOpacity>
+                    }
                 </View>
             ),
             headerStyle: { backgroundColor: '#2f95dc' },
@@ -53,7 +66,7 @@ export default class DraftsScreen extends Component {
         this.state = {
             description: '',
             selectedDraftId: '',
-            drafts: null,
+            draft: null,
 
             globalAlertVisible: false,
             globalAlertType: '',
@@ -61,9 +74,9 @@ export default class DraftsScreen extends Component {
         }
         this.DraftRequests = new DraftRequests();
         // @PROD
-        this.selectedStoryId = null;
+        // this.selectedStoryId = null;
         // @DEV
-        // this.selectedStoryId = 1;
+        this.selectedStoryId = 1;
         this.getDrafts();
     }
 
@@ -79,7 +92,13 @@ export default class DraftsScreen extends Component {
                     });
                 }
                 else {
-                    this.setState({drafts: res.success});
+                    this.setState({
+                        draft: res.success,
+                        description: res.success.description
+                    });
+                    if ('id' in res.success) {
+                        this.props.navigation.setParams({onDraftSave: () => this.editDraft()})
+                    }
                 }
             })
             .catch((error) => {
@@ -116,7 +135,8 @@ export default class DraftsScreen extends Component {
                 });
             }
             else {
-                this.setState({drafts: res.success});
+                this.setState({draft: res.success});
+                this.props.navigation.setParams({onDraftSave: () => this.editDraft()})
             }
         })
         .catch((error) => {
@@ -130,9 +150,8 @@ export default class DraftsScreen extends Component {
 
     // We only have one draft per story
     editDraft = () => {
-        let draftKey = Object.keys(this.state.drafts);
         let paramsObject = {
-            draft: draftKey[0],
+            draft: this.state.draft.id,
             description: this.state.description,
         };
         this.DraftRequests.editDraft(paramsObject).then((res) => {
@@ -144,8 +163,13 @@ export default class DraftsScreen extends Component {
                 })
             }
             else {
-                console.info(`See if this will be incorrect? should be an array - draft edit res`, res);
-                this.setState({drafts: res.success});
+                this.setState({
+                    draft: res.success,
+                    description: res.success.description,
+                    globalAlertVisible: true,
+                    globalAlertType: 'success',
+                    globalAlertMessage: 'Successfully saved draft changes!'
+                });
             }
         })
         .catch((error) => {
@@ -158,7 +182,7 @@ export default class DraftsScreen extends Component {
     }
 
     deleteDraft = () => {
-        this.DraftRequests.editDraft(draftKey[0]).then((res) => {
+        this.DraftRequests.editDraft(this.state.draft.id).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: false,
@@ -168,7 +192,7 @@ export default class DraftsScreen extends Component {
             }
             else {
                 // As of right now - we only allow one draft. set to an empty array
-                this.setState({drafts: []});
+                this.setState({draft: []});
             }
         })
         .catch((error) => {
@@ -181,7 +205,7 @@ export default class DraftsScreen extends Component {
     }
 
     render () {
-        if (this.state.drafts === null) {
+        if (this.state.draft === null) {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
@@ -194,7 +218,7 @@ export default class DraftsScreen extends Component {
                 </View>
             )
         }
-        else if (Object.keys(this.state.drafts).length > 0) {
+        else if ('id' in this.state.draft) {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
@@ -204,11 +228,12 @@ export default class DraftsScreen extends Component {
                         closeAlert={() => this.setState({globalAlertVisible: false})}
                     />
                     <TextInput
+                        placeholder="Start writing your draft"
                         style={styles.draftInput}
                         underlineColorAndroid='rgba(0,0,0,0)'
                         multiline={true}
                         value={this.state.description}
-                        onChange={(newDescription) => this.setState({description: newDescription})}
+                        onChangeText={(newDescription) => this.setState({description: newDescription})}
                     />
                 </View>
             );
@@ -300,5 +325,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20,
         fontWeight: 'bold',
-    }
+    },
 })

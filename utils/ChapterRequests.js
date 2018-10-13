@@ -31,13 +31,8 @@ export default class ChapterRequests {
         return postRequestWithFormData(paramObject, 'chapter/creation', {}).then(res => res);
     }
 
-    editChapter = (chapterId, name, number, description) => {
-        let paramObject = {
-            name: name,
-            number: parseInt(number),
-            description: description,
-        }
-        return postRequestWithFormData(paramObject, 'chapter/edit', {}).then(res => res);
+    editChapter = (paramsObject) => {
+        return postRequestWithFormData(paramsObject, 'chapter/edit', {}).then(res => res);
     }
 
     deleteChapter = (chapterId) => {
