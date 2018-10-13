@@ -12,7 +12,7 @@ import ConfirmationModal from '../components/ConfirmationModal.js';
 import ModalPicker from '../components/ModalPicker.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FloatingButtons from '../components/FloatingButtons.js';
-import { ImagePicker } from 'expo';
+import { ImagePicker, Permissions } from 'expo';
 
 export default class EditEntity extends Component {
     constructor(props) {
@@ -22,6 +22,7 @@ export default class EditEntity extends Component {
             isModalPickerOpen: false,
             scrollViewVerticalPadding: 0,
         }
+        Permissions.askAsync(Permissions.CAMERA_ROLL);
     }
 
     componentDidMount () {
@@ -270,7 +271,8 @@ const styles = StyleSheet.create({
     },
     entityInputLabel: {
         textAlign: 'left',
-        width: '50%',
+        width: '49%',
+        marginRight: '1%',
         color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
