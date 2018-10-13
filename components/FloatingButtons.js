@@ -105,8 +105,6 @@ export default class FloatingButtons extends Component {
             position: 'absolute',
             justifyContent: 'center',
             alignItems: 'center',
-            paddingLeft: 10,
-            paddingRight: 10,
         },
         oddRightPadding: {
             paddingRight: 6,

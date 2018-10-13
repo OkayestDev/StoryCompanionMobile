@@ -218,7 +218,7 @@ export default class EditEntity extends Component {
                 </KeyboardAwareScrollView>
                 <FloatingButtons
                     onSave={() => this.props.selectedEntityId === 'new' ? this.props.createEntity() : this.props.editEntity()}
-                    onDelete={this.props.selectedEntityId !== null ? () => this.setState({isConfirmationModalOpen: true}) : null}
+                    onDelete={this.props.selectedEntityId !== 'new' ? () => this.setState({isConfirmationModalOpen: true}) : null}
                     onCancel={() => this.props.cancelEntityEdit()}
                 />
             </View>
