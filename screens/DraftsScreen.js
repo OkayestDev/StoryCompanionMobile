@@ -4,7 +4,6 @@ import {
     Text, 
     StyleSheet, 
     TouchableOpacity, 
-    ScrollView, 
     TextInput, 
     AsyncStorage 
 } from 'react-native';
@@ -104,15 +103,81 @@ export default class DraftsScreen extends Component {
     }
 
     createDraft = () => {
-
+        let paramsObject = {
+            story: this.selectedStoryId,
+            description: ''
+        }
+        this.DraftRequests.createDraft(paramsObject).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    globalAlertVisible: false,
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                this.setState({drafts: res.success});
+            }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: false,
+                globalAlertType: 'danger',
+                globalAlertMessage: 'Unable to create draft at this time',
+            });
+        })
     }
 
+    // We only have one draft per story
     editDraft = () => {
-
+        let draftKey = Object.keys(this.state.drafts);
+        let paramsObject = {
+            draft: draftKey[0],
+            description: this.state.description,
+        };
+        this.DraftRequests.editDraft(paramsObject).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    globalAlertVisible: false,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to edit draft at this time',
+                })
+            }
+            else {
+                console.info(`See if this will be incorrect? should be an array - draft edit res`, res);
+                this.setState({drafts: res.success});
+            }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: false,
+                globalAlertType: 'danger',
+                globalAlertMessage: 'Unable to edit draft at this time',
+            });
+        });
     }
 
     deleteDraft = () => {
-        
+        this.DraftRequests.editDraft(draftKey[0]).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    globalAlertVisible: false,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to edit draft at this time',
+                })
+            }
+            else {
+                // As of right now - we only allow one draft. set to an empty array
+                this.setState({drafts: []});
+            }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: false,
+                globalAlertType: 'danger',
+                globalAlertMessage: 'Unable to edit draft at this time',
+            });
+        });
     }
 
     render () {
@@ -125,32 +190,11 @@ export default class DraftsScreen extends Component {
                         type={this.state.globalAlertType}
                         closeAlert={() => this.setState({globalAlertVisible: false})}
                     />
+                    <View style={styles.noDraftContainer}/>
                 </View>
             )
         }
         else if (Object.keys(this.state.drafts).length > 0) {
-            return (
-                <View styles={styles.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
-                    />
-                    <ScrollView styles={styles.draftScrollView}>
-                        <TextInput
-                            style={styles.draftInput}
-                            underlineColorAndroid='rgba(0,0,0,0)'
-                            multiline={true}
-                            value={this.state.description}
-                            onChange={(newDescription) => this.setState({description: newDescription})}
-                        />
-                    </ScrollView>
-                </View>
-            );
-        }
-        // No draft created
-        else {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
@@ -159,9 +203,39 @@ export default class DraftsScreen extends Component {
                         type={this.state.globalAlertType}
                         closeAlert={() => this.setState({globalAlertVisible: false})}
                     />
-                    <Text>
-                        Looks like you haven't created a draft yet @TODO
-                    </Text>
+                    <TextInput
+                        style={styles.draftInput}
+                        underlineColorAndroid='rgba(0,0,0,0)'
+                        multiline={true}
+                        value={this.state.description}
+                        onChange={(newDescription) => this.setState({description: newDescription})}
+                    />
+                </View>
+            );
+        }
+        // No draft created
+        else {
+            return (
+                <View style={styles.container}>
+                    <View style={styles.noDraftContainer}>
+                        <GlobalAlert
+                            visible={this.state.globalAlertVisible}
+                            message={this.state.globalAlertMessage}
+                            type={this.state.globalAlertType}
+                            closeAlert={() => this.setState({globalAlertVisible: false})}
+                        />
+                        <Text style={styles.noDraftText}>
+                            Looks like you haven't started a draft for this story yet
+                        </Text>
+                        <TouchableOpacity
+                            style={styles.noDraftButton}
+                            onPress={() => this.createDraft()}
+                        >
+                            <Text style={styles.noDraftButtonText}>
+                                Start A Draft
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )
         }
@@ -180,15 +254,51 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     draftInput: {
-        width: '100%',
-        height: '100%',
-        width: '100%',
+        height: '98%',
+        width: '98%',
+        marginTop: '1.5%',
+        marginLeft: '1%',
         borderRadius: 4,
-        borderWidth: 2,
+        borderWidth: 3,
         borderStyle: 'solid',
         borderColor: '#CCCCCC',
         padding: 10,
         textAlignVertical: 'top',
-        fontSize: 16,
+        fontSize: 18,
+    },
+    noDraftContainer: {
+        width: '100%',
+        height: '98%',
+        width: '98%',
+        marginTop: '1.5%',
+        marginLeft: '1%',
+        borderRadius: 4,
+        borderWidth: 3,
+        borderStyle: 'solid',
+        borderColor: '#CCCCCC',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    noDraftText: {
+        textAlign: 'center',
+        fontSize: 30,
+        color: '#CCCCCC',
+        fontWeight: 'bold',
+        marginBottom: 15,
+    },
+    noDraftButton: {
+        width: '70%',
+        backgroundColor: '#2f95dc',
+        height: 50,
+        display: 'flex',
+        borderRadius: 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    noDraftButtonText: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
     }
 })
