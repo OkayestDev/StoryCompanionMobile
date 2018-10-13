@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     chapterViewChapterContainer: {
         width: '100%',
         padding: 10,
-        height: 60,
+        height: 75,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',

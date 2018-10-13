@@ -189,6 +189,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         width: .3 * screenX,
+        marginRight: .05 * screenX,
     },
     loginInput: {
         width: .6 * screenX,

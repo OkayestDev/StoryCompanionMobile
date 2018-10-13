@@ -24,15 +24,15 @@ export default class App extends React.Component {
         else {
             return (
                 <View style={styles.container}>
-                    {/* Remove status and ad in paid version */}
+                    {/* Remove ad in paid version */}
                     <AppNavigator />
-                    {/* <View style={styles.adContainer}>
+                    <View style={styles.adContainer}>
                         <AdMobBanner
                             bannerSize="smartBannerPortrait"
                             adUnitID="ca-app-pub-5830175342552944/7130625883"
                             testDeviceID="EMULATOR"
                         />
-                    </View> */}
+                    </View>
                 </View>
             );
         }

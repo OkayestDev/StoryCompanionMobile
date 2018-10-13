@@ -8,12 +8,10 @@ import {
     Image,
     Keyboard,
 } from 'react-native';
-import FloatingCancelButton from '../components/FloatingCancelButton.js';
-import FloatingSaveButton from '../components/FloatingSaveButton.js';
-import FloatingDeleteButton from '../components/FloatingDeleteButton.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import ModalPicker from '../components/ModalPicker.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import FloatingButtons from '../components/FloatingButtons.js';
 import { ImagePicker } from 'expo';
 
 export default class EditEntity extends Component {
@@ -217,12 +215,11 @@ export default class EditEntity extends Component {
                         }
                     </View>
                 </KeyboardAwareScrollView>
-                <FloatingSaveButton onPress={() => this.props.selectedEntityId === 'new' ? this.props.createEntity() : this.props.editEntity()}/>
-                {
-                    this.props.selectedEntityId !== 'new' &&
-                    <FloatingDeleteButton onPress={() => this.setState({isConfirmationModalOpen: true})}/>
-                }
-                <FloatingCancelButton onPress={() => this.props.cancelEntityEdit()}/>
+                <FloatingButtons
+                    onSave={() => this.props.selectedEntityId === 'new' ? this.props.createEntity() : this.props.editEntity()}
+                    onDelete={this.props.selectedEntityId !== null ? () => this.setState({isConfirmationModalOpen: true}) : null}
+                    onCancel={() => this.props.cancelEntityEdit()}
+                />
             </View>
         )
     }
