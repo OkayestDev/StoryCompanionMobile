@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'flex-end',
+        paddingRight: 3,
     },
     floatingAddButton: {
         width: 60,  

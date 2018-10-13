@@ -29,7 +29,11 @@ export default class App extends React.Component {
                     <View style={styles.adContainer}>
                         <AdMobBanner
                             bannerSize="smartBannerPortrait"
-                            adUnitID="ca-app-pub-5830175342552944/7130625883"
+                            adUnitID={
+                                Platform.OS === 'android'
+                                    ? "ca-app-pub-5830175342552944/7130625883"
+                                    : "ca-app-pub-5830175342552944/4205993347"
+                            }
                             testDeviceID="EMULATOR"
                         />
                     </View>
