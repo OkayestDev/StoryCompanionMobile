@@ -6,6 +6,7 @@ import {
     TouchableOpacity, 
     TextInput, 
     AsyncStorage,
+    Keyboard
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import DraftRequests from '../utils/DraftRequests.js'
@@ -150,6 +151,7 @@ export default class DraftsScreen extends Component {
 
     // We only have one draft per story
     editDraft = () => {
+        Keyboard.dismiss();
         let paramsObject = {
             draft: this.state.draft.id,
             description: this.state.description,
