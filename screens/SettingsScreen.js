@@ -98,7 +98,7 @@ export default class SettingsScreen extends Component {
     render() {
         if (this.state.submittingBug) {
             return (
-                <View style={styles.container}>
+                <View style={styles.submissionContainer}>
                     <FloatingButtons
                         onCancel={() => this.setState({submittingBug: false})}
                         onSave={null}
@@ -109,16 +109,18 @@ export default class SettingsScreen extends Component {
         }
         else if (this.state.submittingFeature) {
             return (
-                <View style={styles.container}>
+                <View style={styles.submissionContainer}>
                     <FloatingButtons
                         onCancel={() => this.setState({submittingFeature: false})}
                         onSave={null}
                         onDelete={null}
                     />
-                    <View style={styles.submissionContainer}>
+                    <View style={styles.submissionLabelContainer}>
                         <Text style={styles.submissionLabel}>
                             Submitting a Feature Request
                         </Text>
+                    </View>
+                    <View style={styles.submissionDescriptionContainer}>
                         <TextInput
                             style={styles.submissionDescription}
                             multiline={true}
@@ -199,6 +201,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
     },
+    submissionLabelContainer: {
+        width: '100%',
+        height: '10%',
+    },
     submissionLabel: {
         fontSize: 24,
         color: '#2f95dc',
@@ -208,10 +214,15 @@ const styles = StyleSheet.create({
     submissionContainer: {
         width: '100%',
         height: '100%',
+        backgroundColor: 'white',
         padding: 10,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    submissionDescriptionContainer: {
+        height: '90%',
+        width: '100%',
     },
     submissionDescription: {
         height: '10%',
