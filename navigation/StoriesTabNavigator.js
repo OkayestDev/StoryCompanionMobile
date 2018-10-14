@@ -4,7 +4,6 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import StoriesScreen from '../screens/StoriesScreen.js';
-import LogoutScreen from '../screens/LogoutScreen.js';
 import SettingsScreen from '../screens/SettingsScreen.js';
 
 const StoriesScreenStack = createStackNavigator({

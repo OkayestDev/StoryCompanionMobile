@@ -82,7 +82,9 @@ export default class SettingsScreen extends Component {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'success',
-                    globalAlertMessage: 'Successfully submitted bug. Thank you!'
+                    globalAlertMessage: 'Successfully submitted bug. Thank you!',
+                    submittingBug: false,
+                    bugDescription: '',
                 });
             }
         })
@@ -112,7 +114,9 @@ export default class SettingsScreen extends Component {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'success',
-                    globalAlertMessage: 'Successfully submitted feature. Thank you!'
+                    globalAlertMessage: 'Successfully submitted feature. Thank you!',
+                    submittingFeature: false,
+                    featureDescription: '',
                 });
             }
         })
@@ -230,7 +234,7 @@ export default class SettingsScreen extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => this.logout()}
+                            onPress={() => this.setState({isConfirmationModalOpen: true})}
                         >
                             <Text style={styles.buttonText}>
                                 Logout
