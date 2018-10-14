@@ -5,6 +5,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import StoriesScreen from '../screens/StoriesScreen.js';
 import LogoutScreen from '../screens/LogoutScreen.js';
+import SettingsScreen from '../screens/SettingsScreen.js';
 
 const StoriesScreenStack = createStackNavigator({
     Stories: StoriesScreen,
@@ -24,24 +25,24 @@ StoriesScreenStack.navigationOptions = {
     ),
 };
 
-const LogoutStack = createStackNavigator({
-    Logout: LogoutScreen,
+const SettingsStack = createStackNavigator({
+    Settings: SettingsScreen
 });
 
-LogoutStack.navigationOptions = {
-    tabBarLabel: 'Logout',
+SettingsStack.navigationOptions = {
+    tabBarLabel: 'Settings',
     tabBarIcon: ({ focused }) => (
         <TabBarIcon
             focused={focused}
             name={
                 Platform.OS === 'ios' 
-                    ? `ios-log-out${focused ? '': '-outline'}` 
-                    : 'md-log-out'}
+                    ? `ios-settings${focused ? '': '-outline'}` 
+                    : 'md-settings'}
         />
     ),
-};
+}
 
 export default createBottomTabNavigator({
     StoriesScreenStack,
-    LogoutStack,
+    SettingsStack,
 });
