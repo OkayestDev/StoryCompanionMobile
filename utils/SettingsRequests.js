@@ -2,7 +2,7 @@ import {
     postRequestWithFormData,
 } from './HelperFunctions.js';
 
-export default class SettingRequests {
+export default class SettingsRequests {
     bug = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'settings/bug', {}).then(res => res);
     }

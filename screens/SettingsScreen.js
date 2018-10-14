@@ -10,7 +10,7 @@ import {
 import GlobalAlert from '../components/GlobalAlert.js';
 import FloatingButtons from '../components/FloatingButtons.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
-import SettingRequests from '../utils/SettingRequests.js';
+import SettingsRequests from '../utils/SettingsRequests.js';
 
 const headerTitle = {
     display: 'flex',
@@ -49,7 +49,7 @@ export default class SettingsScreen extends Component {
             globalAlertType: '',
             globalAlertMessage: '',
         }
-        this.SettingRequests = new SettingRequests();
+        this.SettingsRequests = new SettingsRequests();
         this.userId = null;
         this.getUserId();
     }
@@ -70,23 +70,59 @@ export default class SettingsScreen extends Component {
             user: this.userId,
             description: this.state.bugDescription,
         }
-        this.SettingRequests.bug(paramsObject).then((res) => {
+        this.SettingsRequests.bug(paramsObject).then((res) => {
             if ('error' in res) {
-
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: res.error,
+                });
             }
             else {
-
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'success',
+                    globalAlertMessage: 'Successfully submitted bug. Thank you!'
+                });
             }
         })
         .catch((error) => {
             this.setState({
-
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: 'Unable to submit bug at this time',
             });
         })
     }
 
     feature = () => {
-
+        let paramsObject = {
+            user: this.userId,
+            description: this.state.featureDescription,
+        }
+        this.SettingsRequests.feature(paramsObject).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'success',
+                    globalAlertMessage: 'Successfully submitted feature. Thank you!'
+                });
+            }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: 'Unable to submit feature at this time',
+            });
+        })
     }
 
     logout = () => {
@@ -99,20 +135,47 @@ export default class SettingsScreen extends Component {
         if (this.state.submittingBug) {
             return (
                 <View style={styles.submissionContainer}>
+                    <GlobalAlert
+                        visible={this.state.globalAlertVisible}
+                        message={this.state.globalAlertMessage}
+                        type={this.state.globalAlertType}
+                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                    />
                     <FloatingButtons
                         onCancel={() => this.setState({submittingBug: false})}
-                        onSave={null}
+                        onSave={() => this.bug()}
                         onDelete={null}
                     />
+                    <View style={styles.submissionLabelContainer}>
+                        <Text style={styles.submissionLabel}>
+                            Submitting a Bug
+                        </Text>
+                    </View>
+                    <View style={styles.submissionDescriptionContainer}>
+                        <TextInput
+                            placeholder="Feature description..."
+                            underlineColorAndroid='rgba(0,0,0,0)'
+                            style={styles.submissionDescription}
+                            multiline={true}
+                            value={this.state.bugDescription}
+                            onChangeText={(newDescription) => this.setState({bugDescription: newDescription})}
+                        />
+                    </View>
                 </View>
             );
         }
         else if (this.state.submittingFeature) {
             return (
                 <View style={styles.submissionContainer}>
+                    <GlobalAlert
+                        visible={this.state.globalAlertVisible}
+                        message={this.state.globalAlertMessage}
+                        type={this.state.globalAlertType}
+                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                    />
                     <FloatingButtons
                         onCancel={() => this.setState({submittingFeature: false})}
-                        onSave={null}
+                        onSave={() => this.feature()}
                         onDelete={null}
                     />
                     <View style={styles.submissionLabelContainer}>
@@ -122,6 +185,8 @@ export default class SettingsScreen extends Component {
                     </View>
                     <View style={styles.submissionDescriptionContainer}>
                         <TextInput
+                            placeholder="Feature description..."
+                            underlineColorAndroid='rgba(0,0,0,0)'
                             style={styles.submissionDescription}
                             multiline={true}
                             value={this.state.featureDescription}
@@ -134,6 +199,12 @@ export default class SettingsScreen extends Component {
         else {
             return (
                 <View style={styles.container}>
+                    <GlobalAlert
+                        visible={this.state.globalAlertVisible}
+                        message={this.state.globalAlertMessage}
+                        type={this.state.globalAlertType}
+                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                    />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.state.isConfirmationModalOpen}
                         closeConfirmationModal={() => this.setState({isConfirmationModalOpen: false})}
@@ -180,6 +251,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    scrollView: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
     buttonContainer: {
         width: '100%',
         height: '60%',
@@ -203,13 +278,12 @@ const styles = StyleSheet.create({
     },
     submissionLabelContainer: {
         width: '100%',
-        height: '10%',
+        height: '15%',
     },
     submissionLabel: {
         fontSize: 24,
         color: '#2f95dc',
         fontWeight: 'bold',
-        height: '10%',
     },
     submissionContainer: {
         width: '100%',
@@ -221,11 +295,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     submissionDescriptionContainer: {
-        height: '90%',
+        height: '85%',
         width: '100%',
     },
     submissionDescription: {
-        height: '10%',
+        height: '100%',
         borderRadius: 4,
         borderWidth: 2,
         borderStyle: 'solid',
