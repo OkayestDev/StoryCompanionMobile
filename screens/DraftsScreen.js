@@ -39,12 +39,27 @@ export default class DraftsScreen extends Component {
                             size={28}
                         />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    <Text numberOfLines={1} style={{width: '60%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
                         {navigation.getParam('title')}
                     </Text>
                     {
+                        'params' in navigation.state && 'onDraftExport' in navigation.state.params &&
+                        <TouchableOpacity
+                            onPress={() => navigation.state.params.onDraftExport()}
+                            style={{width: '15%'}}
+                        >
+                            <Icon
+                                color="white"
+                                name="envelope"
+                                type="font-awesome"
+                                size={28}
+                            />
+                        </TouchableOpacity>
+                    }
+                    {
                         'params' in navigation.state && 'onDraftSave' in navigation.state.params &&
                         <TouchableOpacity
+                            style={{width: '15%'}}
                             onPress={() => navigation.state.params.onDraftSave()}
                         >
                             <Icon
@@ -88,7 +103,7 @@ export default class DraftsScreen extends Component {
                 if ('error' in res) {
                     this.setState({
                         globalAlertVisible: true,
-                        globalAlertType: 'danger',
+                        globalAlertType: 'warning',
                         globalAlertMessage: res.error,
                     });
                 }
@@ -98,7 +113,10 @@ export default class DraftsScreen extends Component {
                         description: res.success.description
                     });
                     if ('id' in res.success) {
-                        this.props.navigation.setParams({onDraftSave: () => this.editDraft()})
+                        this.props.navigation.setParams({
+                            onDraftSave: () => this.editDraft(),
+                            onDraftExport: () => this.exportDraft(),
+                        })
                     }
                 }
             })
@@ -122,6 +140,32 @@ export default class DraftsScreen extends Component {
         }
     }
 
+    exportDraft = () => {
+        this.DraftRequests.exportDraft(this.state.draft.id).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'success',
+                    globalAlertMessage: res.success,
+                });
+            }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: 'Unable to export draft at this time',
+            });
+        });
+    }
+
     createDraft = () => {
         let paramsObject = {
             story: this.selectedStoryId,
@@ -137,7 +181,10 @@ export default class DraftsScreen extends Component {
             }
             else {
                 this.setState({draft: res.success});
-                this.props.navigation.setParams({onDraftSave: () => this.editDraft()})
+                this.props.navigation.setParams({
+                    onDraftSave: () => this.editDraft(),
+                    onDraftExport: () => this.exportDraft(),
+                })
             }
         })
         .catch((error) => {
@@ -187,7 +234,7 @@ export default class DraftsScreen extends Component {
         this.DraftRequests.editDraft(this.state.draft.id).then((res) => {
             if ('error' in res) {
                 this.setState({
-                    globalAlertVisible: false,
+                    globalAlertVisible: true,
                     globalAlertType: 'danger',
                     globalAlertMessage: 'Unable to edit draft at this time',
                 })
@@ -199,7 +246,7 @@ export default class DraftsScreen extends Component {
         })
         .catch((error) => {
             this.setState({
-                globalAlertVisible: false,
+                globalAlertVisible: true,
                 globalAlertType: 'danger',
                 globalAlertMessage: 'Unable to edit draft at this time',
             });

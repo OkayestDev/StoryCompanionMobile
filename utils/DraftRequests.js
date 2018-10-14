@@ -24,4 +24,11 @@ export default class DraftRequests {
         };
         return postRequestWithFormData(paramsObject, 'draft/delete', {}).then(res => res);
     }
+
+    exportDraft = (draft) => {
+        let paramsObject = {
+            draft: draft
+        };
+        return postRequestWithFormData(paramsObject, 'draft/export', {}).then(res => res);
+    }
 }

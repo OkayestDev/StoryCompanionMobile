@@ -28,7 +28,7 @@ export default class GlobalAlert extends Component {
     render() {
         if (this.props.visible) {
             // Hide the alert after 2.5 seconds
-            setTimeout(() => this.props.closeAlert(), 2500);
+            setTimeout(() => this.props.closeAlert(), 3000);
             return (
                 <TouchableOpacity
                     style={[styles.globalAlertContainer, {backgroundColor: this.figureAlertColor()}]}
