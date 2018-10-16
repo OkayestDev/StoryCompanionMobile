@@ -4,6 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import LoginScreen from '../screens/LoginScreen.js';
+import PasswordResetScreen from '../screens/PasswordResetScreen.js';
 import CreateAccountScreen from '../screens/CreateAccountScreen.js';
 
 const LoginStack = createStackNavigator({
@@ -38,7 +39,26 @@ CreateAccountStack.navigationOptions = {
     ),
 };
 
+const PasswordResetStack = createStackNavigator({
+    PasswordReset: PasswordResetScreen
+});
+
+PasswordResetStack.navigationOptions = {
+    tabBarLabel: 'Password Reset',
+    tabBarIcon: ({ focused }) => (
+        <TabBarIcon
+            focused={focused}
+            name={
+                Platform.OS === 'ios' 
+                    ? `ios-help${focused ? '' : '-outline'}`
+                    : 'md-help'
+            }
+        />
+    ),
+}
+
 export default createBottomTabNavigator({
     LoginStack,
     CreateAccountStack,
+    PasswordResetStack,
 });

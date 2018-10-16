@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { 
     View, 
-    Text,
-    StyleSheet, 
-    TouchableOpacity, 
-    Dimensions, 
-    TextInput, 
-    KeyboardAvoidingView, 
-    AsyncStorage,
+    Text, 
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    KeyboardAvoidingView,
+    Dimensions,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import UserRequests from '../utils/UserRequests.js';
+import { PATTERNS } from '../config/Patterns.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -25,13 +25,13 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class LoginScreen extends Component {
+export default class PasswordResetScreen extends Component {
     static navigationOptions = {
-        title: 'Login',
+        title: 'Password Reset',
         headerTitle: (
             <View style={headerTitle}>
                 <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                    Story Companion
+                    Password Reset
                 </Text>
             </View>
         ),
@@ -43,7 +43,6 @@ export default class LoginScreen extends Component {
         super(props);
         this.state = {
             email: '',
-            password: '',
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
@@ -51,20 +50,17 @@ export default class LoginScreen extends Component {
         this.UserRequests = new UserRequests();
     }
 
-    componentWillMount() {
-        this.checkIfUserIsAlreadyLoggedIn();
-    }
+    passwordReset = () => {
+        if (!PATTERNS.email.test(this.state.email)) {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'warning',
+                globalAlertMessage: "Please enter a valid email",
+            });
+            return;
+        }
 
-    checkIfUserIsAlreadyLoggedIn = () => {
-        AsyncStorage.multiGet(['email', 'id', 'apiKey']).then((res) => {
-            if (res[0][1] !== null && res[1][1] !== null && res[2][1] !== null) {
-                this.props.navigation.navigate("StoriesTab");
-            }
-        });
-    }
-
-    login = () => {
-        this.UserRequests.login(this.state.email, this.state.password).then((res) => {
+        this.UserRequests.passwordReset(this.state.email).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -73,24 +69,24 @@ export default class LoginScreen extends Component {
                 });
             }
             else {
-                AsyncStorage.multiSet([['email', String(res.success.email)], ['id', String(res.success.id)], ['apiKey', String(res.success.apiKey)]]).then((res) => {
-                    this.props.navigation.navigate("StoriesTab");
-                })
-                .catch((error) => {
-                    console.info(error);
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'success',
+                    globalAlertMessage: "Temporary password sent to " + this.state.email,
+                    email: '',
                 });
+                setTimeout(() => this.props.navigation.navigate("Login"), 3000);
             }
         })
         .catch((error) => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
+                globalAlertMessage: "Unable to get a response from the server",
             });
-        })
+        });
     }
-    
-    // @TODO add App Icon to login screen
+
     render() {
         return (
             <View style={styles.container}>
@@ -110,44 +106,31 @@ export default class LoginScreen extends Component {
                         enabled={true}
                         behavior="position"
                     >
-                        <View style={styles.loginView}>
-                            <Text style={styles.welcomeBack}>
-                                Welcome Back!
+                        <View style={styles.resetPasswordView}>
+                            <Text style={styles.forgotPassword}>
+                                Forgot Your Password, eh?
                             </Text>
-                            <View style={styles.loginLabelAndInputContainer}>
-                                <Text style={styles.loginInputLabel}>
+                            <View style={styles.resetPasswordLabelAndInputContainer}>
+                                <Text style={styles.resetPasswordInputLabel}>
                                     Email
                                 </Text>
                                 <TextInput
                                     autoCapitalize="none"
                                     keyboardType="email-address"
-                                    style={styles.loginInput}
+                                    style={styles.resetPasswordInput}
                                     underlineColorAndroid='rgba(0,0,0,0)'
                                     value={this.state.email}
                                     onChangeText={(newText) => this.setState({email: newText})}
                                 />
                             </View>
-                            <View style={styles.loginLabelAndInputContainer}>
-                                <Text style={styles.loginInputLabel}>
-                                    Password
-                                </Text>
-                                <TextInput
-                                    autoCapitalize="none"
-                                    secureTextEntry={true}
-                                    style={styles.loginInput}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                    value={this.state.password}
-                                    onChangeText={(newText) => this.setState({password: newText})}
-                                />
-                            </View>
                             <TouchableOpacity
-                                style={styles.loginButton}
-                                onPress={() => this.login()}
+                                style={styles.resetPasswordButton}
+                                onPress={() => this.passwordReset()}
                             >
                                 <Text
-                                    style={styles.loginButtonText}
+                                    style={styles.resetPasswordButtonText}
                                 >
-                                    Login
+                                    Send New Password
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -161,22 +144,22 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: 'white'
     },
-    welcomeBack: {
+    forgotPassword: {
         fontWeight: 'bold',
-        fontSize: 36,
+        fontSize: 28,
         color: '#CCCCCC',
         marginBottom: 20,
     },
-    loginView: {
+    resetPasswordView: {
         height: .7 * Dimensions.get('window').height,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loginLabelAndInputContainer: {
+    resetPasswordLabelAndInputContainer: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -184,14 +167,14 @@ const styles = StyleSheet.create({
         width: screenX,
         marginBottom: 20,
     },
-    loginInputLabel: {
+    resetPasswordInputLabel: {
         color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
         width: .3 * screenX,
         marginRight: .05 * screenX,
     },
-    loginInput: {
+    resetPasswordInput: {
         width: .6 * screenX,
         height: 60,
         borderRadius: 4,
@@ -201,7 +184,7 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 16,
     },
-    loginButton: {
+    resetPasswordButton: {
         backgroundColor: '#2f95dc',
         display: 'flex',
         height: 50,
@@ -210,8 +193,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 4,
     },
-    loginButtonText: {
+    resetPasswordButtonText: {
         color: 'white',
         fontSize: 24,
     },
-});
+})
