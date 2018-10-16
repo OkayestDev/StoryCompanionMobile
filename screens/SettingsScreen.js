@@ -6,11 +6,17 @@ import {
     Text, 
     TouchableOpacity, 
     TextInput,
+    Dimensions,
+    KeyboardAvoidingView,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import FloatingButtons from '../components/FloatingButtons.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import SettingsRequests from '../utils/SettingsRequests.js';
+import UserRequests from '../utils/UserRequests.js';
+
+const screenX = Dimensions.get('window').width;
 
 const headerTitle = {
     display: 'flex',
@@ -44,12 +50,17 @@ export default class SettingsScreen extends Component {
             bugDescription: '',
             submittingFeature: false,
             featureDescription: '',
+            changingPassword: false,
+
+            password: '',
+            confirmPassword: '',
 
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
         }
         this.SettingsRequests = new SettingsRequests();
+        this.UserRequests = new UserRequests();
         this.userId = null;
         this.getUserId();
     }
@@ -57,12 +68,65 @@ export default class SettingsScreen extends Component {
     getUserId = () => {
         AsyncStorage.getItem('id').then((res) => {
             if (!res) {
-
+                this.props.navigation.navigate("LoginTab");
             }
             if (res !== null) {
                 this.userId = res;
             }
         })
+    }
+
+    changePassword = () => {
+        console.info(this.state);
+        if (this.state.password === '') {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'warning',
+                globalAlertMessage: "Passwords cannot be empty",
+            });
+            return;
+        }
+
+        if (this.state.password !== this.state.confirmPassword) {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'warning',
+                globalAlertMessage: "Passwords do not match",
+            });
+            return;
+        }
+
+        let paramsObject = {
+            password: this.state.password,
+            confirmPassword: this.state.confirmPassword,
+            user: this.userId,
+        }
+        this.UserRequests.changePassword(paramsObject).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'success',
+                    globalAlertMessage: "Successfully updated password",
+                    changingPassword: false,
+                    password: '',
+                    confirmPassword: '',
+                });
+            }
+        })
+        .catch((error) => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
+        });
     }
 
     bug = () => {
@@ -200,6 +264,70 @@ export default class SettingsScreen extends Component {
                 </View>
             );
         }
+        else if (this.state.changingPassword) {
+            return (
+                <View style={styles.container}>
+                    <GlobalAlert
+                        visible={this.state.globalAlertVisible}
+                        message={this.state.globalAlertMessage}
+                        type={this.state.globalAlertType}
+                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                    />
+                    <KeyboardAwareScrollView
+                        enableOnAndroid={true}
+                        keyboardShouldPersistTaps="handled"
+                        scrollEnabled={true}
+                    >
+                        <KeyboardAvoidingView
+                            enabled={true}
+                            behavior="position"
+                        >
+                            <View style={styles.resetPasswordView}>
+                                <Text style={styles.forgotPassword}>
+                                    Change Your Password
+                                </Text>
+                                <View style={styles.resetPasswordLabelAndInputContainer}>
+                                    <Text style={styles.resetPasswordInputLabel}>
+                                        New Password
+                                    </Text>
+                                    <TextInput
+                                        autoCapitalize="none"
+                                        secureTextEntry={true}
+                                        style={styles.resetPasswordInput}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        value={this.state.password}
+                                        onChangeText={(newText) => this.setState({password: newText})}
+                                    />
+                                </View>
+                                <View style={styles.resetPasswordLabelAndInputContainer}>
+                                    <Text style={styles.resetPasswordInputLabel}>
+                                        Confirm Password
+                                    </Text>
+                                    <TextInput
+                                        autoCapitalize="none"
+                                        secureTextEntry={true}
+                                        style={styles.resetPasswordInput}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        value={this.state.confirmPassword}
+                                        onChangeText={(newText) => this.setState({confirmPassword: newText})}
+                                    />
+                                </View>
+                                <TouchableOpacity
+                                    style={styles.resetPasswordButton}
+                                    onPress={() => this.changePassword()}
+                                >
+                                    <Text
+                                        style={styles.resetPasswordButtonText}
+                                    >
+                                        Change Password
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </KeyboardAwareScrollView>
+                </View>
+            )
+        }
         else {
             return (
                 <View style={styles.container}>
@@ -230,6 +358,14 @@ export default class SettingsScreen extends Component {
                         >
                             <Text style={styles.buttonText}>
                                 Submit a Feature Request
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => this.setState({changingPassword: true})}
+                        >
+                            <Text style={styles.buttonText}>
+                                Change Password
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -311,5 +447,56 @@ const styles = StyleSheet.create({
         padding: 10,
         textAlignVertical: 'top',
         fontSize: 18,
-    }
+    },
+    forgotPassword: {
+        fontWeight: 'bold',
+        fontSize: 28,
+        color: '#CCCCCC',
+        marginBottom: 20,
+    },
+    resetPasswordView: {
+        height: .7 * Dimensions.get('window').height,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    resetPasswordLabelAndInputContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: screenX,
+        marginBottom: 20,
+    },
+    resetPasswordInputLabel: {
+        color: '#CCCCCC',
+        fontSize: 24,
+        fontWeight: 'bold',
+        width: .3 * screenX,
+        marginRight: .05 * screenX,
+    },
+    resetPasswordInput: {
+        width: .6 * screenX,
+        height: 60,
+        borderRadius: 4,
+        borderWidth: 2,
+        borderStyle: 'solid',
+        borderColor: '#CCCCCC',
+        padding: 10,
+        fontSize: 16,
+    },
+    resetPasswordButton: {
+        backgroundColor: '#2f95dc',
+        display: 'flex',
+        height: 50,
+        width: .8 * screenX,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+    },
+    resetPasswordButtonText: {
+        color: 'white',
+        fontSize: 24,
+    },
 })

@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Image,
     Keyboard,
+    KeyboardAvoidingView,
 } from 'react-native';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import ModalPicker from '../components/ModalPicker.js';
@@ -20,27 +21,8 @@ export default class EditEntity extends Component {
         this.state = {
             isConfirmationModalOpen: false,
             isModalPickerOpen: false,
-            scrollViewVerticalPadding: 0,
         }
         Permissions.askAsync(Permissions.CAMERA_ROLL);
-    }
-
-    componentDidMount () {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-    }
-
-    componentWillUnmount () {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
-
-    keyboardDidShow = () => {
-        this.setState({scrollViewVerticalPadding: 60});
-    }
-
-    keyboardDidHide = () => {
-        this.setState({scrollViewVerticalPadding: 0});
     }
 
     openImagePicker = () => {
@@ -139,82 +121,87 @@ export default class EditEntity extends Component {
                 <KeyboardAwareScrollView
                     enableOnAndroid={true}
                     keyboardShouldPersistTaps="handled"
-                    contentContainerStyle={{marginTop: this.state.scrollViewVerticalPadding}}
+                    scrollEnabled={true}
                 >
-                    <View style={{marginBottom: 100}}>
-                        {this.renderImage()}
-                        {
-                            'inputOne' in this.props &&
-                            <View style={styles.entityInputAndLabel}>
-                                <Text style={styles.entityInputLabel}>
-                                    {this.props.inputOneName}
-                                </Text>
-                                <TextInput
-                                    style={styles.entityInput}
-                                    value={this.props.inputOne}
-                                    onChangeText={(newName) => this.props.inputOneOnChange(newName)}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                />
-                            </View>
-                        }
-                        {
-                            'inputTwo' in this.props &&
-                            <View style={styles.entityInputAndLabel}>
-                                <Text style={styles.entityInputLabel}>
-                                    {this.props.inputTwoName}
-                                </Text>
-                                <TextInput
-                                    keyboardType="numeric"
-                                    style={styles.entityInput}
-                                    value={this.props.inputTwo}
-                                    onChangeText={(newNumber) => this.props.inputTwoOnChange(newNumber)}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                />
-                            </View>
-                        }
-                        {
-                            'modalPicker' in this.props &&
-                            <View style={styles.entityInputAndLabel}>
-                                <Text style={styles.entityInputLabel}>
-                                    {this.props.modalPicker}
-                                </Text>
-                                <TouchableOpacity
-                                    style={styles.modalPickerOpenButton}
-                                    onPress={() => this.setState({isModalPickerOpen: true})}
-                                >
-                                    <Text style={styles.modalPickerButtonText}>
-                                        {this.props.modalPickerDisplayValue}
+                    <KeyboardAvoidingView
+                        enabled={true}
+                        behavior="padding"
+                    >
+                        <View>
+                            {this.renderImage()}
+                            {
+                                'inputOne' in this.props &&
+                                <View style={styles.entityInputAndLabel}>
+                                    <Text style={styles.entityInputLabel}>
+                                        {this.props.inputOneName}
                                     </Text>
-                                </TouchableOpacity>
-                            </View>
-                        }
-                        {
-                            'inputThree' in this.props &&
-                            <View style={styles.entityInputAndLabel}>
-                                <TextInput
-                                    placeholder={this.props.inputThreeName}
-                                    multiline={true}
-                                    style={styles.entityDescription}
-                                    value={this.props.inputThree}
-                                    onChangeText={(newDescription) => this.props.inputThreeOnChange(newDescription)}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                />
-                            </View>
-                        }
-                        {
-                            'inputFour' in this.props &&
-                            <View style={styles.entityInputAndLabel}>
-                                <TextInput
-                                    placeholder={this.props.inputFourName}
-                                    multiline={true}
-                                    style={styles.entityDescription}
-                                    value={this.props.inputFour}
-                                    onChangeText={(newDescription) => this.props.inputFourOnChange(newDescription)}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
-                                />
-                            </View>
-                        }
-                    </View>
+                                    <TextInput
+                                        style={styles.entityInput}
+                                        value={this.props.inputOne}
+                                        onChangeText={(newName) => this.props.inputOneOnChange(newName)}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                    />
+                                </View>
+                            }
+                            {
+                                'inputTwo' in this.props &&
+                                <View style={styles.entityInputAndLabel}>
+                                    <Text style={styles.entityInputLabel}>
+                                        {this.props.inputTwoName}
+                                    </Text>
+                                    <TextInput
+                                        keyboardType="numeric"
+                                        style={styles.entityInput}
+                                        value={this.props.inputTwo}
+                                        onChangeText={(newNumber) => this.props.inputTwoOnChange(newNumber)}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                    />
+                                </View>
+                            }
+                            {
+                                'modalPicker' in this.props &&
+                                <View style={styles.entityInputAndLabel}>
+                                    <Text style={styles.entityInputLabel}>
+                                        {this.props.modalPicker}
+                                    </Text>
+                                    <TouchableOpacity
+                                        style={styles.modalPickerOpenButton}
+                                        onPress={() => this.setState({isModalPickerOpen: true})}
+                                    >
+                                        <Text style={styles.modalPickerButtonText}>
+                                            {this.props.modalPickerDisplayValue}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+                            {
+                                'inputThree' in this.props &&
+                                <View style={styles.entityInputAndLabel}>
+                                    <TextInput
+                                        placeholder={this.props.inputThreeName}
+                                        multiline={true}
+                                        style={styles.entityDescription}
+                                        value={this.props.inputThree}
+                                        onChangeText={(newDescription) => this.props.inputThreeOnChange(newDescription)}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                    />
+                                </View>
+                            }
+                            {
+                                'inputFour' in this.props &&
+                                <View style={styles.entityInputAndLabel}>
+                                    <TextInput
+                                        placeholder={this.props.inputFourName}
+                                        multiline={true}
+                                        style={styles.entityDescription}
+                                        value={this.props.inputFour}
+                                        onChangeText={(newDescription) => this.props.inputFourOnChange(newDescription)}
+                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                    />
+                                </View>
+                            }
+                        </View>
+                    </KeyboardAvoidingView>
                 </KeyboardAwareScrollView>
                 <FloatingButtons
                     onSave={() => this.props.selectedEntityId === 'new' ? this.props.createEntity() : this.props.editEntity()}

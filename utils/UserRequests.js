@@ -26,11 +26,7 @@ export default class UserRequests {
         return postRequestWithFormData(paramsObject, 'user/password_reset', {}).then(res => res);
     }
 
-    changePassword = (password, confirmPassword) => {
-        let paramsObject = {
-            password: password,
-            confirmPassword: confirmPassword
-        };
+    changePassword = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'user/change_password', {}).then(res => res);
     }
 }
