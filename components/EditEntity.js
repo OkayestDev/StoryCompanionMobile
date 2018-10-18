@@ -21,8 +21,27 @@ export default class EditEntity extends Component {
         this.state = {
             isConfirmationModalOpen: false,
             isModalPickerOpen: false,
+            keyboardOpenPadding: 0,
         }
         Permissions.askAsync(Permissions.CAMERA_ROLL);
+    }
+
+    componentDidMount () {
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+    }
+
+    componentWillUnmount () {
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    }
+
+    keyboardDidHide = () => {
+        this.setState({keyboardOpenPadding: 0});
+    }
+
+    keyboardDidShow = () => {
+        this.setState({keyboardOpenPadding: 60});
     }
 
     openImagePicker = () => {
@@ -127,7 +146,7 @@ export default class EditEntity extends Component {
                         enabled={true}
                         behavior="padding"
                     >
-                        <View>
+                        <View style={{paddingTop: this.state.keyboardOpenPadding}}>
                             {this.renderImage()}
                             {
                                 'inputOne' in this.props &&

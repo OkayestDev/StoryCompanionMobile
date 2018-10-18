@@ -77,7 +77,15 @@ export default class SettingsScreen extends Component {
     }
 
     changePassword = () => {
-        console.info(this.state);
+        if (this.state.password.length < 6) {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'warning',
+                globalAlertMessage: 'Ensure passwords are at least 6 characters long',
+            });
+            return;
+        }
+
         if (this.state.password === '') {
             this.setState({
                 globalAlertVisible: true,
