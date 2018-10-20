@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Story Companion",
+    "name": "Story Companion Free",
     "description": "Story Writing Companion App",
-    "slug": "story_companion",
+    "slug": "story_companion_free",
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -25,7 +25,8 @@
       "bundleIdentifier": "com.isjustgame.storycompanion"
     },
     "android": {
-      "package": "com.isjustgame.storycompanion"
+      "versionCode": 3,
+      "package": "com.isjustgame.storycompanionfree"
     }
   }
 }
