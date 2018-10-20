@@ -26,7 +26,7 @@ export default class App extends React.Component {
                 <View style={styles.container}>
                     {/* Remove ad in paid version */}
                     <AppNavigator />
-                    {/* <View style={styles.adContainer}>
+                    <View style={styles.adContainer}>
                         <AdMobBanner
                             bannerSize="smartBannerPortrait"
                             adUnitID={
@@ -36,7 +36,7 @@ export default class App extends React.Component {
                             }
                             testDeviceID="EMULATOR"
                         />
-                    </View> */}
+                    </View>
                 </View>
             );
         }

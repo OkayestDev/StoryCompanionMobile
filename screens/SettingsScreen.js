@@ -281,6 +281,11 @@ export default class SettingsScreen extends Component {
                         type={this.state.globalAlertType}
                         closeAlert={() => this.setState({globalAlertVisible: false})}
                     />
+                    <FloatingButtons
+                        onCancel={() => this.setState({changingPassword: false})}
+                        onSave={null}
+                        onDelete={null}
+                    />
                     <KeyboardAwareScrollView
                         enableOnAndroid={true}
                         keyboardShouldPersistTaps="handled"
