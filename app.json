@@ -25,8 +25,8 @@
       "bundleIdentifier": "com.isjustgame.storycompanion"
     },
     "android": {
-      "versionCode": 3,
-      "package": "com.isjustgame.storycompanionfree"
+      "versionCode": 5,
+      "package": "com.isjustgame.storycompanion.free"
     }
   }
 }
