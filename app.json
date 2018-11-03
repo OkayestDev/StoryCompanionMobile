@@ -6,7 +6,7 @@
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -25,16 +25,17 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.isjustgame.storycompanion",
       "infoPlist": {
-        "NSCameraUsageDescription": "Story Companion uses the camera to upload pictures of entities (Stories, Characters) to our server",
-        "NSPhotoLibraryUsageDescription": "Story Companion uses photos you choose to upload pictures of entities (Stories, Characters) to our server"
+        "NSCameraUsageDescription": "Story Companion uses the camera to upload pictures of entities (Stories, Characters) to our cloud storage",
+        "NSPhotoLibraryUsageDescription": "Story Companion uses photos you choose to upload pictures of entities (Stories, Characters) to our cloud storage"
       }
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "package": "com.isjustgame.storycompanion.free",
       "permissions": [
         "CAMERA",
-        "READ_EXTERNAL_STORAGE"
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
       ]
     }
   }
