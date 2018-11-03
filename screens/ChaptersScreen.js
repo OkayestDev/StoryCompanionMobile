@@ -6,7 +6,6 @@ import {
     TouchableOpacity, 
     AsyncStorage, 
     ScrollView,
-    Dimensions 
 } from 'react-native';
 import GlobalAlert from '../components/GlobalAlert.js';
 import FloatingAddButton from '../components/FloatingAddButton.js'
