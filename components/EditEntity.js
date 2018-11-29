@@ -127,7 +127,7 @@ export default class EditEntity extends Component {
                     />
                 }
                 {
-                    'modalPicker' in this.props &&
+                    'modalPickerList' in this.props &&
                     <ModalPicker
                         isModalPickerOpen={this.state.isModalPickerOpen}
                         closeModalPicker={() => this.setState({isModalPickerOpen: false})}
@@ -178,7 +178,7 @@ export default class EditEntity extends Component {
                                 </View>
                             }
                             {
-                                'modalPicker' in this.props &&
+                                'modalPickerList' in this.props &&
                                 <View style={styles.entityInputAndLabel}>
                                     <Text style={styles.entityInputLabel}>
                                         {this.props.modalPicker}
@@ -188,7 +188,7 @@ export default class EditEntity extends Component {
                                         onPress={() => this.setState({isModalPickerOpen: true})}
                                     >
                                         <Text style={styles.modalPickerButtonText}>
-                                            {this.props.modalPickerDisplayValue}
+                                            {this.props.modalPickerSelectedValue}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>

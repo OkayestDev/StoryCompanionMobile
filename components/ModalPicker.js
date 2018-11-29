@@ -12,7 +12,7 @@ import {
 export default class ModalPicker extends Component {
     renderModalList = () => {
         let listKeys = this.props.list;
-        if (this.props.list instanceof Object) {
+        if (!(this.props.list instanceof Array)) {
             listKeys = Object.keys(this.props.list);
         }
         let renderList = [];
@@ -23,14 +23,23 @@ export default class ModalPicker extends Component {
             renderList.push(
                 <TouchableOpacity
                     key={id}
-                    style={[styles.listItem, id == this.props.selectedValue ? styles.selectedListItem : {}]}
+                    style={[
+                        styles.listItem, 
+                        id == this.props.selectedValue ? styles.selectedListItem : {},
+                    ]}
                     onPress={() => {
                         this.props.onChange(id);
                         this.props.closeModalPicker();
                     }}
                 >
                     <Text>
-                        {this.props.list[id].name}
+                        {
+                            !(this.props.list instanceof Array)
+                            ?
+                            this.props.list[id].name
+                            :
+                            id
+                        }
                     </Text>
                 </TouchableOpacity>
             )
