@@ -56,7 +56,7 @@ export default class TagsScreen extends Component {
             globalAlertType: '',
             globalAlertMessage: '',
         }
-        this.selectedStoryId = null;
+        this.userId = null;
         this.TagRequests = new TagRequests();
     }
 
@@ -64,9 +64,9 @@ export default class TagsScreen extends Component {
         this.getTags();
     }
 
-    getTags = (story = null) => {
-        if (story !== null) {
-            this.TagRequests.getTags(story).then((res) => {
+    getTags = (user = null) => {
+        if (user !== null) {
+            this.TagRequests.getTags(user).then((res) => {
                 if ('error' in res) {
                     this.setState({
                         selectedTagId: null,
@@ -89,27 +89,116 @@ export default class TagsScreen extends Component {
             })
         }
         else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
+            AsyncStorage.getItem('id').then((res) => {
                 if (!res) {
                     this.props.navigation.navigate("LoginTab");
                 }
-                this.selectedStoryId = parseInt(res[0][1]);
-                this.props.navigation.setParams({title: res[1][1]});
-                this.getTags(this.selectedStoryId);
+                this.userId = res
+                this.getTags(this.userId);
             });
         }
     }
 
     createTag = () => {
-
+        let paramsObject = {
+            user: this.userId,
+            name: this.state.name,
+            description: this.state.description,
+            type: this.state.type,
+        };
+        this.TagRequests.createTag(paramsObject).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    selectedTagId: null,
+                    globalAlertVisible: true,
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                this.setState({
+                    tags: res.success,
+                    description: '',
+                    name: '',
+                    type: '',
+                    selectedTagId: null,
+                });
+            }
+        })
+        .catch(() => {
+            this.setState({
+                selectedTagId: null,
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to create tag at this time",
+            });
+        });
     }
 
     deleteTag = () => {
-
+        this.TagRequests.deleteTag(this.state.selectedTagId).then((res) => {
+            if ('error' in res) {
+                this.setState({
+                    selectedTagId: null,
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                let tempTags = this.state.tags;
+                delete tempTags[this.state.selectedTagId];
+                this.setState({
+                    selectedTagId: null,
+                    name: '',
+                    description: '',
+                    type: '',
+                    tags: tempTags
+                });
+            }
+        })
+        .catch((error) => {
+            console.info(error);
+            this.setState({
+                selectedTagId: null,
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to delete tag at this time",
+            });
+        })
     }
 
     editTag = () => {
+        let paramsObject = {
+            tag: this.state.selectedTagId,
+            description: this.state.description,
+            type: this.state.type,
+            name: this.state.name,
+        };
+        this.TagRequests.editTag(paramsObject).then((res) => {
+            if ('error' in res) {
 
+            }
+            else {
+                let tempTags = this.state.tags;
+                tempTags[this.state.selectedTagId] = res.success;
+                this.setState({
+                    tags: tempTags,
+                    name: '',
+                    description: '',
+                    type: '',
+                    selectedTagId: null,
+                })
+            }
+        })
+        .catch(() => {
+            this.setState({
+                selectedTagId: null,
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to edit tag at this time",
+            })
+        })
     }
 
     cancelTagEdit = () => {
@@ -138,7 +227,7 @@ export default class TagsScreen extends Component {
         let tagIds = Object.keys(this.state.tags);
         let tagView = [];
         if (tagIds.length > 0) {
-
+            return tagView;
         }
         else {
             return (

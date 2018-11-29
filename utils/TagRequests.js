@@ -11,7 +11,7 @@ export default class TagRequests {
     }
 
     createTag = (paramsObject) => {
-        return postRequestWithFormData(paramsObject, 'tag/create', {}).then(res => res);
+        return postRequestWithFormData(paramsObject, 'tag/creation', {}).then(res => res);
     }
 
     deleteTag = (tagId) => {

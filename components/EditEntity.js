@@ -111,7 +111,12 @@ export default class EditEntity extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View 
+                style={[
+                    styles.container,
+                    this.state.isModalPickerOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
+                ]}
+            >
                 {
                     this.props.selectedEntityId !== 'new' &&
                     <ConfirmationModal

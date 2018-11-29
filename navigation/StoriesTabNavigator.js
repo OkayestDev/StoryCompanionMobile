@@ -36,8 +36,8 @@ TagsScreenStack.navigationOptions = {
             focused={focused}
             name={
                 Platform.OS === 'ios'
-                    ? `ios-book${focused ? '' : '-outline'}`
-                    : 'md-book'
+                    ? `ios-bookmark${focused ? '' : '-outline'}`
+                    : 'md-bookmark'
             }
         />
     ),

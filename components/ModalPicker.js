@@ -50,9 +50,11 @@ export default class ModalPicker extends Component {
     render () {
         return (
             <Modal
+                animationType="fade"
                 visible={this.props.isModalPickerOpen}
                 onRequestClose={() => this.props.closeModalPicker()}
                 transparent={true}
+                style={styles.background}
             >
                 <View style={styles.modalContent}>
                     <ScrollView
@@ -71,11 +73,16 @@ export default class ModalPicker extends Component {
                     </TouchableOpacity>
                 </View>
             </Modal>
-        );
+        )
     }
 }
 
 const styles = StyleSheet.create({
+    background: {
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+        backgroundColor: 'rgba(255, 255, 255, .5)',
+    },
     modalContent: {
         position: 'absolute',
         top: "10%",
