@@ -114,7 +114,7 @@ export default class EditEntity extends Component {
             <View 
                 style={[
                     styles.container,
-                    this.state.isModalPickerOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
+                    this.state.isModalPickerOpen || this.state.isConfirmationModalOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
                 ]}
             >
                 {
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
         height: 200,
         borderRadius: 4,
         borderWidth: 2,
+        borderColor: '#CCCCCC',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

@@ -48,6 +48,7 @@ class StoriesScreen extends StoryCompanion {
             name: '',
             description: '',
             image: '',
+            selectedTagId: null,
             selectedStoryId: null,
 
             globalAlertVisible: false,
@@ -68,6 +69,7 @@ class StoriesScreen extends StoryCompanion {
 
     componentDidMount() {
         this.getStories();
+        this.getTags();
     }
 
     getStories = () => {

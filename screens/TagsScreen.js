@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     View,
     StyleSheet,
     Text,
-    ScrollView
+    ScrollView,
+    TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
 import Actions from '../store/Actions.js';
@@ -182,7 +183,7 @@ class TagsScreen extends StoryCompanion {
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
                 globalAlertMessage: "Unable to edit tag at this time",
-            })
+            });
         })
     }
 
@@ -212,13 +213,37 @@ class TagsScreen extends StoryCompanion {
         let tagIds = Object.keys(this.props.tags);
         let tagView = [];
         if (tagIds.length > 0) {
+            tagIds.forEach((id) => {
+                tagView.push(
+                    <TouchableOpacity
+                        key={id}
+                        onPress={() => this.selectTag(id)}
+                        style={styles.tagContainer}
+                    >
+                        <View>
+                            <Text style={styles.tagName}>
+                                {this.props.tags[id].name}
+                            </Text>
+                            <Text style={styles.tagType}>
+                                Type: {this.props.tags[id].type}
+                            </Text>
+                            <Text 
+                                style={styles.tagDescription}
+                                numberOfLines={2}
+                            >
+                                {this.props.tags[id].description}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                )
+            });
             return tagView;
         }
         else {
             return (
                 <View style={styles.noTagsContainer}>
                     <Text style={styles.noTagsText}>
-                        Looks like you haven't created any Tags yet.
+                        Looks like you haven't created any tags yet.
                     </Text>
                     <Text style={styles.noTagsText}>
                         Press on the + to create a tag!
@@ -302,4 +327,22 @@ const styles = StyleSheet.create({
         color: '#CCCCCC',
         fontWeight: 'bold',
     },
+    tagContainer: {
+        width: '100%',
+        padding: 10,
+        height: 125,
+        borderBottomWidth: 2,
+        borderBottomColor: '#CCCCCC',
+    },
+    tagName: {
+        fontSize: 28,
+        fontWeight: 'bold',
+    },
+    tagType: {
+        fontSize: 18,
+    },
+    tagDescription: {
+        fontSize: 18,
+        overflow: 'hidden',
+    }, 
 })

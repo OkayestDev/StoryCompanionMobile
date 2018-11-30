@@ -32,14 +32,17 @@ export default class ModalPicker extends Component {
                         this.props.closeModalPicker();
                     }}
                 >
-                    <Text>
-                        {
-                            !(this.props.list instanceof Array)
-                            ?
-                            this.props.list[id].name
-                            :
-                            id
-                        }
+                    <Text 
+                        style={styles.listItemText}
+                        numberOfLines={1}
+                    >
+                    {
+                        !(this.props.list instanceof Array)
+                        ?
+                        this.props.list[id].name
+                        :
+                        id
+                    }
                     </Text>
                 </TouchableOpacity>
             )
@@ -129,7 +132,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     listItemText: {
-        color: '#CCCCCC',
+        fontWeight: 'bold',
         fontSize: 24,
-    }
+    },
 })

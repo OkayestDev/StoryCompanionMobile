@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, 
     Text,
     StyleSheet, 
@@ -68,7 +68,11 @@ class CharactersScreen extends StoryCompanion {
         };
         this.CharacterRequests = new CharacterRequests();
         props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
+    }
+
+    componentDidMount() {
         this.getCharacters();
+        this.getTags();
     }
 
     getCharacters = () => {

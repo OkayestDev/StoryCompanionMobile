@@ -63,7 +63,7 @@ export default class App extends React.Component {
         ]);
     };
 
-    handleLoadingError = error => {
+    handleLoadingError = () => {
         
     };
 
