@@ -9,6 +9,8 @@ import {
     Dimensions,
     KeyboardAvoidingView,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import FloatingButtons from '../components/FloatingButtons.js';
@@ -28,7 +30,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class SettingsScreen extends Component {
+class SettingsScreen extends Component {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -61,19 +63,6 @@ export default class SettingsScreen extends Component {
         }
         this.SettingsRequests = new SettingsRequests();
         this.UserRequests = new UserRequests();
-        this.userId = null;
-        this.getUserId();
-    }
-
-    getUserId = () => {
-        AsyncStorage.getItem('id').then((res) => {
-            if (!res) {
-                this.props.navigation.navigate("LoginTab");
-            }
-            if (res !== null) {
-                this.userId = res;
-            }
-        })
     }
 
     changePassword = () => {
@@ -107,7 +96,7 @@ export default class SettingsScreen extends Component {
         let paramsObject = {
             password: this.state.password,
             confirmPassword: this.state.confirmPassword,
-            user: this.userId,
+            user: this.props.userId,
         }
         this.UserRequests.changePassword(paramsObject).then((res) => {
             if ('error' in res) {
@@ -139,7 +128,7 @@ export default class SettingsScreen extends Component {
 
     bug = () => {
         let paramsObject = {
-            user: this.userId,
+            user: this.props.userId,
             description: this.state.bugDescription,
         }
         this.SettingsRequests.bug(paramsObject).then((res) => {
@@ -171,7 +160,7 @@ export default class SettingsScreen extends Component {
 
     feature = () => {
         let paramsObject = {
-            user: this.userId,
+            user: this.props.userId,
             description: this.state.featureDescription,
         }
         this.SettingsRequests.feature(paramsObject).then((res) => {
@@ -395,6 +384,8 @@ export default class SettingsScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
     container: {

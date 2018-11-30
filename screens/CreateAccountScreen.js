@@ -7,6 +7,8 @@ import {
     Dimensions, 
     TextInput, 
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import { PATTERNS } from '../config/Patterns.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -28,8 +30,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-// @TODO check if email is of correct pattern
-export default class CreateAccountScreen extends Component {
+class CreateAccountScreen extends Component {
     static navigationOptions = {
         title: 'Create Account',
         headerTitle: (
@@ -250,6 +251,8 @@ export default class CreateAccountScreen extends Component {
         )
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(CreateAccountScreen);
 
 const styles = StyleSheet.create({
     container: {

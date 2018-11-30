@@ -12,23 +12,11 @@ export default class PlotRequests {
         return postRequestWithFormData(paramsObject, 'plot/view', {}).then(res => res);
     }
 
-    createPlot = (name, description, plotParent, story) => {
-        let paramsObject = {
-            name: name,
-            description: description,
-            plotParent: plotParent,
-            story: story,
-        };
+    createPlot = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/creation', {}).then(res => res);
     }
 
-    editPlot = (plot, name, description, plotParent) => {
-        let paramsObject = {
-            plot: plot,
-            name: name,
-            description: description,
-            plotParent: plotParent,
-        };
+    editPlot = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/edit', {}).then(res => res);
     }
 

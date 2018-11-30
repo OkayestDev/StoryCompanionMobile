@@ -7,8 +7,9 @@ import {
     Dimensions, 
     TextInput, 
     KeyboardAvoidingView, 
-    AsyncStorage,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import UserRequests from '../utils/UserRequests.js';
@@ -25,7 +26,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
     static navigationOptions = {
         title: 'Login',
         headerTitle: (
@@ -42,8 +43,9 @@ export default class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: '',
-            password: '',
+            // @TODO DEV
+            email: 'isjustgamedev@gmail.com',
+            password: 'encounter1',
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
@@ -56,11 +58,9 @@ export default class LoginScreen extends Component {
     }
 
     checkIfUserIsAlreadyLoggedIn = () => {
-        AsyncStorage.multiGet(['email', 'id', 'apiKey']).then((res) => {
-            if (res[0][1] !== null && res[1][1] !== null && res[2][1] !== null) {
-                this.props.navigation.navigate("StoriesTab");
-            }
-        });
+        if (this.props.id !== null && this.props.apiKey !== null) {
+            this.props.navigation.navigate("StoriesTab");
+        }
     }
 
     login = () => {
@@ -73,15 +73,11 @@ export default class LoginScreen extends Component {
                 });
             }
             else {
-                AsyncStorage.multiSet([['email', String(res.success.email)], ['id', String(res.success.id)], ['apiKey', String(res.success.apiKey)]]).then((res) => {
-                    this.props.navigation.navigate("StoriesTab");
-                })
-                .catch((error) => {
-                    console.info(error);
-                });
+                this.props.login(res.success);
+                this.props.navigation.navigate("StoriesTab");
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -110,6 +106,9 @@ export default class LoginScreen extends Component {
                         enabled={true}
                         behavior="position"
                     >
+                        <Text>
+                            {this.props.apiKey}
+                        </Text>
                         <View style={styles.loginView}>
                             <Text style={styles.welcomeBack}>
                                 Welcome Back!
@@ -157,6 +156,8 @@ export default class LoginScreen extends Component {
         )
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(LoginScreen);
 
 const styles = StyleSheet.create({
     container: {

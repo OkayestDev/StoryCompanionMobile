@@ -2,8 +2,13 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View,  } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { AdMobBanner } from 'expo';
+import { Provider } from 'react-redux';
+import AppStore from './store/AppStore.js';
 import AppNavigator from './navigation/AppNavigator';
 
+/**
+ * @TODO add auto rehydrate
+ */
 export default class App extends React.Component {
     state = {
         isLoadingComplete: false,
@@ -23,21 +28,23 @@ export default class App extends React.Component {
         }
         else {
             return (
-                <View style={styles.container}>
-                    {/* Remove ad in paid version */}
-                    <AppNavigator />
-                    <View style={styles.adContainer}>
-                        <AdMobBanner
-                            bannerSize="smartBannerPortrait"
-                            adUnitID={
-                                Platform.OS === 'android'
-                                    ? "ca-app-pub-5830175342552944/7130625883"
-                                    : "ca-app-pub-5830175342552944/4205993347"
-                            }
-                            testDeviceID="EMULATOR"
-                        />
+                <Provider store={AppStore}>
+                    <View style={styles.container}>
+                        {/* Remove ad in paid version */}
+                        <AppNavigator />
+                        {/* <View style={styles.adContainer}>
+                            <AdMobBanner
+                                bannerSize="smartBannerPortrait"
+                                adUnitID={
+                                    Platform.OS === 'android'
+                                        ? "ca-app-pub-5830175342552944/7130625883"
+                                        : "ca-app-pub-5830175342552944/4205993347"
+                                }
+                                testDeviceID="EMULATOR"
+                            />
+                        </View> */}
                     </View>
-                </View>
+                </Provider>
             );
         }
     }

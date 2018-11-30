@@ -3,10 +3,11 @@ import { View,
     Text,
     StyleSheet, 
     TouchableOpacity, 
-    AsyncStorage, 
     ScrollView,
     Image,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { Icon } from 'react-native-elements';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
@@ -23,7 +24,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class CharactersScreen extends Component {
+class CharactersScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Characters',
@@ -65,60 +66,44 @@ export default class CharactersScreen extends Component {
             globalAlertMessage: '',
         };
         this.CharacterRequests = new CharacterRequests();
-        //@PROD
-        this.selectedStoryId = null;
+        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
         this.getCharacters();
-        // @DEV
-        // this.selectedStoryId = 1;
-        // this.getCharacters(1);
     }
 
-    getCharacters = (story = null) => {
-        if (story !== null) {
-            this.CharacterRequests.getCharacters(story).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedCharacterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                }
-                else {
-                    this.setState({
-                        selectedCharacterId: null,
-                        characters: res.success
-                    });
-                }
-            })
-            .catch((error) => {
+    getCharacters = () => {
+        this.CharacterRequests.getCharacters(this.props.selectedStoryId).then((res) => {
+            if ('error' in res) {
                 this.setState({
+                    selectedCharacterId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get response from server",
+                    globalAlertMessage: res.error,
                 });
+            }
+            else {
+                this.setState({
+                    selectedCharacterId: null,
+                    characters: res.success
+                });
+            }
+        })
+        .catch(() => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
             });
-        }
-        else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                this.selectedStoryId = parseInt(res[0][1]);
-                this.props.navigation.setParams({title: res[1][1]})
-                this.getCharacters(res[0][1]);
-            });
-        }
+        });
     }
 
     createCharacter = async () => {
         let image = this.state.image;
         // check if new image has been uploaded
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.selectedStoryId); //@TODO add await
+            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); //@TODO add await
         }
         let paramsObject = {
-            story: this.selectedStoryId,
+            story: this.props.selectedStoryId,
             name: this.state.name,
             image: image,
             description: this.state.description,
@@ -143,7 +128,7 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -155,7 +140,7 @@ export default class CharactersScreen extends Component {
     editCharacter = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.selectedStoryId); // @TODO add await
+            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); // @TODO add await
         }
         let paramsObject = {
             character: this.state.selectedCharacterId,
@@ -185,7 +170,7 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -216,7 +201,7 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -349,6 +334,8 @@ export default class CharactersScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(CharactersScreen);
 
 const styles = StyleSheet.create({
     container: {

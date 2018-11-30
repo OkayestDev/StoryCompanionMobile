@@ -3,9 +3,10 @@ import {
     View,
     StyleSheet,
     Text,
-    AsyncStorage,
     ScrollView
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import EditEntity from '../components/EditEntity.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
@@ -29,7 +30,7 @@ const tagTypes = [
     'Character',
 ]
 
-export default class TagsScreen extends Component {
+class TagsScreen extends Component {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -56,7 +57,6 @@ export default class TagsScreen extends Component {
             globalAlertType: '',
             globalAlertMessage: '',
         }
-        this.userId = null;
         this.TagRequests = new TagRequests();
     }
 
@@ -64,44 +64,33 @@ export default class TagsScreen extends Component {
         this.getTags();
     }
 
-    getTags = (user = null) => {
-        if (user !== null) {
-            this.TagRequests.getTags(user).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedTagId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    })
-                }
-                else {
-                    this.setState({tags: res.success});
-                }
-            })
-            .catch(() => {
+    getTags = () => {
+        this.TagRequests.getTags(this.props.userId).then((res) => {
+            if ('error' in res) {
                 this.setState({
                     selectedTagId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get Tags at this time.",
+                    globalAlertMessage: res.error,
                 })
+            }
+            else {
+                this.setState({tags: res.success});
+            }
+        })
+        .catch(() => {
+            this.setState({
+                selectedTagId: null,
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get Tags at this time.",
             })
-        }
-        else {
-            AsyncStorage.getItem('id').then((res) => {
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                this.userId = res
-                this.getTags(this.userId);
-            });
-        }
+        })
     }
 
     createTag = () => {
         let paramsObject = {
-            user: this.userId,
+            user: this.props.userId,
             name: this.state.name,
             description: this.state.description,
             type: this.state.type,
@@ -296,6 +285,8 @@ export default class TagsScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(TagsScreen);
 
 const styles = StyleSheet.create({
     container: {

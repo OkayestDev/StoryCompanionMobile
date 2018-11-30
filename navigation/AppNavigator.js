@@ -5,7 +5,7 @@ import LoginTabNavigator from './LoginTabNavigator.js'
 import StoryTabNavigator from './StoryTabNavigator.js';
 
 export default createSwitchNavigator({
-    // LoginTab: LoginTabNavigator,
+    LoginTab: LoginTabNavigator,
     StoriesTab: StoriesTabNavigator,
     StoryTab: StoryTabNavigator,
 });

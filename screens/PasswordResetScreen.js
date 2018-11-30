@@ -8,6 +8,8 @@ import {
     KeyboardAvoidingView,
     Dimensions,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import UserRequests from '../utils/UserRequests.js';
@@ -25,7 +27,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class PasswordResetScreen extends Component {
+class PasswordResetScreen extends Component {
     static navigationOptions = {
         title: 'Password Reset',
         headerTitle: (
@@ -78,7 +80,7 @@ export default class PasswordResetScreen extends Component {
                 setTimeout(() => this.props.navigation.navigate("Login"), 3000);
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -140,6 +142,8 @@ export default class PasswordResetScreen extends Component {
         )
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(PasswordResetScreen);
 
 const styles = StyleSheet.create({
     container: {

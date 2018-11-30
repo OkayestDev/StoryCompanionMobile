@@ -4,9 +4,10 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    AsyncStorage,
     ScrollView,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
@@ -23,7 +24,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class NotesScreen extends Component {
+class NotesScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Notes',
@@ -63,55 +64,39 @@ export default class NotesScreen extends Component {
             globalAlertMessage: '',
         }
         this.NoteRequests = new NoteRequests();
-        // @PROD
-        this.selectedStoryId = null;
+        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});        
         this.getNotes();
-        // @DEV
-        // this.selectedStoryId = 3;
-        // this.getNotes(3);
     }
 
-    getNotes = (story = null) => {
-        if (story !== null) {
-            this.NoteRequests.getNotes(story).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedNoteId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    })
-                }
-                else {
-                    this.setState({
-                        selectedNoteId: null,
-                        notes: res.success,
-                    })
-                }
-            })
-            .catch((error) => {
+    getNotes = () => {
+        this.NoteRequests.getNotes(this.props.selectedStoryId).then((res) => {
+            if ('error' in res) {
                 this.setState({
+                    selectedNoteId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get response from server",
-                });
-            })
-        }
-        else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                this.selectedStoryId = res[0][1];
-                this.props.navigation.setParams({title: res[1][1]});
-                this.getNotes(res[0][1]);
+                    globalAlertMessage: res.error,
+                })
+            }
+            else {
+                this.setState({
+                    selectedNoteId: null,
+                    notes: res.success,
+                })
+            }
+        })
+        .catch(() => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
             });
-        }
+        })
     }
 
     createNote = () => {
         let paramsObject = {
-            story: this.selectedStoryId,
+            story: this.props.selectedStoryId,
             name: this.state.name,
             description: this.state.description,
         };
@@ -132,7 +117,7 @@ export default class NotesScreen extends Component {
                 })
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -166,7 +151,7 @@ export default class NotesScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -195,7 +180,7 @@ export default class NotesScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -314,6 +299,8 @@ export default class NotesScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(NotesScreen);
 
 const styles = StyleSheet.create({
     container: {

@@ -4,9 +4,10 @@ import {
     Text, 
     StyleSheet, 
     TouchableOpacity, 
-    AsyncStorage, 
     ScrollView 
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
@@ -23,7 +24,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class PlotsScreen extends Component {
+class PlotsScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Plots',
@@ -64,52 +65,41 @@ export default class PlotsScreen extends Component {
             globalAlertMessage: '',
         }
         this.PlotRequests = new PlotRequests();
-        //@PROD
-        this.selectedStoryId = null;
+        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
         this.getPlots();
-        // @DEV
-        // this.selectedStoryId = 1;
-        // this.getPlots(1);
     }
 
-    getPlots = (story = null) => {
-        if (story !== null) {
-            this.PlotRequests.getPlots(story).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedPlotId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                }
-                else {
-                    this.setState({plots: res.success});
-                }
-            })
-            .catch((error) => {
+    getPlots = () => {
+        this.PlotRequests.getPlots(this.props.selectedStoryId).then((res) => {
+            if ('error' in res) {
                 this.setState({
+                    selectedPlotId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get response from server",
+                    globalAlertMessage: res.error,
                 });
-            })
-        }
-        else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
-                // Unable to load story - log user out
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                this.selectedStoryId = res[0][1];
-                this.props.navigation.setParams({title: res[1][1]});
-                this.getPlots(res[0][1]);
-            })
-        }
+            }
+            else {
+                this.setState({plots: res.success});
+            }
+        })
+        .catch(() => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
+            });
+        })
     }
 
     createPlot = () => {
-        this.PlotRequests.createPlot(this.state.name, this.state.description, this.state.plotParent, this.selectedStoryId).then((res) => {
+        let paramsObject = {
+            name: this.state.name,
+            description: this.state.description,
+            plotParent: this.state.plotParent,
+            story: this.props.selectedStoryId,
+        };
+        this.PlotRequests.createPlot(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -137,7 +127,14 @@ export default class PlotsScreen extends Component {
     }
 
     editPlot = () => {
-        this.PlotRequests.editPlot(this.state.selectedPlotId, this.state.name, this.state.description, this.state.plotParent).then((res) => {
+        let paramsObject = {
+            name: this.state.name,
+            description: this.state.description,
+            plotParent: this.state.plotParent,
+            story: this.props.selectedStoryId,
+            plot: this.state.selectedPlotId,
+        }
+        this.PlotRequests.editPlot(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedPlotId: null,
@@ -158,7 +155,7 @@ export default class PlotsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -189,7 +186,7 @@ export default class PlotsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -369,6 +366,8 @@ export default class PlotsScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(PlotsScreen);
 
 const styles = StyleSheet.create({
     container: {
