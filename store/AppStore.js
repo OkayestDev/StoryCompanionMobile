@@ -42,6 +42,12 @@ const reducer = (state = INITIAL_STATE, action) => {
                 selectedStoryId: action.payload
             };
             break;
+        case "SET_TAGS":
+            newState = {
+                ...state,
+                tags: action.payload
+            };
+            break;
     }
     // @TODO Set storage persist here?
     return newState;

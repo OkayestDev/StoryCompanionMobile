@@ -50,7 +50,6 @@ class TagsScreen extends Component {
             name: '',
             description: '',
             type: '',
-            tags: null,
             selectedTagId: null,
 
             globalAlertVisible: false,
@@ -75,7 +74,7 @@ class TagsScreen extends Component {
                 })
             }
             else {
-                this.setState({tags: res.success});
+                this.props.setTags(res.success);
             }
         })
         .catch(() => {
@@ -106,12 +105,12 @@ class TagsScreen extends Component {
             }
             else {
                 this.setState({
-                    tags: res.success,
                     description: '',
                     name: '',
                     type: '',
                     selectedTagId: null,
                 });
+                this.props.setTags(res.success);
             }
         })
         .catch(() => {
@@ -135,19 +134,18 @@ class TagsScreen extends Component {
                 });
             }
             else {
-                let tempTags = this.state.tags;
+                let tempTags = this.props.tags;
                 delete tempTags[this.state.selectedTagId];
                 this.setState({
                     selectedTagId: null,
                     name: '',
                     description: '',
                     type: '',
-                    tags: tempTags
                 });
+                this.props.setTags(tempTags);
             }
         })
-        .catch((error) => {
-            console.info(error);
+        .catch(() => {
             this.setState({
                 selectedTagId: null,
                 globalAlertVisible: true,
@@ -166,18 +164,23 @@ class TagsScreen extends Component {
         };
         this.TagRequests.editTag(paramsObject).then((res) => {
             if ('error' in res) {
-
+                this.setState({
+                    selectedTagId: null,
+                    globalAlertVisible: true,
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                })
             }
             else {
-                let tempTags = this.state.tags;
+                let tempTags = this.props.tags;
                 tempTags[this.state.selectedTagId] = res.success;
                 this.setState({
-                    tags: tempTags,
                     name: '',
                     description: '',
                     type: '',
                     selectedTagId: null,
                 })
+                this.props.setTags(tempTags);
             }
         })
         .catch(() => {
@@ -202,18 +205,18 @@ class TagsScreen extends Component {
     selectTag = (id) => {
         this.setState({
             selectedTagId: id,
-            name: this.state.tags[id].name,
-            description: this.state.tags[id].description,
-            type: this.state.tags[id].type
+            name: this.props.tags[id].name,
+            description: this.props.tags[id].description,
+            type: this.props.tags[id].type
         });
     }
 
     renderTags = () => {
-        if (this.state.tags === null) {
+        if (this.props.tags === null) {
             return null;
         }
 
-        let tagIds = Object.keys(this.state.tags);
+        let tagIds = Object.keys(this.props.tags);
         let tagView = [];
         if (tagIds.length > 0) {
             return tagView;

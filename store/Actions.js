@@ -21,6 +21,10 @@ export default Actions = {
                     type: "EDIT_COMPONENTS",
                     payload: payload,
                 }),
+                setTags: (payload) => dispatch({
+                    type: "SET_TAGS",
+                    payload: payload,
+                }),
             }
         }
     )

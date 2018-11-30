@@ -96,7 +96,7 @@ class DraftsScreen extends Component {
 
     // Only allowing one draft per story at this time
     getDrafts = () => {
-        this.DraftRequests.getDrafts(story).then((res) => {
+        this.DraftRequests.getDrafts(this.props.selectedStoryId).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
