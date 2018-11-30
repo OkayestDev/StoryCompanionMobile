@@ -98,13 +98,11 @@ const styles = StyleSheet.create({
     },
     modalText: {
         fontSize: 24,
-        color: '#CCCCCC',
         fontWeight: 'bold',
         textAlign: 'center'
     },
     noteText: {
         fontSize: 16,
-        color: '#CCCCCC',
         fontWeight: 'bold',
         textAlign: 'center'
     },

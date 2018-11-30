@@ -13,6 +13,7 @@ import FloatingAddButton from '../components/FloatingAddButton.js'
 import ChapterRequests from '../utils/ChapterRequests.js';
 import EditEntity from '../components/EditEntity.js';
 import { Icon } from 'react-native-elements';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -24,7 +25,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class ChaptersScreen extends Component {
+class ChaptersScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Chapters',
@@ -84,7 +85,8 @@ class ChaptersScreen extends Component {
     }
 
     getChapters = () => {
-        this.ChapterRequests.getChapters(this.props.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();        
+        this.ChapterRequests.getChapters(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedChapterId: null,
@@ -127,12 +129,7 @@ class ChaptersScreen extends Component {
 
     // @TODO check all inputs are filled out
     createChapter = () => {
-        let paramsObject = {
-            name: this.state.name,
-            number: this.state.number,
-            description: this.state.description,
-            story: this.props.selectedStoryId,
-        }
+        let paramsObject = this.createParamsObject();
         this.ChapterRequests.createChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -163,12 +160,7 @@ class ChaptersScreen extends Component {
     }
 
     editChapter = () => {
-        let paramsObject = {
-            chapter: this.state.selectedChapterId,
-            name: this.state.name,
-            number: this.state.number,
-            description: this.state.description,
-        }
+        let paramsObject = this.createParamsObject();        
         this.ChapterRequests.editChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -192,7 +184,8 @@ class ChaptersScreen extends Component {
     }
 
     deleteChapter = () => {
-        this.ChapterRequests.deleteChapter(this.state.selectedChapterId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.ChapterRequests.deleteChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedChapterId: null,

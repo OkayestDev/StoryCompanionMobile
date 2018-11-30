@@ -11,6 +11,7 @@ import EditEntity from '../components/EditEntity.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import TagRequests from '../utils/TagRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     flex: 1,
@@ -30,7 +31,7 @@ const tagTypes = [
     'Character',
 ]
 
-class TagsScreen extends Component {
+class TagsScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -64,7 +65,8 @@ class TagsScreen extends Component {
     }
 
     getTags = () => {
-        this.TagRequests.getTags(this.props.userId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.TagRequests.getTags(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedTagId: null,
@@ -88,12 +90,7 @@ class TagsScreen extends Component {
     }
 
     createTag = () => {
-        let paramsObject = {
-            user: this.props.userId,
-            name: this.state.name,
-            description: this.state.description,
-            type: this.state.type,
-        };
+        let paramsObject = this.createParamsObject();        
         this.TagRequests.createTag(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -124,7 +121,8 @@ class TagsScreen extends Component {
     }
 
     deleteTag = () => {
-        this.TagRequests.deleteTag(this.state.selectedTagId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.TagRequests.deleteTag(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedTagId: null,
@@ -156,12 +154,7 @@ class TagsScreen extends Component {
     }
 
     editTag = () => {
-        let paramsObject = {
-            tag: this.state.selectedTagId,
-            description: this.state.description,
-            type: this.state.type,
-            name: this.state.name,
-        };
+        let paramsObject = this.createParamsObject();
         this.TagRequests.editTag(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({

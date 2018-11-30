@@ -3,7 +3,8 @@ import { Platform, StatusBar, StyleSheet, View,  } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { AdMobBanner } from 'expo';
 import { Provider } from 'react-redux';
-import AppStore from './store/AppStore.js';
+import { AppStore, Persistor } from './store/AppStore.js';
+import { PersistGate } from 'redux-persist/integration/react';
 import AppNavigator from './navigation/AppNavigator';
 
 /**
@@ -14,21 +15,25 @@ export default class App extends React.Component {
         isLoadingComplete: false,
     };
 
+    renderLoading = () => {
+        return (
+            <View style={styles.container}>
+                <AppLoading
+                    startAsync={this.loadResourcesAsync}
+                    onError={this.handleLoadingError}
+                    onFinish={this.handleFinishLoading}
+                />
+            </View>
+        )
+    }
+
     render() {
-        if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
-            return (
-                <View style={styles.container}>
-                    <AppLoading
-                        startAsync={this._loadResourcesAsync}
-                        onError={this._handleLoadingError}
-                        onFinish={this._handleFinishLoading}
-                    />
-                </View>
-            );
-        }
-        else {
-            return (
-                <Provider store={AppStore}>
+        return (
+            <Provider store={AppStore}>
+                <PersistGate 
+                    persistor={Persistor}
+                    loading={this.renderLoading()}
+                >
                     <View style={styles.container}>
                         {/* Remove ad in paid version */}
                         <AppNavigator />
@@ -44,12 +49,12 @@ export default class App extends React.Component {
                             />
                         </View> */}
                     </View>
-                </Provider>
-            );
-        }
+                </PersistGate>
+            </Provider>
+        );
     }
 
-    _loadResourcesAsync = async () => {
+    loadResourcesAsync = async () => {
         return Promise.all([
             Font.loadAsync({
                 ...Icon.Ionicons.font,
@@ -58,11 +63,11 @@ export default class App extends React.Component {
         ]);
     };
 
-    _handleLoadingError = error => {
+    handleLoadingError = error => {
         
     };
 
-    _handleFinishLoading = () => {
+    handleFinishLoading = () => {
         this.setState({ isLoadingComplete: true });
     };
 }

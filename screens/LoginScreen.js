@@ -8,6 +8,7 @@ import {
     TextInput, 
     KeyboardAvoidingView, 
 } from 'react-native';
+import StoryCompanion from '../utils/StoryCompanion.js';
 import { connect } from 'react-redux';
 import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -26,7 +27,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class LoginScreen extends Component {
+class LoginScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Login',
         headerTitle: (
@@ -58,13 +59,14 @@ class LoginScreen extends Component {
     }
 
     checkIfUserIsAlreadyLoggedIn = () => {
-        if (this.props.id !== null && this.props.apiKey !== null) {
+        if (this.props.userId !== null && this.props.apiKey !== null) {
             this.props.navigation.navigate("StoriesTab");
         }
     }
 
     login = () => {
-        this.UserRequests.login(this.state.email, this.state.password).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.UserRequests.login(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -106,9 +108,6 @@ class LoginScreen extends Component {
                         enabled={true}
                         behavior="position"
                     >
-                        <Text>
-                            {this.props.apiKey}
-                        </Text>
                         <View style={styles.loginView}>
                             <Text style={styles.welcomeBack}>
                                 Welcome Back!
@@ -167,7 +166,6 @@ const styles = StyleSheet.create({
     welcomeBack: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: '#CCCCCC',
         marginBottom: 20,
     },
     loginView: {
@@ -186,7 +184,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     loginInputLabel: {
-        color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
         width: .3 * screenX,

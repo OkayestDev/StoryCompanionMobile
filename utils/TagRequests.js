@@ -3,10 +3,7 @@ import {
 } from './HelperFunctions.js';
 
 export default class TagRequests {
-    getTags = (userId) => {
-        let paramsObject = {
-            user: userId
-        };
+    getTags = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'tag/view', {}).then(res => res);
     }
 
@@ -14,10 +11,7 @@ export default class TagRequests {
         return postRequestWithFormData(paramsObject, 'tag/creation', {}).then(res => res);
     }
 
-    deleteTag = (tagId) => {
-        let paramsObject = {
-            tag: tagId
-        };
+    deleteTag = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'tag/delete', {}).then(res => res);
     }
 

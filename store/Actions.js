@@ -25,6 +25,7 @@ export default Actions = {
                     type: "SET_TAGS",
                     payload: payload,
                 }),
+                logout: () => dispatch({type: "LOGOUT"})
             }
         }
     )

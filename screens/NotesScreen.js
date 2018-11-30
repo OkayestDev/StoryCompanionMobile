@@ -13,6 +13,7 @@ import EditEntity from '../components/EditEntity.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import NoteRequests from '../utils/NoteRequests.js';
 import { Icon } from 'react-native-elements';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -24,7 +25,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class NotesScreen extends Component {
+class NotesScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Notes',
@@ -69,7 +70,8 @@ class NotesScreen extends Component {
     }
 
     getNotes = () => {
-        this.NoteRequests.getNotes(this.props.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.NoteRequests.getNotes(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedNoteId: null,
@@ -95,11 +97,7 @@ class NotesScreen extends Component {
     }
 
     createNote = () => {
-        let paramsObject = {
-            story: this.props.selectedStoryId,
-            name: this.state.name,
-            description: this.state.description,
-        };
+        let paramsObject = this.createParamsObject();
         this.NoteRequests.createNote(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -127,11 +125,7 @@ class NotesScreen extends Component {
     }
 
     editNote = () => {
-        let paramsObject = {
-            note: this.state.selectedNoteId,
-            name: this.state.name,
-            description: this.state.description,
-        };
+        let paramsObject = this.createParamsObject();        
         this.NoteRequest.editNote(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -161,7 +155,8 @@ class NotesScreen extends Component {
     }
 
     deleteNote = () => {
-        this.NoteRequests.deleteNote(this.state.selectedNoteId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.NoteRequests.deleteNote(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,

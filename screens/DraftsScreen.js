@@ -12,6 +12,7 @@ import Actions from '../store/Actions.js';
 import { Icon } from 'react-native-elements';
 import DraftRequests from '../utils/DraftRequests.js'
 import GlobalAlert from '../components/GlobalAlert.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -23,7 +24,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class DraftsScreen extends Component {
+class DraftsScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Characters',
@@ -96,7 +97,8 @@ class DraftsScreen extends Component {
 
     // Only allowing one draft per story at this time
     getDrafts = () => {
-        this.DraftRequests.getDrafts(this.props.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.DraftRequests.getDrafts(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -185,10 +187,7 @@ class DraftsScreen extends Component {
     // We only have one draft per story
     editDraft = () => {
         Keyboard.dismiss();
-        let paramsObject = {
-            draft: this.state.draft.id,
-            description: this.state.description,
-        };
+        let paramsObject = this.createParamsObject();        
         this.DraftRequests.editDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -217,7 +216,8 @@ class DraftsScreen extends Component {
     }
 
     deleteDraft = () => {
-        this.DraftRequests.editDraft(this.state.draft.id).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.DraftRequests.editDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,

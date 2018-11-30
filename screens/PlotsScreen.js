@@ -13,6 +13,7 @@ import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
 import { Icon } from 'react-native-elements';
 import PlotRequests from '../utils/PlotRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -24,7 +25,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class PlotsScreen extends Component {
+class PlotsScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Plots',
@@ -70,7 +71,8 @@ class PlotsScreen extends Component {
     }
 
     getPlots = () => {
-        this.PlotRequests.getPlots(this.props.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();        
+        this.PlotRequests.getPlots(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedPlotId: null,
@@ -93,12 +95,7 @@ class PlotsScreen extends Component {
     }
 
     createPlot = () => {
-        let paramsObject = {
-            name: this.state.name,
-            description: this.state.description,
-            plotParent: this.state.plotParent,
-            story: this.props.selectedStoryId,
-        };
+        let paramsObject = this.createParamsObject();        
         this.PlotRequests.createPlot(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -127,13 +124,7 @@ class PlotsScreen extends Component {
     }
 
     editPlot = () => {
-        let paramsObject = {
-            name: this.state.name,
-            description: this.state.description,
-            plotParent: this.state.plotParent,
-            story: this.props.selectedStoryId,
-            plot: this.state.selectedPlotId,
-        }
+        let paramsObject = this.createParamsObject();
         this.PlotRequests.editPlot(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -165,7 +156,8 @@ class PlotsScreen extends Component {
     }
 
     deletePlot = () => {
-        this.PlotRequests.deletePlot(this.state.selectedPlotId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.PlotRequests.deletePlot(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedPlotId: null,

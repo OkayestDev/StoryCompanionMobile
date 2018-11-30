@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
     StyleSheet,
     View,
@@ -7,6 +7,7 @@ import {
     ScrollView,
     Image,
 } from 'react-native';
+import StoryCompanion from '../utils/StoryCompanion.js';
 import { connect } from 'react-redux';
 import Actions from '../store/Actions.js';
 import GlobalAlert from '../components/GlobalAlert.js';
@@ -27,7 +28,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class StoriesScreen extends Component {
+class StoriesScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -54,7 +55,6 @@ class StoriesScreen extends Component {
             globalAlertMessage: '',
         }
         this.StoryRequests = new StoryRequests();
-        console.info(`Stories Props`, props);
     }
 
     resetStory = () => {
@@ -71,7 +71,8 @@ class StoriesScreen extends Component {
     }
 
     getStories = () => {
-        this.StoryRequests.getStories(this.props.userId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.StoryRequests.getStories(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -110,12 +111,8 @@ class StoriesScreen extends Component {
         if (image instanceof Object) {
             image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.props.userId);
         }
-        let paramsObject = {
-            name: this.state.name, 
-            description: this.state.description, 
-            user: this.props.userId,
-            image: image,
-        }
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.StoryRequests.createStory(paramsObject).then(res => {
             if ('error' in res) {
                 this.setState({
@@ -149,13 +146,8 @@ class StoriesScreen extends Component {
         if (image instanceof Object) {
             image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
         }
-        let paramsObject = {
-            story: this.state.selectedStoryId,
-            description: this.state.description, 
-            name: this.state.name,
-            user: this.props.userId,
-            image: image,
-        }
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'];
         this.StoryRequests.editStory(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -186,7 +178,8 @@ class StoriesScreen extends Component {
     }
 
     deleteStory = () => {
-        this.StoryRequests.deleteStory(this.state.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.StoryRequests.deleteStory(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,

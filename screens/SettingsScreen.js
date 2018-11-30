@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { 
     View, 
-    StyleSheet, 
-    AsyncStorage, 
+    StyleSheet,
     Text, 
     TouchableOpacity, 
     TextInput,
@@ -17,6 +16,7 @@ import FloatingButtons from '../components/FloatingButtons.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import SettingsRequests from '../utils/SettingsRequests.js';
 import UserRequests from '../utils/UserRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -30,7 +30,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class SettingsScreen extends Component {
+class SettingsScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -49,9 +49,8 @@ class SettingsScreen extends Component {
         this.state = {
             isConfirmationModalOpen: false,
             submittingBug: false,
-            bugDescription: '',
             submittingFeature: false,
-            featureDescription: '',
+            description: '',
             changingPassword: false,
 
             password: '',
@@ -93,11 +92,7 @@ class SettingsScreen extends Component {
             return;
         }
 
-        let paramsObject = {
-            password: this.state.password,
-            confirmPassword: this.state.confirmPassword,
-            user: this.props.userId,
-        }
+        let paramsObject = this.createParamsObject();
         this.UserRequests.changePassword(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -117,7 +112,7 @@ class SettingsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -127,10 +122,7 @@ class SettingsScreen extends Component {
     }
 
     bug = () => {
-        let paramsObject = {
-            user: this.props.userId,
-            description: this.state.bugDescription,
-        }
+        let paramsObject = this.createParamsObject();
         this.SettingsRequests.bug(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -149,7 +141,7 @@ class SettingsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -159,10 +151,7 @@ class SettingsScreen extends Component {
     }
 
     feature = () => {
-        let paramsObject = {
-            user: this.props.userId,
-            description: this.state.featureDescription,
-        }
+        let paramsObject = this.createParamsObject();
         this.SettingsRequests.feature(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -181,7 +170,7 @@ class SettingsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -191,9 +180,8 @@ class SettingsScreen extends Component {
     }
 
     logout = () => {
-        AsyncStorage.clear().then((res) => {
-            this.props.navigation.navigate("LoginTab");
-        });
+        this.props.logout();
+        this.props.navigation.navigate("LoginTab");
     }
 
     render() {
@@ -222,8 +210,8 @@ class SettingsScreen extends Component {
                             underlineColorAndroid='rgba(0,0,0,0)'
                             style={styles.submissionDescription}
                             multiline={true}
-                            value={this.state.bugDescription}
-                            onChangeText={(newDescription) => this.setState({bugDescription: newDescription})}
+                            value={this.state.description}
+                            onChangeText={(newDescription) => this.setState({description: newDescription})}
                         />
                     </View>
                 </View>
@@ -254,8 +242,8 @@ class SettingsScreen extends Component {
                             underlineColorAndroid='rgba(0,0,0,0)'
                             style={styles.submissionDescription}
                             multiline={true}
-                            value={this.state.featureDescription}
-                            onChangeText={(newDescription) => this.setState({featureDescription: newDescription})}
+                            value={this.state.description}
+                            onChangeText={(newDescription) => this.setState({description: newDescription})}
                         />
                     </View>
                 </View>

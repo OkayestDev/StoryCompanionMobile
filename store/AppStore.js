@@ -1,5 +1,15 @@
+import { AsyncStorage } from 'react-native';
 import { createStore } from 'redux';
+import { persistStore, persistReducer } from 'redux-persist';
 import { LOGS } from '../config/Logs.js';
+
+/**
+ * Changing key will cause the storage to be reset
+ */
+const PERSIST_CONFIG = {
+    key: '1.0.0',
+    storage: AsyncStorage,
+}
 
 const INITIAL_STATE = {
     apiKey: null,
@@ -14,12 +24,6 @@ const INITIAL_STATE = {
 }
 
 const reducer = (state = INITIAL_STATE, action) => {
-    if (LOGS.ENABLE_LOGS) {
-        console.info("Updating AppStore: ", {
-            state: state,
-            action: action,
-        });
-    }
     let newState = state;
     switch (action.type) {
         case "LOGIN":
@@ -48,9 +52,22 @@ const reducer = (state = INITIAL_STATE, action) => {
                 tags: action.payload
             };
             break;
+        case "LOGOUT":
+            newState = INITIAL_STATE;
+            break;
     }
-    // @TODO Set storage persist here?
+
+    if (LOGS.ENABLE_LOGS) {
+        console.info("Updating AppStore: ", {
+            state: newState,
+            action: action,
+        });
+    }
+
     return newState;
 }
 
-export default AppStore = createStore(reducer);
+const persistedReducer = persistReducer(PERSIST_CONFIG, reducer);
+
+export const AppStore = createStore(persistedReducer);
+export const Persistor = persistStore(AppStore);

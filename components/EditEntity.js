@@ -255,7 +255,6 @@ const styles = StyleSheet.create({
         height: 200,
         borderRadius: 4,
         borderWidth: 2,
-        borderColor: '#CCCCCC',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -263,7 +262,6 @@ const styles = StyleSheet.create({
     noImageSelectedText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     selectedImage: {
         width: 200,
@@ -284,7 +282,6 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         width: '49%',
         marginRight: '1%',
-        color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
     },

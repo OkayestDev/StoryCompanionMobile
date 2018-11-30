@@ -13,6 +13,7 @@ import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
 import CharacterRequests from '../utils/CharacterRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -24,7 +25,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-class CharactersScreen extends Component {
+class CharactersScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Characters',
@@ -71,7 +72,8 @@ class CharactersScreen extends Component {
     }
 
     getCharacters = () => {
-        this.CharacterRequests.getCharacters(this.props.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.CharacterRequests.getCharacters(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedCharacterId: null,
@@ -102,13 +104,8 @@ class CharactersScreen extends Component {
         if (image instanceof Object) {
             image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); //@TODO add await
         }
-        let paramsObject = {
-            story: this.props.selectedStoryId,
-            name: this.state.name,
-            image: image,
-            description: this.state.description,
-            attribute: this.state.attribute,
-        };
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.CharacterRequests.createCharacter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -142,13 +139,8 @@ class CharactersScreen extends Component {
         if (image instanceof Object) {
             image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); // @TODO add await
         }
-        let paramsObject = {
-            character: this.state.selectedCharacterId,
-            name: this.state.name,
-            description: this.state.description,
-            attribute: this.state.attribute,
-            image: image,
-        };
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.CharacterRequests.editCharacter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -180,7 +172,8 @@ class CharactersScreen extends Component {
     }
 
     deleteCharacter = () => {
-        this.CharacterRequests.deleteCharacter(this.state.selectedCharacterId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.CharacterRequests.deleteCharacter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,

@@ -3,10 +3,7 @@ import {
 } from './HelperFunctions.js';
 
 export default class NoteRequests {
-    getNotes = (storyId) => {
-        let paramsObject = {
-            story: storyId,
-        };
+    getNotes = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'note/view', {}).then(res => res);
     }
 
@@ -18,10 +15,7 @@ export default class NoteRequests {
         return postRequestWithFormData(paramsObject, 'note/edit', {}).then(res => res);
     }
 
-    deleteNote = (noteId) => {
-        let paramsObject = {
-            note: noteId
-        };
+    deleteNote = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'note/delete', {}).then(res => res);
     }
 }
