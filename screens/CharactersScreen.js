@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, 
     Text,
     StyleSheet, 
     TouchableOpacity, 
-    AsyncStorage, 
     ScrollView,
     Image,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { Icon } from 'react-native-elements';
 import FloatingAddButton from '../components/FloatingAddButton.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
 import CharacterRequests from '../utils/CharacterRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -23,7 +25,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class CharactersScreen extends Component {
+class CharactersScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Characters',
@@ -59,71 +61,56 @@ export default class CharactersScreen extends Component {
             image: '',
             characters: null,
             selectedCharacterId: null,
+            selectedTagId: null,
 
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
         };
         this.CharacterRequests = new CharacterRequests();
-        //@PROD
-        this.selectedStoryId = null;
-        this.getCharacters();
-        // @DEV
-        // this.selectedStoryId = 1;
-        // this.getCharacters(1);
+        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
     }
 
-    getCharacters = (story = null) => {
-        if (story !== null) {
-            this.CharacterRequests.getCharacters(story).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedCharacterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                }
-                else {
-                    this.setState({
-                        selectedCharacterId: null,
-                        characters: res.success
-                    });
-                }
-            })
-            .catch((error) => {
+    componentDidMount() {
+        this.getCharacters();
+        this.getTags();
+    }
+
+    getCharacters = () => {
+        let paramsObject = this.createParamsObject();
+        this.CharacterRequests.getCharacters(paramsObject).then((res) => {
+            if ('error' in res) {
                 this.setState({
+                    selectedCharacterId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get response from server",
+                    globalAlertMessage: res.error,
                 });
+            }
+            else {
+                this.setState({
+                    selectedCharacterId: null,
+                    characters: res.success
+                });
+            }
+        })
+        .catch(() => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
             });
-        }
-        else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                this.selectedStoryId = parseInt(res[0][1]);
-                this.props.navigation.setParams({title: res[1][1]})
-                this.getCharacters(res[0][1]);
-            });
-        }
+        });
     }
 
     createCharacter = async () => {
         let image = this.state.image;
         // check if new image has been uploaded
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.selectedStoryId); //@TODO add await
+            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); //@TODO add await
         }
-        let paramsObject = {
-            story: this.selectedStoryId,
-            name: this.state.name,
-            image: image,
-            description: this.state.description,
-            attribute: this.state.attribute,
-        };
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.CharacterRequests.createCharacter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -143,7 +130,7 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -155,15 +142,10 @@ export default class CharactersScreen extends Component {
     editCharacter = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.selectedStoryId); // @TODO add await
+            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); // @TODO add await
         }
-        let paramsObject = {
-            character: this.state.selectedCharacterId,
-            name: this.state.name,
-            description: this.state.description,
-            attribute: this.state.attribute,
-            image: image,
-        };
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.CharacterRequests.editCharacter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -185,7 +167,7 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -195,7 +177,8 @@ export default class CharactersScreen extends Component {
     }
 
     deleteCharacter = () => {
-        this.CharacterRequests.deleteCharacter(this.state.selectedCharacterId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.CharacterRequests.deleteCharacter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -216,7 +199,7 @@ export default class CharactersScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -232,6 +215,7 @@ export default class CharactersScreen extends Component {
             description: this.state.characters[id].description,
             attribute: this.state.characters[id].attribute,
             image: this.state.characters[id].image,
+            selectedTagId: this.state.characters[id].tag,
         })
     }
 
@@ -242,6 +226,7 @@ export default class CharactersScreen extends Component {
             description: '',
             attribute: '',
             image: '',
+            selectedTagId: '',
         });
     }
 
@@ -332,6 +317,17 @@ export default class CharactersScreen extends Component {
                         inputOneName="Character Name"
                         inputOneOnChange={(newValue) => this.setState({name: newValue})}
 
+                        modalPicker="Tag"
+                        modalPickerSelectedValue={
+                            this.state.selectedTagId in this.props.tags
+                            ?
+                            this.props.tags[this.state.selectedTagId].name
+                            :
+                            ''
+                        }
+                        modalPickerList={this.filterTagsByType('Character')}
+                        modalPickerOnChange={(newTag) => this.setState({selectedTagId: newTag})}
+
                         inputThree={this.state.description}
                         inputThreeName="Description"
                         inputThreeOnChange={(newValue) => this.setState({description: newValue})}
@@ -349,6 +345,8 @@ export default class CharactersScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(CharactersScreen);
 
 const styles = StyleSheet.create({
     container: {

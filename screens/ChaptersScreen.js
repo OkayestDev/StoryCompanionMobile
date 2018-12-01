@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { 
     View, 
     Text, 
     StyleSheet, 
     TouchableOpacity, 
-    AsyncStorage, 
     ScrollView,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import FloatingAddButton from '../components/FloatingAddButton.js'
 import ChapterRequests from '../utils/ChapterRequests.js';
 import EditEntity from '../components/EditEntity.js';
 import { Icon } from 'react-native-elements';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -23,7 +25,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class ChaptersScreen extends Component {
+class ChaptersScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Chapters',
@@ -63,8 +65,8 @@ export default class ChaptersScreen extends Component {
             globalAlertType: '',
             globalAlertMessage: '',
         }
-        this.selectedStoryId = null;
         this.ChapterRequests = new ChapterRequests();
+        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
     }
 
     componentDidMount() {
@@ -82,40 +84,29 @@ export default class ChaptersScreen extends Component {
         return chapterIds;
     }
 
-    getChapters = (story = null) => {
-        if (story !== null) {
-            this.ChapterRequests.getChapters(story).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedChapterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                }
-                else {
-                    this.setState({chapters: res.success})
-                }
-            })
-            .catch((error) => {
+    getChapters = () => {
+        let paramsObject = this.createParamsObject();        
+        this.ChapterRequests.getChapters(paramsObject).then((res) => {
+            if ('error' in res) {
                 this.setState({
                     selectedChapterId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get Chapters at this time.",
-                })
+                    globalAlertMessage: res.error,
+                });
+            }
+            else {
+                this.setState({chapters: res.success})
+            }
+        })
+        .catch(() => {
+            this.setState({
+                selectedChapterId: null,
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get Chapters at this time.",
             })
-        }
-        else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                this.selectedStoryId = parseInt(res[0][1]);
-                this.props.navigation.setParams({title: res[1][1]});
-                this.getChapters(this.selectedStoryId);
-            })
-        }
+        })
     }
     
     cancelChapterEdit = () => {
@@ -138,7 +129,8 @@ export default class ChaptersScreen extends Component {
 
     // @TODO check all inputs are filled out
     createChapter = () => {
-        this.ChapterRequests.createChapter(this.state.name, this.state.number, this.state.description, this.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.ChapterRequests.createChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedChapterId: null,
@@ -157,7 +149,7 @@ export default class ChaptersScreen extends Component {
                 })
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 selectedChapterId: null,
                 globalAlertVisible: true,
@@ -168,12 +160,7 @@ export default class ChaptersScreen extends Component {
     }
 
     editChapter = () => {
-        let paramsObject = {
-            chapter: this.state.selectedChapterId,
-            name: this.state.name,
-            number: this.state.number,
-            description: this.state.description,
-        }
+        let paramsObject = this.createParamsObject();        
         this.ChapterRequests.editChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -197,7 +184,8 @@ export default class ChaptersScreen extends Component {
     }
 
     deleteChapter = () => {
-        this.ChapterRequests.deleteChapter(this.state.selectedChapterId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.ChapterRequests.deleteChapter(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     selectedChapterId: null,
@@ -316,6 +304,8 @@ export default class ChaptersScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(ChaptersScreen);
 
 const styles = StyleSheet.create({
     container: {

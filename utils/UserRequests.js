@@ -3,26 +3,15 @@ import {
 } from './HelperFunctions.js';
 
 export default class UserRequests {
-    login = (email, password) => {
-        let paramsObject = {
-            email: email,
-            password: password
-        };
+    login = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'user/login', {}).then(res => res);
     }
 
-    createAccount = (email, password) => {
-        let paramsObject = {
-            email: email,
-            password: password
-        };
+    createAccount = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'user/creation', {}).then(res => res);
     }
 
-    passwordReset = (email) => {
-        let paramsObject = {
-            email: email
-        };
+    passwordReset = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'user/password_reset', {}).then(res => res);
     }
 

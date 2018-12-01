@@ -12,7 +12,7 @@ import {
 export default class ModalPicker extends Component {
     renderModalList = () => {
         let listKeys = this.props.list;
-        if (this.props.list instanceof Object) {
+        if (!(this.props.list instanceof Array)) {
             listKeys = Object.keys(this.props.list);
         }
         let renderList = [];
@@ -23,14 +23,26 @@ export default class ModalPicker extends Component {
             renderList.push(
                 <TouchableOpacity
                     key={id}
-                    style={[styles.listItem, id == this.props.selectedValue ? styles.selectedListItem : {}]}
+                    style={[
+                        styles.listItem, 
+                        id == this.props.selectedValue ? styles.selectedListItem : {},
+                    ]}
                     onPress={() => {
                         this.props.onChange(id);
                         this.props.closeModalPicker();
                     }}
                 >
-                    <Text>
-                        {this.props.list[id].name}
+                    <Text 
+                        style={styles.listItemText}
+                        numberOfLines={1}
+                    >
+                    {
+                        !(this.props.list instanceof Array)
+                        ?
+                        this.props.list[id].name
+                        :
+                        id
+                    }
                     </Text>
                 </TouchableOpacity>
             )
@@ -41,9 +53,11 @@ export default class ModalPicker extends Component {
     render () {
         return (
             <Modal
+                animationType="fade"
                 visible={this.props.isModalPickerOpen}
                 onRequestClose={() => this.props.closeModalPicker()}
                 transparent={true}
+                style={styles.background}
             >
                 <View style={styles.modalContent}>
                     <ScrollView
@@ -62,11 +76,16 @@ export default class ModalPicker extends Component {
                     </TouchableOpacity>
                 </View>
             </Modal>
-        );
+        )
     }
 }
 
 const styles = StyleSheet.create({
+    background: {
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('window').width,
+        backgroundColor: 'rgba(255, 255, 255, .5)',
+    },
     modalContent: {
         position: 'absolute',
         top: "10%",
@@ -113,7 +132,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     listItemText: {
-        color: '#CCCCCC',
+        fontWeight: 'bold',
         fontSize: 24,
-    }
+    },
 })

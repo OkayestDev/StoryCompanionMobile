@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { 
     View, 
     Text, 
     StyleSheet, 
     TouchableOpacity, 
     TextInput, 
-    AsyncStorage,
     Keyboard
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { Icon } from 'react-native-elements';
 import DraftRequests from '../utils/DraftRequests.js'
 import GlobalAlert from '../components/GlobalAlert.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',
@@ -22,7 +24,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class DraftsScreen extends Component {
+class DraftsScreen extends StoryCompanion {
     static navigationOptions = ({navigation}) => {
         return {
             title: 'Characters',
@@ -89,55 +91,41 @@ export default class DraftsScreen extends Component {
             globalAlertMessage: '',
         }
         this.DraftRequests = new DraftRequests();
-        // @PROD
-        this.selectedStoryId = null;
-        // @DEV
-        // this.selectedStoryId = 1;
+        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
         this.getDrafts();
     }
 
     // Only allowing one draft per story at this time
-    getDrafts = (story = null) => {
-        if (story !== null) {
-            this.DraftRequests.getDrafts(story).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
-                }
-                else {
-                    this.setState({
-                        draft: res.success,
-                        description: res.success.description
-                    });
-                    if ('id' in res.success) {
-                        this.props.navigation.setParams({
-                            onDraftSave: () => this.editDraft(),
-                            onDraftExport: () => this.exportDraft(),
-                        })
-                    }
-                }
-            })
-            .catch((error) => {
+    getDrafts = () => {
+        let paramsObject = this.createParamsObject();
+        this.DraftRequests.getDrafts(paramsObject).then((res) => {
+            if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get response from server",
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
                 });
-            })
-        }
-        else {
-            AsyncStorage.multiGet(['selectedStoryId', 'selectedStoryName']).then((res) => {
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
+            }
+            else {
+                this.setState({
+                    draft: res.success,
+                    description: res.success.description
+                });
+                if ('id' in res.success) {
+                    this.props.navigation.setParams({
+                        onDraftSave: () => this.editDraft(),
+                        onDraftExport: () => this.exportDraft(),
+                    })
                 }
-                this.selectedStoryId = parseInt(res[0][1]);
-                this.props.navigation.setParams({title: res[1][1]});
-                this.getDrafts(res[0][1]);
+            }
+        })
+        .catch(() => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
             });
-        }
+        })
     }
 
     exportDraft = () => {
@@ -168,7 +156,7 @@ export default class DraftsScreen extends Component {
 
     createDraft = () => {
         let paramsObject = {
-            story: this.selectedStoryId,
+            story: this.props.selectedStoryId,
             description: ''
         }
         this.DraftRequests.createDraft(paramsObject).then((res) => {
@@ -187,7 +175,7 @@ export default class DraftsScreen extends Component {
                 })
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: false,
                 globalAlertType: 'danger',
@@ -199,10 +187,7 @@ export default class DraftsScreen extends Component {
     // We only have one draft per story
     editDraft = () => {
         Keyboard.dismiss();
-        let paramsObject = {
-            draft: this.state.draft.id,
-            description: this.state.description,
-        };
+        let paramsObject = this.createParamsObject();        
         this.DraftRequests.editDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -221,7 +206,7 @@ export default class DraftsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: false,
                 globalAlertType: 'danger',
@@ -231,7 +216,8 @@ export default class DraftsScreen extends Component {
     }
 
     deleteDraft = () => {
-        this.DraftRequests.editDraft(this.state.draft.id).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.DraftRequests.editDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -244,7 +230,7 @@ export default class DraftsScreen extends Component {
                 this.setState({draft: []});
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -315,6 +301,8 @@ export default class DraftsScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(DraftsScreen);
 
 const styles = StyleSheet.create({
     container: {

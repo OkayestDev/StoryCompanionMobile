@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { 
     View, 
     Text,
@@ -7,8 +7,10 @@ import {
     Dimensions, 
     TextInput, 
     KeyboardAvoidingView, 
-    AsyncStorage,
 } from 'react-native';
+import StoryCompanion from '../utils/StoryCompanion.js';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import UserRequests from '../utils/UserRequests.js';
@@ -25,7 +27,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class LoginScreen extends Component {
+class LoginScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Login',
         headerTitle: (
@@ -56,15 +58,14 @@ export default class LoginScreen extends Component {
     }
 
     checkIfUserIsAlreadyLoggedIn = () => {
-        AsyncStorage.multiGet(['email', 'id', 'apiKey']).then((res) => {
-            if (res[0][1] !== null && res[1][1] !== null && res[2][1] !== null) {
-                this.props.navigation.navigate("StoriesTab");
-            }
-        });
+        if (this.props.userId !== null && this.props.apiKey !== null) {
+            this.props.navigation.navigate("StoriesTab");
+        }
     }
 
     login = () => {
-        this.UserRequests.login(this.state.email, this.state.password).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.UserRequests.login(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -73,15 +74,11 @@ export default class LoginScreen extends Component {
                 });
             }
             else {
-                AsyncStorage.multiSet([['email', String(res.success.email)], ['id', String(res.success.id)], ['apiKey', String(res.success.apiKey)]]).then((res) => {
-                    this.props.navigation.navigate("StoriesTab");
-                })
-                .catch((error) => {
-                    console.info(error);
-                });
+                this.props.login(res.success);
+                this.props.navigation.navigate("StoriesTab");
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -158,6 +155,8 @@ export default class LoginScreen extends Component {
     }
 }
 
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(LoginScreen);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -166,7 +165,6 @@ const styles = StyleSheet.create({
     welcomeBack: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: '#CCCCCC',
         marginBottom: 20,
     },
     loginView: {
@@ -185,7 +183,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     loginInputLabel: {
-        color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
         width: .3 * screenX,

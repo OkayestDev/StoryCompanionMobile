@@ -5,6 +5,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import StoriesScreen from '../screens/StoriesScreen.js';
 import SettingsScreen from '../screens/SettingsScreen.js';
+import TagsScreen from '../screens/TagsScreen.js';
 
 const StoriesScreenStack = createStackNavigator({
     Stories: StoriesScreen,
@@ -19,6 +20,24 @@ StoriesScreenStack.navigationOptions = {
                 Platform.OS === 'ios'
                     ? `ios-book${focused ? '' : '-outline'}`
                     : 'md-book'
+            }
+        />
+    ),
+};
+
+const TagsScreenStack = createStackNavigator({
+    Tags: TagsScreen
+});
+
+TagsScreenStack.navigationOptions = {
+    tabBarLabel: 'Tags',
+    tabBarIcon: ({ focused }) => (
+        <TabBarIcon
+            focused={focused}
+            name={
+                Platform.OS === 'ios'
+                    ? `ios-bookmark${focused ? '' : '-outline'}`
+                    : 'md-bookmark'
             }
         />
     ),
@@ -43,5 +62,6 @@ SettingsStack.navigationOptions = {
 
 export default createBottomTabNavigator({
     StoriesScreenStack,
+    TagsScreenStack,
     SettingsStack,
 });

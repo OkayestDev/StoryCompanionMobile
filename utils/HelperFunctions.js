@@ -54,16 +54,13 @@ export function postRequestWithFormData(requestData, route, paramsObject) {
         }
     }
 
-    return AsyncStorage.getItem('apiKey').then((res) => {
-        formData.append('apiKey', res);
-        let params = {
-            method: 'POST',
-            credentials: 'include',
-            body: formData,
-        };
-        
-        return baseRequest(paramsObject, route, params);
-    });
+    let params = {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+    };
+    
+    return baseRequest(paramsObject, route, params);
 }
 
 export function getData(paramsObject, route) {

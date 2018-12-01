@@ -5,9 +5,11 @@ import {
     Text,
     TouchableOpacity,
     ScrollView,
-    AsyncStorage,
     Image,
 } from 'react-native';
+import StoryCompanion from '../utils/StoryCompanion.js';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import EditEntity from '../components/EditEntity.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
@@ -26,7 +28,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class StoriesScreen extends React.Component {
+class StoriesScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -46,7 +48,7 @@ export default class StoriesScreen extends React.Component {
             name: '',
             description: '',
             image: '',
-            stories: null,
+            selectedTagId: null,
             selectedStoryId: null,
 
             globalAlertVisible: false,
@@ -54,10 +56,6 @@ export default class StoriesScreen extends React.Component {
             globalAlertMessage: '',
         }
         this.StoryRequests = new StoryRequests();
-        // @PROD
-        // this.userId = null;
-        // @DEV
-        this.userId = 1;
     }
 
     resetStory = () => {
@@ -65,48 +63,37 @@ export default class StoriesScreen extends React.Component {
             name: '',
             description: '',
             image: '',
+            selectedTagId: '',
             selectedStoryId: null,
         };
     }
 
     componentDidMount() {
         this.getStories();
+        this.getTags();
     }
 
-    getStories = (user = null) => {
-        if (user !== null) {
-            this.StoryRequests.getStories(user).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    })
-                }
-                else {
-                    this.setState({stories: res.success});
-                }
-            })
-            .catch((error) => {
+    getStories = () => {
+        let paramsObject = this.createParamsObject();
+        this.StoryRequests.getStories(paramsObject).then((res) => {
+            if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to get response from server",
-                });
+                    globalAlertType: 'warning',
+                    globalAlertMessage: res.error,
+                })
+            }
+            else {
+                this.props.setStories(res.success);
+            }
+        })
+        .catch(() => {
+            this.setState({
+                globalAlertVisible: true,
+                globalAlertType: 'danger',
+                globalAlertMessage: "Unable to get response from server",
             });
-        }
-        else {
-            AsyncStorage.getItem('id').then((res) => {
-                // Unable to load story - log user out
-                if (!res) {
-                    this.props.navigation.navigate("LoginTab");
-                }
-                if (res !== null) {
-                    this.userId = res;
-                    this.getStories(res);
-                }
-            });
-        }
+        });
     }
 
     cancelStoryEdit = () => {
@@ -116,23 +103,20 @@ export default class StoriesScreen extends React.Component {
     selectStory = (id) => {
         this.setState({
             selectedStoryId: id,
-            name: this.state.stories[id].name,
-            description: this.state.stories[id].description,
-            image: this.state.stories[id].image,
+            name: this.props.stories[id].name,
+            description: this.props.stories[id].description,
+            image: this.props.stories[id].image,
+            selectedTagId: this.props.stories[id].tag,
         });
     }
 
     createStory = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.userId);
+            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.props.userId);
         }
-        let paramsObject = {
-            name: this.state.name, 
-            description: this.state.description, 
-            user: this.userId,
-            image: image,
-        }
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.StoryRequests.createStory(paramsObject).then(res => {
             if ('error' in res) {
                 this.setState({
@@ -142,17 +126,11 @@ export default class StoriesScreen extends React.Component {
                 });
             }
             else {
-                this.setState({
-                    isCreateStoreModalOpen: false,
-                    name: '',
-                    stories: res.success,
-                    description: '',
-                    image: '',
-                    selectedStoryId: null,
-                });
+                this.setState(this.resetStory());
+                this.props.setStories(res.success);
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -166,13 +144,8 @@ export default class StoriesScreen extends React.Component {
         if (image instanceof Object) {
             image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
         }
-        let paramsObject = {
-            story: this.state.selectedStoryId,
-            description: this.state.description, 
-            name: this.state.name,
-            user: this.userId,
-            image: image,
-        }
+        let paramsObject = this.createParamsObject();
+        paramsObject['image'] = image;
         this.StoryRequests.editStory(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -182,18 +155,13 @@ export default class StoriesScreen extends React.Component {
                 });
             }
             else {
-                let tempStories = this.state.stories;
+                let tempStories = this.props.stories;
                 tempStories[this.state.selectedStoryId] = res.success;
-                this.setState({
-                    name: '',
-                    description: '',
-                    image: '',
-                    stories: tempStories,
-                    selectedStoryId: null,
-                });
+                this.setState(this.resetStory());
+                this.props.setStories(tempStories);
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -202,9 +170,9 @@ export default class StoriesScreen extends React.Component {
         })
     }
 
-    // @TODO some form of confirmation!!
     deleteStory = () => {
-        this.StoryRequests.deleteStory(this.state.selectedStoryId).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.StoryRequests.deleteStory(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -213,18 +181,13 @@ export default class StoriesScreen extends React.Component {
                 });
             }
             else {
-                let tempStories = this.state.stories;
+                let tempStories = this.props.stories;
                 delete tempStories[this.state.selectedStoryId];
-                this.setState({
-                    stories: tempStories,
-                    name: '',
-                    description: '',
-                    selectedStoryId: null,
-                    image: '',
-                })
+                this.setState(this.resetStory());
+                this.props.setStories(tempStories);
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -233,19 +196,17 @@ export default class StoriesScreen extends React.Component {
         })
     }
 
-    selectStoryToEdit = (storyId) => {
-        AsyncStorage.multiSet([['selectedStoryId', String(storyId)],['selectedStoryName', String(this.state.stories[storyId].name)]]).then((res) => {
-            this.props.navigation.navigate("StoryTab");
-        });
+    selectStoryToEditComponents = (storyId) => {
+        this.props.editStoryComponents(storyId);
+        this.props.navigation.navigate("StoryTab");
     }
 
     renderStories = () => {
-        // @TODO add loading screen
-        if (this.state.stories === null) {
+        if (this.props.stories === null) {
             return null;
         }
         let stories = [];
-        let ids = Object.keys(this.state.stories);
+        let ids = Object.keys(this.props.stories);
         if (ids.length > 0) {
             ids.forEach((id) => {
                 stories.push(
@@ -258,10 +219,10 @@ export default class StoriesScreen extends React.Component {
                             <View style={styles.storyPictureAndName}>
                                 <View styles={styles.storyPictureContainer}>
                                 {
-                                    this.state.stories[id].image !== ''
+                                    this.props.stories[id].image !== ''
                                     ?
                                     <Image
-                                        source={{uri: this.state.stories[id].image}}
+                                        source={{uri: this.props.stories[id].image}}
                                         style={styles.storyPicture}
                                     />
                                     :
@@ -272,11 +233,11 @@ export default class StoriesScreen extends React.Component {
                                 </View>
                                 <View style={styles.storyNameAndDescription}>
                                     <Text numberOfLines={1} style={styles.storyName}>
-                                        {this.state.stories[id].name}
+                                        {this.props.stories[id].name}
                                     </Text>
                                     <TouchableOpacity
                                         style={styles.editStoryPropsButton}
-                                        onPress={() => {this.selectStoryToEdit(id)}}
+                                        onPress={() => {this.selectStoryToEditComponents(id)}}
                                     >
                                         <Text style={styles.editStoryPropsButtonText}>
                                             Edit Components
@@ -343,6 +304,17 @@ export default class StoriesScreen extends React.Component {
                         inputOneName="Story Name"
                         inputOneOnChange={(newValue) => this.setState({name: newValue})}
 
+                        modalPicker="Tag"
+                        modalPickerSelectedValue={
+                            this.state.selectedTagId in this.props.tags
+                            ?
+                            this.props.tags[this.state.selectedTagId].name
+                            :
+                            ''
+                        }
+                        modalPickerList={this.filterTagsByType('Story')}
+                        modalPickerOnChange={(newTag) => this.setState({selectedTagId: newTag})}
+
                         inputThree={this.state.description}
                         inputThreeName="Summary"
                         inputThreeOnChange={(newValue) => this.setState({description: newValue})}
@@ -357,6 +329,8 @@ export default class StoriesScreen extends React.Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(StoriesScreen);
 
 const styles = StyleSheet.create({
     container: {

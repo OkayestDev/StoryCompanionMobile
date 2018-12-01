@@ -1,20 +1,22 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { 
     View, 
-    StyleSheet, 
-    AsyncStorage, 
+    StyleSheet,
     Text, 
     TouchableOpacity, 
     TextInput,
     Dimensions,
     KeyboardAvoidingView,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import FloatingButtons from '../components/FloatingButtons.js';
 import ConfirmationModal from '../components/ConfirmationModal.js';
 import SettingsRequests from '../utils/SettingsRequests.js';
 import UserRequests from '../utils/UserRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -28,7 +30,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class SettingsScreen extends Component {
+class SettingsScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
@@ -47,9 +49,8 @@ export default class SettingsScreen extends Component {
         this.state = {
             isConfirmationModalOpen: false,
             submittingBug: false,
-            bugDescription: '',
             submittingFeature: false,
-            featureDescription: '',
+            description: '',
             changingPassword: false,
 
             password: '',
@@ -61,19 +62,6 @@ export default class SettingsScreen extends Component {
         }
         this.SettingsRequests = new SettingsRequests();
         this.UserRequests = new UserRequests();
-        this.userId = null;
-        this.getUserId();
-    }
-
-    getUserId = () => {
-        AsyncStorage.getItem('id').then((res) => {
-            if (!res) {
-                this.props.navigation.navigate("LoginTab");
-            }
-            if (res !== null) {
-                this.userId = res;
-            }
-        })
     }
 
     changePassword = () => {
@@ -104,11 +92,7 @@ export default class SettingsScreen extends Component {
             return;
         }
 
-        let paramsObject = {
-            password: this.state.password,
-            confirmPassword: this.state.confirmPassword,
-            user: this.userId,
-        }
+        let paramsObject = this.createParamsObject();
         this.UserRequests.changePassword(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -128,7 +112,7 @@ export default class SettingsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -138,10 +122,7 @@ export default class SettingsScreen extends Component {
     }
 
     bug = () => {
-        let paramsObject = {
-            user: this.userId,
-            description: this.state.bugDescription,
-        }
+        let paramsObject = this.createParamsObject();
         this.SettingsRequests.bug(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -160,7 +141,7 @@ export default class SettingsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -170,10 +151,7 @@ export default class SettingsScreen extends Component {
     }
 
     feature = () => {
-        let paramsObject = {
-            user: this.userId,
-            description: this.state.featureDescription,
-        }
+        let paramsObject = this.createParamsObject();
         this.SettingsRequests.feature(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -192,7 +170,7 @@ export default class SettingsScreen extends Component {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -202,9 +180,8 @@ export default class SettingsScreen extends Component {
     }
 
     logout = () => {
-        AsyncStorage.clear().then((res) => {
-            this.props.navigation.navigate("LoginTab");
-        });
+        this.props.logout();
+        this.props.navigation.navigate("LoginTab");
     }
 
     render() {
@@ -233,8 +210,8 @@ export default class SettingsScreen extends Component {
                             underlineColorAndroid='rgba(0,0,0,0)'
                             style={styles.submissionDescription}
                             multiline={true}
-                            value={this.state.bugDescription}
-                            onChangeText={(newDescription) => this.setState({bugDescription: newDescription})}
+                            value={this.state.description}
+                            onChangeText={(newDescription) => this.setState({description: newDescription})}
                         />
                     </View>
                 </View>
@@ -265,8 +242,8 @@ export default class SettingsScreen extends Component {
                             underlineColorAndroid='rgba(0,0,0,0)'
                             style={styles.submissionDescription}
                             multiline={true}
-                            value={this.state.featureDescription}
-                            onChangeText={(newDescription) => this.setState({featureDescription: newDescription})}
+                            value={this.state.description}
+                            onChangeText={(newDescription) => this.setState({description: newDescription})}
                         />
                     </View>
                 </View>
@@ -343,7 +320,10 @@ export default class SettingsScreen extends Component {
         }
         else {
             return (
-                <View style={styles.container}>
+                <View style={[
+                    styles.container,
+                    this.state.isConfirmationModalOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
+                ]}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
@@ -395,6 +375,8 @@ export default class SettingsScreen extends Component {
         }
     }
 }
+
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
     container: {

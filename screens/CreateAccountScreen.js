@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { 
     View, 
     Text,
@@ -7,10 +7,13 @@ import {
     Dimensions, 
     TextInput, 
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import { PATTERNS } from '../config/Patterns.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import UserRequests from '../utils/UserRequests.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -28,8 +31,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-// @TODO check if email is of correct pattern
-export default class CreateAccountScreen extends Component {
+class CreateAccountScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Create Account',
         headerTitle: (
@@ -102,7 +104,8 @@ export default class CreateAccountScreen extends Component {
 
     createAccount = () => {
         if (this.doEmailsMatch() && this.doPasswordsMatch() && this.isEmailValid(this.state.email) && this.isPasswordValid(this.state.password)) {
-            this.UserRequests.createAccount(this.state.email, this.state.password).then(res => {
+            let paramsObject = this.createParamsObject();
+            this.UserRequests.createAccount(paramsObject).then(res => {
                 if ('error' in res) {
                     this.setState({
                         globalAlertVisible: true,
@@ -251,6 +254,8 @@ export default class CreateAccountScreen extends Component {
     }
 }
 
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(CreateAccountScreen);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -259,7 +264,6 @@ const styles = StyleSheet.create({
     welcome: {
         fontWeight: 'bold',
         fontSize: 36,
-        color: '#CCCCCC',
         marginBottom: 20,
     },
     createAccountView: {
@@ -278,7 +282,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     createAccountInputLabel: {
-        color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
         width: .3 * screenX,

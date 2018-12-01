@@ -1,2 +1,0 @@
-Loading Screens
-Password reset endpoint

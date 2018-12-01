@@ -4,10 +4,7 @@ import {
 import Utilities from './Utilities.js';
 
 export default class StoryRequests extends Utilities {
-    getStories = (userId) => {
-        let paramsObject = {
-            user: userId
-        };
+    getStories = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'story/view', {}).then(res => res);
     }
 
@@ -19,10 +16,7 @@ export default class StoryRequests extends Utilities {
         return postRequestWithFormData(paramsObject, 'story/edit', {}).then(res => res);
     }
 
-    deleteStory = (storyId) => {
-        let paramsObject = {
-            story: storyId
-        };
+    deleteStory = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'story/delete', {}).then(res => res);
     }
 }

@@ -111,7 +111,12 @@ export default class EditEntity extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View 
+                style={[
+                    styles.container,
+                    this.state.isModalPickerOpen || this.state.isConfirmationModalOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
+                ]}
+            >
                 {
                     this.props.selectedEntityId !== 'new' &&
                     <ConfirmationModal
@@ -127,7 +132,7 @@ export default class EditEntity extends Component {
                     />
                 }
                 {
-                    'modalPicker' in this.props &&
+                    'modalPickerList' in this.props &&
                     <ModalPicker
                         isModalPickerOpen={this.state.isModalPickerOpen}
                         closeModalPicker={() => this.setState({isModalPickerOpen: false})}
@@ -178,7 +183,7 @@ export default class EditEntity extends Component {
                                 </View>
                             }
                             {
-                                'modalPicker' in this.props &&
+                                'modalPickerList' in this.props &&
                                 <View style={styles.entityInputAndLabel}>
                                     <Text style={styles.entityInputLabel}>
                                         {this.props.modalPicker}
@@ -188,7 +193,7 @@ export default class EditEntity extends Component {
                                         onPress={() => this.setState({isModalPickerOpen: true})}
                                     >
                                         <Text style={styles.modalPickerButtonText}>
-                                            {this.props.modalPickerDisplayValue}
+                                            {this.props.modalPickerSelectedValue}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -258,7 +263,6 @@ const styles = StyleSheet.create({
     noImageSelectedText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#CCCCCC',
     },
     selectedImage: {
         width: 200,
@@ -279,7 +283,6 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         width: '49%',
         marginRight: '1%',
-        color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
     },

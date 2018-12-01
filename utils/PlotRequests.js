@@ -1,41 +1,21 @@
 import { 
     postRequestWithFormData,
-    getData,
-    createQueryString,
 } from './HelperFunctions.js';
 
 export default class PlotRequests {
-    getPlots = (storyId) => {
-        let paramsObject = {
-            story: storyId
-        };
+    getPlots = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/view', {}).then(res => res);
     }
 
-    createPlot = (name, description, plotParent, story) => {
-        let paramsObject = {
-            name: name,
-            description: description,
-            plotParent: plotParent,
-            story: story,
-        };
+    createPlot = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/creation', {}).then(res => res);
     }
 
-    editPlot = (plot, name, description, plotParent) => {
-        let paramsObject = {
-            plot: plot,
-            name: name,
-            description: description,
-            plotParent: plotParent,
-        };
+    editPlot = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/edit', {}).then(res => res);
     }
 
-    deletePlot = (plot) => {
-        let paramsObject = {
-            plot: plot
-        };
+    deletePlot = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/delete', {}).then(res => res);
     }
 }

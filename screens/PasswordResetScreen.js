@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { 
     View, 
     Text, 
@@ -8,10 +8,13 @@ import {
     KeyboardAvoidingView,
     Dimensions,
 } from 'react-native';
+import { connect } from 'react-redux';
+import Actions from '../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../components/GlobalAlert.js';
 import UserRequests from '../utils/UserRequests.js';
 import { PATTERNS } from '../config/Patterns.js';
+import StoryCompanion from '../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -25,7 +28,7 @@ const headerTitle = {
     paddingLeft: 20,
 }
 
-export default class PasswordResetScreen extends Component {
+class PasswordResetScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Password Reset',
         headerTitle: (
@@ -59,8 +62,8 @@ export default class PasswordResetScreen extends Component {
             });
             return;
         }
-
-        this.UserRequests.passwordReset(this.state.email).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.UserRequests.passwordReset(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -78,7 +81,7 @@ export default class PasswordResetScreen extends Component {
                 setTimeout(() => this.props.navigation.navigate("Login"), 3000);
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -141,6 +144,8 @@ export default class PasswordResetScreen extends Component {
     }
 }
 
+export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(PasswordResetScreen);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -149,7 +154,6 @@ const styles = StyleSheet.create({
     forgotPassword: {
         fontWeight: 'bold',
         fontSize: 28,
-        color: '#CCCCCC',
         marginBottom: 20,
     },
     resetPasswordView: {
@@ -168,7 +172,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     resetPasswordInputLabel: {
-        color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
         width: .3 * screenX,

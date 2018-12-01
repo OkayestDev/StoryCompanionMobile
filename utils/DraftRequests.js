@@ -3,10 +3,7 @@ import {
 } from './HelperFunctions.js';
 
 export default class DraftRequests {
-    getDrafts = (story) => {
-        let paramsObject = {
-            story: story
-        };
+    getDrafts = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'draft/view', {}).then(res => res);
     }
 
@@ -18,17 +15,11 @@ export default class DraftRequests {
         return postRequestWithFormData(paramsObject, 'draft/edit', {}).then(res => res);
     }
 
-    deleteDraft = (draft) => {
-        let paramsObject = {
-            draft: draft
-        };
+    deleteDraft = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'draft/delete', {}).then(res => res);
     }
 
-    exportDraft = (draft) => {
-        let paramsObject = {
-            draft: draft
-        };
+    exportDraft = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'draft/export', {}).then(res => res);
     }
 }
