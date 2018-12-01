@@ -109,7 +109,8 @@ class DraftsScreen extends StoryCompanion {
             else {
                 this.setState({
                     draft: res.success,
-                    description: res.success.description
+                    description: 'description' in res.success ? res.success.description : '',
+                    selectedDraftId: 'id' in res.success ? res.success.id : '',
                 });
                 if ('id' in res.success) {
                     this.props.navigation.setParams({
@@ -129,7 +130,8 @@ class DraftsScreen extends StoryCompanion {
     }
 
     exportDraft = () => {
-        this.DraftRequests.exportDraft(this.state.draft.id).then((res) => {
+        let paramsObject = this.createParamsObject();
+        this.DraftRequests.exportDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
@@ -145,7 +147,7 @@ class DraftsScreen extends StoryCompanion {
                 });
             }
         })
-        .catch((error) => {
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
@@ -155,10 +157,8 @@ class DraftsScreen extends StoryCompanion {
     }
 
     createDraft = () => {
-        let paramsObject = {
-            story: this.props.selectedStoryId,
-            description: ''
-        }
+        let paramsObject = this.createParamsObject();
+        console.info(paramsObject);
         this.DraftRequests.createDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -187,7 +187,8 @@ class DraftsScreen extends StoryCompanion {
     // We only have one draft per story
     editDraft = () => {
         Keyboard.dismiss();
-        let paramsObject = this.createParamsObject();        
+        let paramsObject = this.createParamsObject();
+        console.info(paramsObject);     
         this.DraftRequests.editDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -206,9 +207,10 @@ class DraftsScreen extends StoryCompanion {
                 });
             }
         })
-        .catch(() => {
+        .catch((error) => {
+            console.info(error);
             this.setState({
-                globalAlertVisible: false,
+                globalAlertVisible: true,
                 globalAlertType: 'danger',
                 globalAlertMessage: 'Unable to edit draft at this time',
             });
