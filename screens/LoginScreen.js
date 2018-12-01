@@ -44,9 +44,8 @@ class LoginScreen extends StoryCompanion {
     constructor(props) {
         super(props);
         this.state = {
-            // @TODO DEV
-            email: 'isjustgamedev@gmail.com',
-            password: 'encounter1',
+            email: '',
+            password: '',
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',

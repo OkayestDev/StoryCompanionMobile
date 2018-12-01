@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import TagRequests from '../utils/TagRequests.js';
 
 export default class StoryCompanion extends Component {
@@ -59,6 +59,17 @@ export default class StoryCompanion extends Component {
                 })
             })
         }
+    }
+
+    filterTagsByType = (type) => {
+        let tagIds = Object.keys(this.props.tags);
+        tagByType = {};
+        tagIds.forEach((id) => {
+            if (this.props.tags[id].type === type) {
+                tagByType[id] = this.props.tags[id];
+            }
+        });
+        return tagByType;
     }
 
     /**

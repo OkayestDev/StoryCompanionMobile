@@ -63,6 +63,7 @@ class StoriesScreen extends StoryCompanion {
             name: '',
             description: '',
             image: '',
+            selectedTagId: '',
             selectedStoryId: null,
         };
     }
@@ -105,6 +106,7 @@ class StoriesScreen extends StoryCompanion {
             name: this.props.stories[id].name,
             description: this.props.stories[id].description,
             image: this.props.stories[id].image,
+            selectedTagId: this.props.stories[id].tag,
         });
     }
 
@@ -124,13 +126,7 @@ class StoriesScreen extends StoryCompanion {
                 });
             }
             else {
-                this.setState({
-                    isCreateStoreModalOpen: false,
-                    name: '',
-                    description: '',
-                    image: '',
-                    selectedStoryId: null,
-                });
+                this.setState(this.resetStory());
                 this.props.setStories(res.success);
             }
         })
@@ -149,7 +145,7 @@ class StoriesScreen extends StoryCompanion {
             image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
         }
         let paramsObject = this.createParamsObject();
-        paramsObject['image'];
+        paramsObject['image'] = image;
         this.StoryRequests.editStory(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -161,12 +157,7 @@ class StoriesScreen extends StoryCompanion {
             else {
                 let tempStories = this.props.stories;
                 tempStories[this.state.selectedStoryId] = res.success;
-                this.setState({
-                    name: '',
-                    description: '',
-                    image: '',
-                    selectedStoryId: null,
-                });
+                this.setState(this.resetStory());
                 this.props.setStories(tempStories);
             }
         })
@@ -192,13 +183,8 @@ class StoriesScreen extends StoryCompanion {
             else {
                 let tempStories = this.props.stories;
                 delete tempStories[this.state.selectedStoryId];
-                this.setState({
-                    name: '',
-                    description: '',
-                    selectedStoryId: null,
-                    image: '',
-                });
-                this.props.setStories(tempStores);
+                this.setState(this.resetStory());
+                this.props.setStories(tempStories);
             }
         })
         .catch(() => {
@@ -317,6 +303,17 @@ class StoriesScreen extends StoryCompanion {
                         inputOne={this.state.name}
                         inputOneName="Story Name"
                         inputOneOnChange={(newValue) => this.setState({name: newValue})}
+
+                        modalPicker="Tag"
+                        modalPickerSelectedValue={
+                            this.state.selectedTagId in this.props.tags
+                            ?
+                            this.props.tags[this.state.selectedTagId].name
+                            :
+                            ''
+                        }
+                        modalPickerList={this.filterTagsByType('Story')}
+                        modalPickerOnChange={(newTag) => this.setState({selectedTagId: newTag})}
 
                         inputThree={this.state.description}
                         inputThreeName="Summary"

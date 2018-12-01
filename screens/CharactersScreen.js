@@ -61,6 +61,7 @@ class CharactersScreen extends StoryCompanion {
             image: '',
             characters: null,
             selectedCharacterId: null,
+            selectedTagId: null,
 
             globalAlertVisible: false,
             globalAlertType: '',
@@ -214,6 +215,7 @@ class CharactersScreen extends StoryCompanion {
             description: this.state.characters[id].description,
             attribute: this.state.characters[id].attribute,
             image: this.state.characters[id].image,
+            selectedTagId: this.state.characters[id].tag,
         })
     }
 
@@ -224,6 +226,7 @@ class CharactersScreen extends StoryCompanion {
             description: '',
             attribute: '',
             image: '',
+            selectedTagId: '',
         });
     }
 
@@ -313,6 +316,17 @@ class CharactersScreen extends StoryCompanion {
                         inputOne={this.state.name}
                         inputOneName="Character Name"
                         inputOneOnChange={(newValue) => this.setState({name: newValue})}
+
+                        modalPicker="Tag"
+                        modalPickerSelectedValue={
+                            this.state.selectedTagId in this.props.tags
+                            ?
+                            this.props.tags[this.state.selectedTagId].name
+                            :
+                            ''
+                        }
+                        modalPickerList={this.filterTagsByType('Character')}
+                        modalPickerOnChange={(newTag) => this.setState({selectedTagId: newTag})}
 
                         inputThree={this.state.description}
                         inputThreeName="Description"

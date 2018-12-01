@@ -320,7 +320,10 @@ class SettingsScreen extends StoryCompanion {
         }
         else {
             return (
-                <View style={styles.container}>
+                <View style={[
+                    styles.container,
+                    this.state.isConfirmationModalOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
+                ]}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
