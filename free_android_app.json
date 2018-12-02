@@ -29,7 +29,7 @@
       }
     },
     "android": {
-      "versionCode": 6,
+      "versionCode": 8,
       "package": "com.isjustgame.storycompanion.free",
       "permissions": [
         "CAMERA",

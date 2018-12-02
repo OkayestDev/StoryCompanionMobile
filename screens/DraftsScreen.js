@@ -158,7 +158,6 @@ class DraftsScreen extends StoryCompanion {
 
     createDraft = () => {
         let paramsObject = this.createParamsObject();
-        console.info(paramsObject);
         this.DraftRequests.createDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -168,7 +167,10 @@ class DraftsScreen extends StoryCompanion {
                 });
             }
             else {
-                this.setState({draft: res.success});
+                this.setState({
+                    draft: res.success,
+                    selectedDraftId: 'id' in res.success ? res.success.id : '',
+                });
                 this.props.navigation.setParams({
                     onDraftSave: () => this.editDraft(),
                     onDraftExport: () => this.exportDraft(),
@@ -188,7 +190,6 @@ class DraftsScreen extends StoryCompanion {
     editDraft = () => {
         Keyboard.dismiss();
         let paramsObject = this.createParamsObject();
-        console.info(paramsObject);     
         this.DraftRequests.editDraft(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
@@ -207,8 +208,7 @@ class DraftsScreen extends StoryCompanion {
                 });
             }
         })
-        .catch((error) => {
-            console.info(error);
+        .catch(() => {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'danger',
