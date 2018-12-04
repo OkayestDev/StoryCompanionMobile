@@ -21,6 +21,7 @@
       "**/*"
     ],
     "ios": {
+      "buildNumber": "1",
       "supportsTablet": true,
       "bundleIdentifier": "com.isjustgame.storycompanion",
       "infoPlist": {

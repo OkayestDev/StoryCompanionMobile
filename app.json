@@ -6,7 +6,7 @@
     "privacy": "public",
     "sdkVersion": "30.0.0",
     "platforms": ["ios", "android"],
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -21,7 +21,6 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": 5,
       "supportsTablet": true,
       "bundleIdentifier": "com.isjustgame.storycompanion",
       "infoPlist": {
@@ -30,7 +29,7 @@
       }
     },
     "android": {
-      "versionCode": 9,
+      "versionCode": 6,
       "package": "com.isjustgame.storycompanion",
       "permissions": [
         "CAMERA",
