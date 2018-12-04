@@ -63,7 +63,7 @@ export default class StoryCompanion extends Component {
 
     filterTagsByType = (type) => {
         let tagIds = Object.keys(this.props.tags);
-        tagByType = {};
+        let tagByType = {};
         tagIds.forEach((id) => {
             if (this.props.tags[id].type === type) {
                 tagByType[id] = this.props.tags[id];

@@ -126,7 +126,7 @@ class NotesScreen extends StoryCompanion {
 
     editNote = () => {
         let paramsObject = this.createParamsObject();        
-        this.NoteRequest.editNote(paramsObject).then((res) => {
+        this.NoteRequests.editNote(paramsObject).then((res) => {
             if ('error' in res) {
                 this.setState({
                     globalAlertVisible: true,
