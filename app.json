@@ -15,7 +15,9 @@
       "backgroundColor": "#000000"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 30000,
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -29,7 +31,7 @@
       }
     },
     "android": {
-      "versionCode": 6,
+      "versionCode": 10,
       "package": "com.isjustgame.storycompanion",
       "permissions": [
         "CAMERA",
