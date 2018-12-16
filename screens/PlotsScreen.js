@@ -1,11 +1,5 @@
 import React from 'react';
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    TouchableOpacity, 
-    ScrollView 
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Actions from '../store/Actions.js';
 import FloatingAddButton from '../components/FloatingAddButton.js';
@@ -23,33 +17,31 @@ const headerTitle = {
     flexDirection: 'row',
     backgroundColor: '#2f95dc',
     paddingLeft: 20,
-}
+};
 
 class PlotsScreen extends StoryCompanion {
-    static navigationOptions = ({navigation}) => {
+    static navigationOptions = ({ navigation }) => {
         return {
             title: 'Plots',
             headerTitle: (
                 <View style={headerTitle}>
-                    <TouchableOpacity 
-                        style={{marginRight: 15}}
-                        onPress={() => navigation.navigate("StoriesTab")}
+                    <TouchableOpacity
+                        style={{ marginRight: 15 }}
+                        onPress={() => navigation.navigate('StoriesTab')}
                     >
-                        <Icon
-                            color="white"
-                            name="arrow-left"
-                            type="font-awesome"
-                            size={28}
-                        />
+                        <Icon color="white" name="chevron-left" type="font-awesome" size={24} />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    <Text
+                        numberOfLines={1}
+                        style={{ width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28 }}
+                    >
                         {navigation.getParam('title')}
                     </Text>
                 </View>
             ),
             headerStyle: { backgroundColor: '#2f95dc' },
             headerTitleStyle: { color: 'white' },
-        }
+        };
     };
 
     constructor(props) {
@@ -64,128 +56,128 @@ class PlotsScreen extends StoryCompanion {
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
-        }
+        };
         this.PlotRequests = new PlotRequests();
-        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
+        props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
         this.getPlots();
     }
 
     getPlots = () => {
-        let paramsObject = this.createParamsObject();        
-        this.PlotRequests.getPlots(paramsObject).then((res) => {
-            if ('error' in res) {
+        let paramsObject = this.createParamsObject();
+        this.PlotRequests.getPlots(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        selectedPlotId: null,
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({ plots: res.success });
+                }
+            })
+            .catch(() => {
                 this.setState({
-                    selectedPlotId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: res.error,
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                this.setState({plots: res.success});
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        })
-    }
+    };
 
     createPlot = () => {
-        let paramsObject = this.createParamsObject();        
-        this.PlotRequests.createPlot(paramsObject).then((res) => {
-            if ('error' in res) {
+        let paramsObject = this.createParamsObject();
+        this.PlotRequests.createPlot(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        plots: res.success,
+                        description: '',
+                        name: '',
+                        plotParent: null,
+                        selectedPlotId: null,
+                    });
+                }
+            })
+            .catch(error => {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: res.error,
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                this.setState({
-                    plots: res.success,
-                    description: '',
-                    name: '',
-                    plotParent: null,
-                    selectedPlotId: null,
-                })
-            }
-        })
-        .catch((error) => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        });
-    }
+    };
 
     editPlot = () => {
         let paramsObject = this.createParamsObject();
-        this.PlotRequests.editPlot(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.PlotRequests.editPlot(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        selectedPlotId: null,
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    let tempPlots = this.state.plots;
+                    tempPlots[this.state.selectedPlotId] = res.success;
+                    this.setState({
+                        plots: tempPlots,
+                        name: '',
+                        plotParent: null,
+                        description: '',
+                        selectedPlotId: null,
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
-                    selectedPlotId: null,
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                let tempPlots = this.state.plots;
-                tempPlots[this.state.selectedPlotId] = res.success;
-                this.setState({
-                    plots: tempPlots,
-                    name: '',
-                    plotParent: null,
-                    description: '',
-                    selectedPlotId: null,
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        });
-    }
+    };
 
     deletePlot = () => {
         let paramsObject = this.createParamsObject();
-        this.PlotRequests.deletePlot(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.PlotRequests.deletePlot(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        selectedPlotId: null,
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    let tempPlots = this.state.plots;
+                    delete tempPlots[this.state.selectedPlotId];
+                    this.setState({
+                        plots: tempPlots,
+                        name: '',
+                        description: '',
+                        plotParent: null,
+                        selectedPlotId: null,
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
-                    selectedPlotId: null,
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                let tempPlots = this.state.plots;
-                delete tempPlots[this.state.selectedPlotId];
-                this.setState({
-                    plots: tempPlots,
-                    name: '',
-                    description: '',
-                    plotParent: null,
-                    selectedPlotId: null,
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        })
-    }
+    };
 
     cancelPlotEdit = () => {
         this.setState({
@@ -195,46 +187,35 @@ class PlotsScreen extends StoryCompanion {
             plotParent: '',
             selectedPlotId: null,
         });
-    }
+    };
 
-    selectPlot = (id) => {
+    selectPlot = id => {
         this.setState({
             plotParent: this.state.plots[id].plot,
             description: this.state.plots[id].description,
             name: this.state.plots[id].name,
             selectedPlotId: id,
         });
-    }
+    };
 
-    addChildPlot = (parentId) => {
+    addChildPlot = parentId => {
         this.setState({
             plotParent: parentId,
             description: '',
             name: '',
             selectedPlotId: 'new',
-        })
-    }
+        });
+    };
 
     returnPlot = (styleName = 'parentPlots', id, addIcon = true) => {
         let plot = (
-            <View 
-                key={id}
-                style={styles.plotContainer}
-            >
-                <TouchableOpacity
-                    onPress={() => this.selectPlot(id)}
-                    style={styles[styleName]}
-                >
-                    <Text 
-                        numberOfLines={1}
-                        style={styles.plotsText}
-                    >
+            <View key={id} style={styles.plotContainer}>
+                <TouchableOpacity onPress={() => this.selectPlot(id)} style={styles[styleName]}>
+                    <Text numberOfLines={1} style={styles.plotsText}>
                         {this.state.plots[id].name}
                     </Text>
-                    
                 </TouchableOpacity>
-                {
-                    addIcon &&
+                {addIcon && (
                     <View style={styles.plotIconContainer}>
                         <Icon
                             onPress={() => this.addChildPlot(id)}
@@ -244,11 +225,11 @@ class PlotsScreen extends StoryCompanion {
                             size={20}
                         />
                     </View>
-                }
+                )}
             </View>
         );
         return plot;
-    }
+    };
 
     renderPlots = () => {
         if (this.state.plots === null) {
@@ -257,46 +238,41 @@ class PlotsScreen extends StoryCompanion {
         let plots = [];
         let plotIds = Object.keys(this.state.plots);
         if (plotIds.length > 0) {
-            plotIds.forEach((id) => {
+            plotIds.forEach(id => {
                 if (this.state.plots[id].plot !== '') {
                     return;
-                }
-                else {
+                } else {
                     plots.push(this.returnPlot('parentPlots', id));
                     let parentOneId = id;
                     // Render childrenOne
-                    plotIds.forEach((id) => {
+                    plotIds.forEach(id => {
                         if (this.state.plots[id].plot == parentOneId) {
                             plots.push(this.returnPlot('childOnePlots', id));
                             // Render childrenTwo
                             let parentTwoId = id;
-                            plotIds.forEach((id) => {
+                            plotIds.forEach(id => {
                                 if (this.state.plots[id].plot == parentTwoId) {
                                     plots.push(this.returnPlot('childTwoPlots', id, false));
                                 }
-                            })
-                        }
-                        else {
+                            });
+                        } else {
                             return;
                         }
-                    })
+                    });
                 }
             });
             return plots;
-        }
-        else {
+        } else {
             return (
                 <View style={styles.noPlotsContainer}>
                     <Text style={styles.noPlotsText}>
                         Looks like you haven't created any plots yet.
                     </Text>
-                    <Text style={styles.noPlotsText}>
-                        Press on the + to create a plot!
-                    </Text>
+                    <Text style={styles.noPlotsText}>Press on the + to create a plot!</Text>
                 </View>
-            )
+            );
         }
-    }
+    };
 
     render() {
         if (this.state.selectedPlotId === null) {
@@ -306,37 +282,31 @@ class PlotsScreen extends StoryCompanion {
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
-                    <ScrollView>
-                        {this.renderPlots()}
-                    </ScrollView>
-                    <FloatingAddButton onPress={() => this.setState({selectedPlotId: 'new'})}/>
+                    <ScrollView>{this.renderPlots()}</ScrollView>
+                    <FloatingAddButton onPress={() => this.setState({ selectedPlotId: 'new' })} />
                 </View>
-            )
-        }
-        else {
+            );
+        } else {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <EditEntity
                         selectedEntityId={this.state.selectedPlotId}
                         entityType="Plot"
                         deleteNote="Note: all children will be deleted"
-
                         inputOne={this.state.name}
                         inputOneName="Plot Name"
-                        inputOneOnChange={(newValue) => this.setState({name: newValue})}
-
+                        inputOneOnChange={newValue => this.setState({ name: newValue })}
                         inputThree={this.state.description}
                         inputThreeName="Description"
-                        inputThreeOnChange={(newValue) => this.setState({description: newValue})}
-
+                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
                         // modalPicker={"Plot Parent"}
                         // modalPickerSelectedValue={this.state.plotParent}
                         // modalPickerDisplayValue={
@@ -359,7 +329,10 @@ class PlotsScreen extends StoryCompanion {
     }
 }
 
-export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(PlotsScreen);
+export default connect(
+    Actions.mapStateToProps,
+    Actions.mapDispatchToProps
+)(PlotsScreen);
 
 const styles = StyleSheet.create({
     container: {
@@ -415,5 +388,5 @@ const styles = StyleSheet.create({
         fontSize: 36,
         color: '#CCCCCC',
         fontWeight: 'bold',
-    }
+    },
 });

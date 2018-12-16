@@ -1,3 +1,3 @@
 export const LOGS = {
-    ENABLE_LOGS: false,
-}
+    ENABLE_LOGS: true,
+};

@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 
 export default class GlobalAlert extends Component {
     figureAlertColor = () => {
-        switch(this.props.type) {
+        switch (this.props.type) {
             case 'success':
                 return 'green';
             case 'warning':
@@ -12,10 +12,10 @@ export default class GlobalAlert extends Component {
             case 'danger':
                 return 'red';
         }
-    }
+    };
 
     figureIcon = () => {
-        switch(this.props.type) {
+        switch (this.props.type) {
             case 'success':
                 return 'smile-o';
             case 'warning':
@@ -23,30 +23,25 @@ export default class GlobalAlert extends Component {
             case 'danger':
                 return 'exclamation-circle';
         }
-    }
+    };
 
     render() {
         if (this.props.visible) {
             // Hide the alert after 2.5 seconds
-            setTimeout(() => this.props.closeAlert(), 3000);
+            setTimeout(() => this.props.closeAlert(), 4000);
             return (
                 <TouchableOpacity
-                    style={[styles.globalAlertContainer, {backgroundColor: this.figureAlertColor()}]}
+                    style={[
+                        styles.globalAlertContainer,
+                        { backgroundColor: this.figureAlertColor() },
+                    ]}
                     onPress={() => this.props.closeAlert()}
                 >
-                    <Icon
-                        name={this.figureIcon()}
-                        size={32}
-                        type='font-awesome'
-                        color='white'
-                    />
-                    <Text style={styles.alertMessageText}>
-                        {this.props.message}
-                    </Text>
+                    <Icon name={this.figureIcon()} size={32} type="font-awesome" color="white" />
+                    <Text style={styles.alertMessageText}>{this.props.message}</Text>
                 </TouchableOpacity>
-            )
-        }
-        else {
+            );
+        } else {
             return null;
         }
     }
@@ -70,4 +65,4 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginLeft: 10,
     },
-})
+});

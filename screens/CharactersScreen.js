@@ -1,11 +1,5 @@
 import React from 'react';
-import { View, 
-    Text,
-    StyleSheet, 
-    TouchableOpacity, 
-    ScrollView,
-    Image,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { connect } from 'react-redux';
 import Actions from '../store/Actions.js';
 import { Icon } from 'react-native-elements';
@@ -23,33 +17,31 @@ const headerTitle = {
     flexDirection: 'row',
     backgroundColor: '#2f95dc',
     paddingLeft: 20,
-}
+};
 
 class CharactersScreen extends StoryCompanion {
-    static navigationOptions = ({navigation}) => {
+    static navigationOptions = ({ navigation }) => {
         return {
             title: 'Characters',
             headerTitle: (
                 <View style={headerTitle}>
-                    <TouchableOpacity 
-                        style={{marginRight: 15}}
-                        onPress={() => navigation.navigate("StoriesTab")}
+                    <TouchableOpacity
+                        style={{ marginRight: 15 }}
+                        onPress={() => navigation.navigate('StoriesTab')}
                     >
-                        <Icon
-                            color="white"
-                            name="arrow-left"
-                            type="font-awesome"
-                            size={28}
-                        />
+                        <Icon color="white" name="chevron-left" type="font-awesome" size={24} />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    <Text
+                        numberOfLines={1}
+                        style={{ width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28 }}
+                    >
                         {navigation.getParam('title')}
                     </Text>
                 </View>
             ),
             headerStyle: { backgroundColor: '#2f95dc' },
             headerTitleStyle: { color: 'white' },
-        }
+        };
     };
 
     constructor(props) {
@@ -60,6 +52,7 @@ class CharactersScreen extends StoryCompanion {
             attribute: '',
             image: '',
             characters: null,
+            number: 0,
             selectedCharacterId: null,
             selectedTagId: null,
 
@@ -68,7 +61,7 @@ class CharactersScreen extends StoryCompanion {
             globalAlertMessage: '',
         };
         this.CharacterRequests = new CharacterRequests();
-        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
+        props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
     }
 
     componentDidMount() {
@@ -76,139 +69,199 @@ class CharactersScreen extends StoryCompanion {
         this.getTags();
     }
 
-    getCharacters = () => {
-        let paramsObject = this.createParamsObject();
-        this.CharacterRequests.getCharacters(paramsObject).then((res) => {
-            if ('error' in res) {
+    moveCharacterDown = id => {
+        const paramsObject = {
+            character: id,
+            apiKey: this.props.apiKey,
+        };
+        this.CharacterRequests.moveCharacterDown(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.props.showAlert(res.error, 'warning');
+                } else {
+                    let tempCharacters = this.state.characters;
+                    tempCharacters[id] = res.success;
+                    this.setState({
+                        characters: tempCharacters,
+                    });
+                }
+            })
+            .catch(() => {
+                this.props.showAlert('Unable to move character up at this time', 'danger');
+            });
+    };
+
+    moveCharacterUp = id => {
+        const paramsObject = {
+            character: id,
+            apiKey: this.props.apiKey,
+        };
+        this.CharacterRequests.moveCharacterUp(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: 'Unable to move character up at this time',
+                    });
+                } else {
+                    let tempCharacters = this.state.characters;
+                    tempCharacters[id] = res.success;
+                    this.setState({
+                        characters: tempCharacters,
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
-                    selectedCharacterId: null,
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: res.error,
+                    globalAlertMessage: 'Unable to move character up at this time',
                 });
-            }
-            else {
-                this.setState({
-                    selectedCharacterId: null,
-                    characters: res.success
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        });
-    }
+    };
+
+    getCharacters = () => {
+        let paramsObject = this.createParamsObject();
+        this.CharacterRequests.getCharacters(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        selectedCharacterId: null,
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        selectedCharacterId: null,
+                        characters: res.success,
+                    });
+                }
+            })
+            .catch(() => {
+                this.setState({
+                    globalAlertVisible: true,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
+                });
+            });
+    };
 
     createCharacter = async () => {
         let image = this.state.image;
-        // check if new image has been uploaded
+        // Check if new image has been uploaded
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); //@TODO add await
+            image = await this.CharacterRequests.uploadImageToS3(
+                'character',
+                this.state.image,
+                this.props.selectedStoryId
+            );
         }
         let paramsObject = this.createParamsObject();
         paramsObject['image'] = image;
-        this.CharacterRequests.createCharacter(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.CharacterRequests.createCharacter(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        characters: res.success,
+                        name: '',
+                        image: '',
+                        attribute: '',
+                        description: '',
+                        selectedCharacterId: null,
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: res.error,
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                this.setState({
-                    characters: res.success,
-                    name: '',
-                    image: '',
-                    attribute: '',
-                    description: '',
-                    selectedCharacterId: null,
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        });
-    }
+    };
 
     editCharacter = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.CharacterRequests.uploadImageToS3('character', this.state.image, this.props.selectedStoryId); // @TODO add await
+            image = await this.CharacterRequests.uploadImageToS3(
+                'character',
+                this.state.image,
+                this.props.selectedStoryId
+            );
         }
         let paramsObject = this.createParamsObject();
         paramsObject['image'] = image;
-        this.CharacterRequests.editCharacter(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.CharacterRequests.editCharacter(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    let tempCharacters = this.state.characters;
+                    tempCharacters[this.state.selectedCharacterId] = res.success;
+                    this.setState({
+                        characters: tempCharacters,
+                        name: '',
+                        attribute: '',
+                        description: '',
+                        image: '',
+                        selectedCharacterId: null,
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                let tempCharacters = this.state.characters;
-                tempCharacters[this.state.selectedCharacterId] = res.success;
-                this.setState({
-                    characters: tempCharacters,
-                    name: '',
-                    attribute: '',
-                    description: '',
-                    image: '',
-                    selectedCharacterId: null,
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        });
-    }
+    };
 
     deleteCharacter = () => {
         let paramsObject = this.createParamsObject();
-        this.CharacterRequests.deleteCharacter(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.CharacterRequests.deleteCharacter(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    let tempCharacters = this.state.characters;
+                    delete tempCharacters[this.state.selectedCharacterId];
+                    this.setState({
+                        characters: tempCharacters,
+                        name: '',
+                        description: '',
+                        attribute: '',
+                        image: '',
+                        selectedCharacterId: null,
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                let tempCharacters = this.state.characters;
-                delete tempCharacters[this.state.selectedCharacterId];
-                this.setState({
-                    characters: tempCharacters,
-                    name: '',
-                    description: '',
-                    attribute: '',
-                    image: '',
-                    selectedCharacterId: null,
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        })
-    } 
+    };
 
-    selectCharacter = (id) => {
+    selectCharacter = id => {
         this.setState({
             selectedCharacterId: id,
             name: this.state.characters[id].name,
@@ -216,8 +269,9 @@ class CharactersScreen extends StoryCompanion {
             attribute: this.state.characters[id].attribute,
             image: this.state.characters[id].image,
             selectedTagId: this.state.characters[id].tag,
-        })
-    }
+            number: this.state.characters[id].number,
+        });
+    };
 
     cancelCharacterEdit = () => {
         this.setState({
@@ -227,18 +281,20 @@ class CharactersScreen extends StoryCompanion {
             attribute: '',
             image: '',
             selectedTagId: '',
+            number: 0,
         });
-    }
+    };
 
     renderCharacters = () => {
         if (this.state.characters === null) {
             return null;
         }
 
-        characterIds = Object.keys(this.state.characters);
+        characterIds = this.sortEntitiesByNumber(this.state.characters);
+        characterIds = characterIds.reverse();
         if (characterIds.length > 0) {
             let charactersRendered = [];
-            characterIds.forEach((id) => {
+            characterIds.forEach(id => {
                 charactersRendered.push(
                     <TouchableOpacity
                         key={id}
@@ -247,16 +303,14 @@ class CharactersScreen extends StoryCompanion {
                     >
                         <View style={styles.characterPictureAndName}>
                             <View styles={styles.characterPictureContainer}>
-                            {
-                                this.state.characters[id].image !== ''
-                                ?
-                                <Image
-                                    source={{uri: this.state.characters[id].image}}
-                                    style={styles.characterPicture}
-                                />
-                                :
-                                <View style={styles.noPicture}/>
-                            }
+                                {this.state.characters[id].image !== '' ? (
+                                    <Image
+                                        source={{ uri: this.state.characters[id].image }}
+                                        style={styles.characterPicture}
+                                    />
+                                ) : (
+                                    <View style={styles.noPicture} />
+                                )}
                             </View>
                             <View style={styles.characterNameAndDescription}>
                                 <Text numberOfLines={1} style={styles.characterName}>
@@ -266,13 +320,39 @@ class CharactersScreen extends StoryCompanion {
                                     {this.state.characters[id].description}
                                 </Text>
                             </View>
+                            <View style={styles.moveCharacterContainer}>
+                                <TouchableOpacity
+                                    style={styles.moveUp}
+                                    onPress={() => this.moveCharacterUp(id)}
+                                >
+                                    <Icon
+                                        color="#2f95dc"
+                                        name="caret-up"
+                                        type="font-awesome"
+                                        size={32}
+                                    />
+                                </TouchableOpacity>
+                                <Text style={styles.characterNumber}>
+                                    {this.state.characters[id].number}
+                                </Text>
+                                <TouchableOpacity
+                                    style={styles.moveDown}
+                                    onPress={() => this.moveCharacterDown(id)}
+                                >
+                                    <Icon
+                                        color="#2f95dc"
+                                        name="caret-down"
+                                        type="font-awesome"
+                                        size={32}
+                                    />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </TouchableOpacity>
-                )
-            })
+                );
+            });
             return charactersRendered;
-        }
-        else {
+        } else {
             return (
                 <View style={styles.noCharactersContainer}>
                     <Text style={styles.noCharactersText}>
@@ -282,9 +362,9 @@ class CharactersScreen extends StoryCompanion {
                         Press on the + to create a character!
                     </Text>
                 </View>
-            )
+            );
         }
-    }
+    };
 
     render() {
         if (this.state.selectedCharacterId === null) {
@@ -294,59 +374,53 @@ class CharactersScreen extends StoryCompanion {
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
-                    <ScrollView>
-                        {this.renderCharacters()}
-                    </ScrollView>
-                    <FloatingAddButton onPress={() => this.setState({selectedCharacterId: 'new'})}/>
+                    <ScrollView>{this.renderCharacters()}</ScrollView>
+                    <FloatingAddButton
+                        onPress={() => this.setState({ selectedCharacterId: 'new' })}
+                    />
                 </View>
-            )
-        }
-        else {
+            );
+        } else {
             return (
                 <EditEntity
-                        selectedEntityId={this.state.selectedCharacterId}
-                        entityType="Character"
-
-                        image={this.state.image}
-                        imagePickerTitle="Add an image for this character"
-                        imagePickerOnChange={(newImage) => this.setState({image: newImage})}
-
-                        inputOne={this.state.name}
-                        inputOneName="Character Name"
-                        inputOneOnChange={(newValue) => this.setState({name: newValue})}
-
-                        modalPicker="Tag"
-                        modalPickerSelectedValue={
-                            this.state.selectedTagId in this.props.tags
-                            ?
-                            this.props.tags[this.state.selectedTagId].name
-                            :
-                            ''
-                        }
-                        modalPickerList={this.filterTagsByType('Character')}
-                        modalPickerOnChange={(newTag) => this.setState({selectedTagId: newTag})}
-
-                        inputThree={this.state.description}
-                        inputThreeName="Description"
-                        inputThreeOnChange={(newValue) => this.setState({description: newValue})}
-
-                        inputFour={this.state.attribute}
-                        inputFourName="Attributes"
-                        inputFourOnChange={(newValue) => this.setState({attribute: newValue})}
-
-                        createEntity={() => this.createCharacter()}
-                        editEntity={() => this.editCharacter()}
-                        deleteEntity={() => this.deleteCharacter()}
-                        cancelEntityEdit={() => this.cancelCharacterEdit()}
+                    selectedEntityId={this.state.selectedCharacterId}
+                    entityType="Character"
+                    image={this.state.image}
+                    imagePickerTitle="Add an image for this character"
+                    imagePickerOnChange={newImage => this.setState({ image: newImage })}
+                    inputOne={this.state.name}
+                    inputOneName="Character Name"
+                    inputOneOnChange={newValue => this.setState({ name: newValue })}
+                    modalPicker="Tag"
+                    modalPickerSelectedValue={
+                        this.state.selectedTagId in this.props.tags
+                            ? this.props.tags[this.state.selectedTagId].name
+                            : ''
+                    }
+                    modalPickerList={this.filterTagsByType('Character')}
+                    modalPickerOnChange={newTag => this.setState({ selectedTagId: newTag })}
+                    inputThree={this.state.description}
+                    inputThreeName="Description"
+                    inputThreeOnChange={newValue => this.setState({ description: newValue })}
+                    inputFour={this.state.attribute}
+                    inputFourName="Attributes"
+                    inputFourOnChange={newValue => this.setState({ attribute: newValue })}
+                    createEntity={() => this.createCharacter()}
+                    editEntity={() => this.editCharacter()}
+                    deleteEntity={() => this.deleteCharacter()}
+                    cancelEntityEdit={() => this.cancelCharacterEdit()}
                 />
-            )
+            );
         }
     }
 }
 
-export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(CharactersScreen);
+export default connect(
+    Actions.mapStateToProps,
+    Actions.mapDispatchToProps
+)(CharactersScreen);
 
 const styles = StyleSheet.create({
     container: {
@@ -366,11 +440,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     characterPictureContainer: {
-        width: '29%',
+        width: '24%',
         marginRight: '1%',
     },
     characterNameAndDescription: {
-        width: '67%',
+        width: '62%',
         marginLeft: '3%',
     },
     characterPicture: {
@@ -392,6 +466,26 @@ const styles = StyleSheet.create({
     characterDescription: {
         fontSize: 18,
     },
+    moveCharacterContainer: {
+        width: '10%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    characterNumber: {
+        fontWeight: 'bold',
+        fontSize: 30,
+        color: 'black',
+    },
+    moveUp: {
+        width: '100%',
+        zIndex: 10,
+    },
+    moveDown: {
+        width: '100%',
+        zIndex: 10,
+    },
     noCharactersContainer: {
         flex: 1,
         display: 'flex',
@@ -404,5 +498,5 @@ const styles = StyleSheet.create({
         fontSize: 36,
         color: '#CCCCCC',
         fontWeight: 'bold',
-    }
+    },
 });

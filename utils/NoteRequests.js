@@ -1,21 +1,23 @@
-import { 
-    postRequestWithFormData,
-} from './HelperFunctions.js';
+import { postRequestWithFormData } from './HelperFunctions.js';
 
 export default class NoteRequests {
-    getNotes = (paramsObject) => {
+    getNotes = paramsObject => {
         return postRequestWithFormData(paramsObject, 'note/view', {}).then(res => res);
-    }
+    };
 
-    createNote = (paramsObject) => {
+    createNote = paramsObject => {
         return postRequestWithFormData(paramsObject, 'note/creation', {}).then(res => res);
-    }
+    };
 
-    editNote = (paramsObject) => {
+    editNote = paramsObject => {
         return postRequestWithFormData(paramsObject, 'note/edit', {}).then(res => res);
-    }
+    };
 
-    deleteNote = (paramsObject) => {
+    deleteNote = paramsObject => {
         return postRequestWithFormData(paramsObject, 'note/delete', {}).then(res => res);
-    }
+    };
+
+    exportNotes = paramsObject => {
+        return postRequestWithFormData(paramsObject, 'note/export', {}).then(res => res);
+    };
 }

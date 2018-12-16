@@ -1,16 +1,9 @@
 import React from 'react';
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    TouchableOpacity, 
-    TextInput, 
-    Keyboard
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import Actions from '../store/Actions.js';
 import { Icon } from 'react-native-elements';
-import DraftRequests from '../utils/DraftRequests.js'
+import DraftRequests from '../utils/DraftRequests.js';
 import GlobalAlert from '../components/GlobalAlert.js';
 import StoryCompanion from '../utils/StoryCompanion.js';
 
@@ -22,61 +15,47 @@ const headerTitle = {
     flexDirection: 'row',
     backgroundColor: '#2f95dc',
     paddingLeft: 20,
-}
+};
 
 class DraftsScreen extends StoryCompanion {
-    static navigationOptions = ({navigation}) => {
+    static navigationOptions = ({ navigation }) => {
         return {
             title: 'Characters',
             headerTitle: (
                 <View style={headerTitle}>
-                    <TouchableOpacity 
-                        style={{marginRight: 15}}
-                        onPress={() => navigation.navigate("StoriesTab")}
+                    <TouchableOpacity
+                        style={{ marginRight: 15 }}
+                        onPress={() => navigation.navigate('StoriesTab')}
                     >
-                        <Icon
-                            color="white"
-                            name="arrow-left"
-                            type="font-awesome"
-                            size={28}
-                        />
+                        <Icon color="white" name="arrow-left" type="font-awesome" size={24} />
                     </TouchableOpacity>
-                    <Text numberOfLines={1} style={{width: '60%', fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                    <Text
+                        numberOfLines={1}
+                        style={{ width: '60%', fontWeight: 'bold', color: 'white', fontSize: 28 }}
+                    >
                         {navigation.getParam('title')}
                     </Text>
-                    {
-                        'params' in navigation.state && 'onDraftExport' in navigation.state.params &&
+                    {'params' in navigation.state && 'onDraftExport' in navigation.state.params && (
                         <TouchableOpacity
-                            onPress={() => navigation.state.params.onDraftExport()}
-                            style={{width: '15%'}}
+                            onPress={navigation.state.params.onDraftExport}
+                            style={{ width: '15%' }}
                         >
-                            <Icon
-                                color="white"
-                                name="envelope"
-                                type="font-awesome"
-                                size={28}
-                            />
+                            <Icon color="white" name="envelope" type="font-awesome" size={28} />
                         </TouchableOpacity>
-                    }
-                    {
-                        'params' in navigation.state && 'onDraftSave' in navigation.state.params &&
+                    )}
+                    {'params' in navigation.state && 'onDraftSave' in navigation.state.params && (
                         <TouchableOpacity
-                            style={{width: '15%'}}
-                            onPress={() => navigation.state.params.onDraftSave()}
+                            style={{ width: '15%' }}
+                            onPress={navigation.state.params.onDraftSave}
                         >
-                            <Icon
-                                color="white"
-                                name="check"
-                                type="font-awesome"
-                                size={28}
-                            />
+                            <Icon color="white" name="check" type="font-awesome" size={28} />
                         </TouchableOpacity>
-                    }
+                    )}
                 </View>
             ),
             headerStyle: { backgroundColor: '#2f95dc' },
             headerTitleStyle: { color: 'white' },
-        }
+        };
     };
 
     constructor(props) {
@@ -89,159 +68,147 @@ class DraftsScreen extends StoryCompanion {
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
-        }
+        };
         this.DraftRequests = new DraftRequests();
-        props.navigation.setParams({title: this.props.stories[this.props.selectedStoryId].name});
+        props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
         this.getDrafts();
     }
 
     // Only allowing one draft per story at this time
     getDrafts = () => {
         let paramsObject = this.createParamsObject();
-        this.DraftRequests.getDrafts(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.DraftRequests.getDrafts(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        draft: res.success,
+                        description: 'description' in res.success ? res.success.description : '',
+                        selectedDraftId: 'id' in res.success ? res.success.id : '',
+                    });
+                    if ('id' in res.success) {
+                        this.props.navigation.setParams({
+                            onDraftSave: () => this.editDraft(),
+                            onDraftExport: () => this.exportDraft(),
+                        });
+                    }
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                this.setState({
-                    draft: res.success,
-                    description: 'description' in res.success ? res.success.description : '',
-                    selectedDraftId: 'id' in res.success ? res.success.id : '',
-                });
-                if ('id' in res.success) {
-                    this.props.navigation.setParams({
-                        onDraftSave: () => this.editDraft(),
-                        onDraftExport: () => this.exportDraft(),
-                    })
-                }
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        })
-    }
+    };
 
     exportDraft = () => {
         let paramsObject = this.createParamsObject();
-        this.DraftRequests.exportDraft(paramsObject).then((res) => {
-            if ('error' in res) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
-                });
-            }
-            else {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'success',
-                    globalAlertMessage: res.success,
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: 'Unable to export draft at this time',
+        this.DraftRequests.exportDraft(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.showAlert(res.error, 'warning');
+                } else {
+                    this.showAlert(res.success, 'success');
+                }
+            })
+            .catch(() => {
+                this.showAlert('Unable to export draft at this time', 'danger');
             });
-        });
-    }
+    };
 
     createDraft = () => {
         let paramsObject = this.createParamsObject();
-        this.DraftRequests.createDraft(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.DraftRequests.createDraft(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: false,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        draft: res.success,
+                        selectedDraftId: 'id' in res.success ? res.success.id : '',
+                    });
+                    this.props.navigation.setParams({
+                        onDraftSave: () => this.editDraft(),
+                        onDraftExport: () => this.exportDraft(),
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: false,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to create draft at this time',
                 });
-            }
-            else {
-                this.setState({
-                    draft: res.success,
-                    selectedDraftId: 'id' in res.success ? res.success.id : '',
-                });
-                this.props.navigation.setParams({
-                    onDraftSave: () => this.editDraft(),
-                    onDraftExport: () => this.exportDraft(),
-                })
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: false,
-                globalAlertType: 'danger',
-                globalAlertMessage: 'Unable to create draft at this time',
             });
-        })
-    }
+    };
 
     // We only have one draft per story
     editDraft = () => {
         Keyboard.dismiss();
         let paramsObject = this.createParamsObject();
-        this.DraftRequests.editDraft(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.DraftRequests.editDraft(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: false,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: 'Unable to edit draft at this time',
+                    });
+                } else {
+                    this.setState({
+                        draft: res.success,
+                        description: res.success.description,
+                        globalAlertVisible: true,
+                        globalAlertType: 'success',
+                        globalAlertMessage: 'Successfully saved draft changes!',
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
-                    globalAlertVisible: false,
+                    globalAlertVisible: true,
                     globalAlertType: 'danger',
                     globalAlertMessage: 'Unable to edit draft at this time',
-                })
-            }
-            else {
-                this.setState({
-                    draft: res.success,
-                    description: res.success.description,
-                    globalAlertVisible: true,
-                    globalAlertType: 'success',
-                    globalAlertMessage: 'Successfully saved draft changes!'
                 });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: 'Unable to edit draft at this time',
             });
-        });
-    }
+    };
 
     deleteDraft = () => {
         let paramsObject = this.createParamsObject();
-        this.DraftRequests.editDraft(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.DraftRequests.editDraft(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: 'Unable to edit draft at this time',
+                    });
+                } else {
+                    // As of right now - we only allow one draft. set to an empty array
+                    this.setState({ draft: [] });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
                     globalAlertMessage: 'Unable to edit draft at this time',
-                })
-            }
-            else {
-                // As of right now - we only allow one draft. set to an empty array
-                this.setState({draft: []});
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: 'Unable to edit draft at this time',
+                });
             });
-        });
-    }
+    };
 
-    render () {
+    render() {
         if (this.state.draft === null) {
             return (
                 <View style={styles.container}>
@@ -249,28 +216,29 @@ class DraftsScreen extends StoryCompanion {
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
-                    <View style={styles.noDraftContainer}/>
+                    <View style={styles.noDraftContainer} />
                 </View>
-            )
-        }
-        else if ('id' in this.state.draft) {
+            );
+        } else if ('id' in this.state.draft) {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <TextInput
                         placeholder="Start writing your draft"
                         style={styles.draftInput}
-                        underlineColorAndroid='rgba(0,0,0,0)'
+                        underlineColorAndroid="rgba(0,0,0,0)"
                         multiline={true}
                         value={this.state.description}
-                        onChangeText={(newDescription) => this.setState({description: newDescription})}
+                        onChangeText={newDescription =>
+                            this.setState({ description: newDescription })
+                        }
                     />
                 </View>
             );
@@ -284,7 +252,7 @@ class DraftsScreen extends StoryCompanion {
                             visible={this.state.globalAlertVisible}
                             message={this.state.globalAlertMessage}
                             type={this.state.globalAlertType}
-                            closeAlert={() => this.setState({globalAlertVisible: false})}
+                            closeAlert={() => this.setState({ globalAlertVisible: false })}
                         />
                         <Text style={styles.noDraftText}>
                             Looks like you haven't started a draft for this story yet
@@ -293,18 +261,19 @@ class DraftsScreen extends StoryCompanion {
                             style={styles.noDraftButton}
                             onPress={() => this.createDraft()}
                         >
-                            <Text style={styles.noDraftButtonText}>
-                                Start A Draft
-                            </Text>
+                            <Text style={styles.noDraftButtonText}>Start A Draft</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-            )
+            );
         }
     }
 }
 
-export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(DraftsScreen);
+export default connect(
+    Actions.mapStateToProps,
+    Actions.mapDispatchToProps
+)(DraftsScreen);
 
 const styles = StyleSheet.create({
     container: {
@@ -365,4 +334,4 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-})
+});

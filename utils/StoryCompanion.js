@@ -12,7 +12,7 @@ export default class StoryCompanion extends Component {
             this.state = {};
         }
 
-        return {
+        const paramsObject = {
             plot: 'selectedPlotId' in this.state ? this.state.selectedPlotId : '',
             plotParent: 'plotParent' in this.state ? this.state.plotParent : '',
             draft: 'selectedDraftId' in this.state ? this.state.selectedDraftId : '',
@@ -21,7 +21,10 @@ export default class StoryCompanion extends Component {
             chapter: 'selectedChapterId' in this.state ? this.state.selectedChapterId : '',
             number: 'number' in this.state ? this.state.number : '',
             user: 'userId' in this.state ? this.state.userId : this.props.userId,
-            story: 'selectedStoryId' in this.state ? this.state.selectedStoryId : this.props.selectedStoryId,
+            story:
+                'selectedStoryId' in this.state
+                    ? this.state.selectedStoryId
+                    : this.props.selectedStoryId,
             tag: 'selectedTagId' in this.state ? this.state.selectedTagId : '',
             type: 'type' in this.state ? this.state.type : '',
             description: 'description' in this.state ? this.state.description : '',
@@ -32,48 +35,62 @@ export default class StoryCompanion extends Component {
             password: 'password' in this.state ? this.state.password : '',
             confirmPassword: 'confirmPassword' in this.state ? this.state.confirmPassword : '',
             apiKey: this.props.apiKey,
+        };
+        return paramsObject;
+    };
+
+    sortEntitiesByNumber = entities => {
+        if (typeof entities === 'undefined') {
+            return [];
         }
+        let entityIds = Object.keys(entities);
+        entityIds.sort(function(a, b) {
+            return entities[a].number - entities[b].number;
+        });
+        return entityIds;
+    };
+
+    showAlert(message, type) {
+        this.setState({
+            globalAlertVisible: true,
+            globalAlertType: type,
+            globalAlertMessage: message,
+        });
     }
 
     getTags = () => {
         // Instance of array means tags is empty
         if (this.props.tags === null || this.props.tags instanceof Array) {
             let paramsObject = this.createParamsObject();
-            this.TagRequests.getTags(paramsObject).then((res) => {
-                if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: "Unable to fetch tags at this time",
-                    });
-                }
-                else {
-                    this.props.setTags(res.success);
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: "Unable to fetch tags at this time",
+            this.TagRequests.getTags(paramsObject)
+                .then(res => {
+                    if ('error' in res) {
+                        this.showAlert('Unable to fetch tags at this time', 'danger');
+                    } else {
+                        this.props.setTags(res.success);
+                    }
                 })
-            })
+                .catch(() => {
+                    this.showAlert('Unable to fetch tags at this time', 'danger');
+                });
         }
-    }
+    };
 
-    filterTagsByType = (type) => {
+    filterTagsByType = type => {
         let tagIds = Object.keys(this.props.tags);
         let tagByType = {};
-        tagIds.forEach((id) => {
+        tagIds.forEach(id => {
             if (this.props.tags[id].type === type) {
                 tagByType[id] = this.props.tags[id];
             }
         });
         return tagByType;
-    }
+    };
 
     /**
      * Require function of component
      */
-    render() { return null }
+    render() {
+        return null;
+    }
 }
