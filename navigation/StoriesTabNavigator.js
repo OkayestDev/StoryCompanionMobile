@@ -3,9 +3,9 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import StoriesScreen from '../screens/StoriesScreen.js';
-import SettingsScreen from '../screens/SettingsScreen.js';
-import TagsScreen from '../screens/TagsScreen.js';
+import StoriesScreen from '../screens/stories/StoriesScreen.js';
+import SettingsScreen from '../screens/settings/SettingsScreen.js';
+import TagsScreen from '../screens/tags/TagsScreen.js';
 
 const StoriesScreenStack = createStackNavigator({
     Stories: StoriesScreen,

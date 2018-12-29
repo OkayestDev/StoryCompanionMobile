@@ -1,19 +1,12 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    TouchableOpacity,
-    ScrollView,
-    Image,
-} from 'react-native';
-import StoryCompanion from '../utils/StoryCompanion.js';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import StoryCompanion from '../../utils/StoryCompanion.js';
 import { connect } from 'react-redux';
-import Actions from '../store/Actions.js';
-import GlobalAlert from '../components/GlobalAlert.js';
-import EditEntity from '../components/EditEntity.js';
-import FloatingAddButton from '../components/FloatingAddButton.js';
-import StoryRequests from '../utils/StoryRequests.js';
+import Actions from '../../store/Actions.js';
+import GlobalAlert from '../../components/GlobalAlert.js';
+import EditEntity from '../../components/EditEntity.js';
+import FloatingAddButton from '../../components/FloatingAddButton.js';
+import StoryRequests from '../../utils/StoryRequests.js';
 
 const headerTitle = {
     flex: 1,
@@ -26,16 +19,14 @@ const headerTitle = {
     flexDirection: 'row',
     backgroundColor: '#2f95dc',
     paddingLeft: 20,
-}
+};
 
 class StoriesScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
             <View style={headerTitle}>
-                <Text style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                    Stories
-                </Text>
+                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 28 }}>Stories</Text>
             </View>
         ),
         headerStyle: { backgroundColor: '#2f95dc' },
@@ -54,7 +45,7 @@ class StoriesScreen extends StoryCompanion {
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
-        }
+        };
         this.StoryRequests = new StoryRequests();
     }
 
@@ -66,7 +57,7 @@ class StoriesScreen extends StoryCompanion {
             selectedTagId: '',
             selectedStoryId: null,
         };
-    }
+    };
 
     componentDidMount() {
         this.getStories();
@@ -75,32 +66,32 @@ class StoriesScreen extends StoryCompanion {
 
     getStories = () => {
         let paramsObject = this.createParamsObject();
-        this.StoryRequests.getStories(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.StoryRequests.getStories(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.props.setStories(res.success);
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
-                })
-            }
-            else {
-                this.props.setStories(res.success);
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
+                });
             });
-        });
-    }
+    };
 
     cancelStoryEdit = () => {
         this.setState(this.resetStory());
-    }
+    };
 
-    selectStory = (id) => {
+    selectStory = id => {
         this.setState({
             selectedStoryId: id,
             name: this.props.stories[id].name,
@@ -108,98 +99,106 @@ class StoriesScreen extends StoryCompanion {
             image: this.props.stories[id].image,
             selectedTagId: this.props.stories[id].tag,
         });
-    }
+    };
 
     createStory = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.props.userId);
+            image = await this.StoryRequests.uploadImageToS3(
+                'story',
+                this.state.image,
+                this.props.userId
+            );
         }
         let paramsObject = this.createParamsObject();
         paramsObject['image'] = image;
-        this.StoryRequests.createStory(paramsObject).then(res => {
-            if ('error' in res) {
+        this.StoryRequests.createStory(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState(this.resetStory());
+                    this.props.setStories(res.success);
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to create story at this time',
                 });
-            }
-            else {
-                this.setState(this.resetStory());
-                this.props.setStories(res.success);
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to create story at this time",
             });
-        });
-    }
+    };
 
     editStory = async () => {
         let image = this.state.image;
         if (image instanceof Object) {
-            image = await this.StoryRequests.uploadImageToS3('story', this.state.image, this.state.selectedStoryId);
+            image = await this.StoryRequests.uploadImageToS3(
+                'story',
+                this.state.image,
+                this.state.selectedStoryId
+            );
         }
         let paramsObject = this.createParamsObject();
         paramsObject['image'] = image;
-        this.StoryRequests.editStory(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.StoryRequests.editStory(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    let tempStories = this.props.stories;
+                    tempStories[this.state.selectedStoryId] = res.success;
+                    this.setState(this.resetStory());
+                    this.props.setStories(tempStories);
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                let tempStories = this.props.stories;
-                tempStories[this.state.selectedStoryId] = res.success;
-                this.setState(this.resetStory());
-                this.props.setStories(tempStories);
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        })
-    }
+    };
 
     deleteStory = () => {
         let paramsObject = this.createParamsObject();
-        this.StoryRequests.deleteStory(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.StoryRequests.deleteStory(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    let tempStories = this.props.stories;
+                    delete tempStories[this.state.selectedStoryId];
+                    this.setState(this.resetStory());
+                    this.props.setStories(tempStories);
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                let tempStories = this.props.stories;
-                delete tempStories[this.state.selectedStoryId];
-                this.setState(this.resetStory());
-                this.props.setStories(tempStories);
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        })
-    }
+    };
 
-    selectStoryToEditComponents = (storyId) => {
+    selectStoryToEditComponents = storyId => {
         this.props.editStoryComponents(storyId);
-        this.props.navigation.navigate("StoryTab");
-    }
+        this.props.navigation.navigate('StoryTab');
+    };
 
     renderStories = () => {
         if (this.props.stories === null) {
@@ -208,7 +207,7 @@ class StoriesScreen extends StoryCompanion {
         let stories = [];
         let ids = Object.keys(this.props.stories);
         if (ids.length > 0) {
-            ids.forEach((id) => {
+            ids.forEach(id => {
                 stories.push(
                     <TouchableOpacity
                         key={id}
@@ -218,18 +217,14 @@ class StoriesScreen extends StoryCompanion {
                         <View>
                             <View style={styles.storyPictureAndName}>
                                 <View styles={styles.storyPictureContainer}>
-                                {
-                                    this.props.stories[id].image !== ''
-                                    ?
-                                    <Image
-                                        source={{uri: this.props.stories[id].image}}
-                                        style={styles.storyPicture}
-                                    />
-                                    :
-                                    <View
-                                        style={styles.noPicture}
-                                    />
-                                }
+                                    {this.props.stories[id].image !== '' ? (
+                                        <Image
+                                            source={{ uri: this.props.stories[id].image }}
+                                            style={styles.storyPicture}
+                                        />
+                                    ) : (
+                                        <View style={styles.noPicture} />
+                                    )}
                                 </View>
                                 <View style={styles.storyNameAndDescription}>
                                     <Text numberOfLines={1} style={styles.storyName}>
@@ -237,7 +232,9 @@ class StoriesScreen extends StoryCompanion {
                                     </Text>
                                     <TouchableOpacity
                                         style={styles.editStoryPropsButton}
-                                        onPress={() => {this.selectStoryToEditComponents(id)}}
+                                        onPress={() => {
+                                            this.selectStoryToEditComponents(id);
+                                        }}
                                     >
                                         <Text style={styles.editStoryPropsButtonText}>
                                             Edit Components
@@ -245,26 +242,22 @@ class StoriesScreen extends StoryCompanion {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            
                         </View>
                     </TouchableOpacity>
                 );
             });
             return stories;
-        }
-        else {
+        } else {
             return (
                 <View style={styles.noStoriesContainer}>
                     <Text style={styles.noStoriesText}>
                         Looks like you haven't created any stories yet.
                     </Text>
-                    <Text style={styles.noStoriesText}>
-                        Press on the + to create a story!
-                    </Text>
+                    <Text style={styles.noStoriesText}>Press on the + to create a story!</Text>
                 </View>
-            )
+            );
         }
-    }
+    };
 
     render() {
         if (this.state.selectedStoryId === null) {
@@ -274,63 +267,56 @@ class StoriesScreen extends StoryCompanion {
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
-                    <ScrollView style={styles.container}>
-                        {this.renderStories()}
-                    </ScrollView>
-                    <FloatingAddButton onPress={() => this.setState({selectedStoryId: "new"})}/>
+                    <ScrollView style={styles.container}>{this.renderStories()}</ScrollView>
+                    <FloatingAddButton onPress={() => this.setState({ selectedStoryId: 'new' })} />
                 </View>
             );
-        }
-        else {
+        } else {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <EditEntity
                         selectedEntityId={this.state.selectedStoryId}
                         entityType="Story"
-
                         image={this.state.image}
                         imagePickerTitle="Add an image to this story"
-                        imagePickerOnChange={(newImage) => this.setState({image: newImage})}
-
+                        imagePickerOnChange={newImage => this.setState({ image: newImage })}
                         inputOne={this.state.name}
                         inputOneName="Story Name"
-                        inputOneOnChange={(newValue) => this.setState({name: newValue})}
-
+                        inputOneOnChange={newValue => this.setState({ name: newValue })}
                         modalPicker="Tag"
                         modalPickerSelectedValue={
                             this.state.selectedTagId in this.props.tags
-                            ?
-                            this.props.tags[this.state.selectedTagId].name
-                            :
-                            ''
+                                ? this.props.tags[this.state.selectedTagId].name
+                                : ''
                         }
                         modalPickerList={this.filterTagsByType('Story')}
-                        modalPickerOnChange={(newTag) => this.setState({selectedTagId: newTag})}
-
+                        modalPickerOnChange={newTag => this.setState({ selectedTagId: newTag })}
                         inputThree={this.state.description}
                         inputThreeName="Summary"
-                        inputThreeOnChange={(newValue) => this.setState({description: newValue})}
-
+                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
                         createEntity={() => this.createStory()}
                         editEntity={() => this.editStory()}
                         deleteEntity={() => this.deleteStory()}
                         cancelEntityEdit={() => this.cancelStoryEdit()}
                     />
                 </View>
-            )
+            );
         }
     }
 }
 
-export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(StoriesScreen);
+export default connect(
+    Actions.mapStateToProps,
+    Actions.mapDispatchToProps
+)(StoriesScreen);
 
 const styles = StyleSheet.create({
     container: {
@@ -408,5 +394,5 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'white',
         fontWeight: 'bold',
-    }
+    },
 });

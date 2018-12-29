@@ -3,9 +3,9 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import LoginScreen from '../screens/LoginScreen.js';
-import PasswordResetScreen from '../screens/PasswordResetScreen.js';
-import CreateAccountScreen from '../screens/CreateAccountScreen.js';
+import LoginScreen from '../screens/login/LoginScreen.js';
+import PasswordResetScreen from '../screens/password_reset/PasswordResetScreen.js';
+import CreateAccountScreen from '../screens/create_account/CreateAccountScreen.js';
 
 const LoginStack = createStackNavigator({
     Login: LoginScreen,

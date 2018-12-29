@@ -8,12 +8,12 @@ import {
     TextInput, 
 } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../store/Actions.js';
-import GlobalAlert from '../components/GlobalAlert.js';
-import { PATTERNS } from '../config/Patterns.js';
+import Actions from '../../store/Actions.js';
+import GlobalAlert from '../../components/GlobalAlert.js';
+import { PATTERNS } from '../../config/Patterns.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import UserRequests from '../utils/UserRequests.js';
-import StoryCompanion from '../utils/StoryCompanion.js';
+import UserRequests from '../../utils/UserRequests.js';
+import StoryCompanion from '../../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 

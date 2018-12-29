@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-    View, 
-    Text, 
+import {
+    View,
+    Text,
     TextInput,
     TouchableOpacity,
     StyleSheet,
@@ -9,12 +9,12 @@ import {
     Dimensions,
 } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../store/Actions.js';
+import Actions from '../../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import GlobalAlert from '../components/GlobalAlert.js';
-import UserRequests from '../utils/UserRequests.js';
-import { PATTERNS } from '../config/Patterns.js';
-import StoryCompanion from '../utils/StoryCompanion.js';
+import GlobalAlert from '../../components/GlobalAlert.js';
+import UserRequests from '../../utils/UserRequests.js';
+import { PATTERNS } from '../../config/Patterns.js';
+import StoryCompanion from '../../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -26,14 +26,17 @@ const headerTitle = {
     flexDirection: 'row',
     backgroundColor: '#2f95dc',
     paddingLeft: 20,
-}
+};
 
 class PasswordResetScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Password Reset',
         headerTitle: (
             <View style={headerTitle}>
-                <Text numberOfLines={1} style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
+                <Text
+                    numberOfLines={1}
+                    style={{ fontWeight: 'bold', color: 'white', fontSize: 28 }}
+                >
                     Password Reset
                 </Text>
             </View>
@@ -49,7 +52,7 @@ class PasswordResetScreen extends StoryCompanion {
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
-        }
+        };
         this.UserRequests = new UserRequests();
     }
 
@@ -58,37 +61,37 @@ class PasswordResetScreen extends StoryCompanion {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'warning',
-                globalAlertMessage: "Please enter a valid email",
+                globalAlertMessage: 'Please enter a valid email',
             });
             return;
         }
         let paramsObject = this.createParamsObject();
-        this.UserRequests.passwordReset(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.UserRequests.passwordReset(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'success',
+                        globalAlertMessage: 'Temporary password sent to ' + this.state.email,
+                        email: '',
+                    });
+                    setTimeout(() => this.props.navigation.navigate('Login'), 3000);
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get a response from the server',
                 });
-            }
-            else {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'success',
-                    globalAlertMessage: "Temporary password sent to " + this.state.email,
-                    email: '',
-                });
-                setTimeout(() => this.props.navigation.navigate("Login"), 3000);
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get a response from the server",
             });
-        });
-    }
+    };
 
     render() {
         return (
@@ -97,7 +100,7 @@ class PasswordResetScreen extends StoryCompanion {
                     visible={this.state.globalAlertVisible}
                     message={this.state.globalAlertMessage}
                     type={this.state.globalAlertType}
-                    closeAlert={() => this.setState({globalAlertVisible: false})}
+                    closeAlert={() => this.setState({ globalAlertVisible: false })}
                 />
                 <KeyboardAwareScrollView
                     style={styles.container}
@@ -105,34 +108,25 @@ class PasswordResetScreen extends StoryCompanion {
                     keyboardShouldPersistTaps="handled"
                     scrollEnabled={true}
                 >
-                    <KeyboardAvoidingView
-                        enabled={true}
-                        behavior="position"
-                    >
+                    <KeyboardAvoidingView enabled={true} behavior="position">
                         <View style={styles.resetPasswordView}>
-                            <Text style={styles.forgotPassword}>
-                                Forgot Your Password, eh?
-                            </Text>
+                            <Text style={styles.forgotPassword}>Forgot Your Password, eh?</Text>
                             <View style={styles.resetPasswordLabelAndInputContainer}>
-                                <Text style={styles.resetPasswordInputLabel}>
-                                    Email
-                                </Text>
+                                <Text style={styles.resetPasswordInputLabel}>Email</Text>
                                 <TextInput
                                     autoCapitalize="none"
                                     keyboardType="email-address"
                                     style={styles.resetPasswordInput}
-                                    underlineColorAndroid='rgba(0,0,0,0)'
+                                    underlineColorAndroid="rgba(0,0,0,0)"
                                     value={this.state.email}
-                                    onChangeText={(newText) => this.setState({email: newText})}
+                                    onChangeText={newText => this.setState({ email: newText })}
                                 />
                             </View>
                             <TouchableOpacity
                                 style={styles.resetPasswordButton}
                                 onPress={() => this.passwordReset()}
                             >
-                                <Text
-                                    style={styles.resetPasswordButtonText}
-                                >
+                                <Text style={styles.resetPasswordButtonText}>
                                     Send New Password
                                 </Text>
                             </TouchableOpacity>
@@ -140,16 +134,19 @@ class PasswordResetScreen extends StoryCompanion {
                     </KeyboardAvoidingView>
                 </KeyboardAwareScrollView>
             </View>
-        )
+        );
     }
 }
 
-export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(PasswordResetScreen);
+export default connect(
+    Actions.mapStateToProps,
+    Actions.mapDispatchToProps
+)(PasswordResetScreen);
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
     },
     forgotPassword: {
         fontWeight: 'bold',
@@ -157,7 +154,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     resetPasswordView: {
-        height: .7 * Dimensions.get('window').height,
+        height: 0.7 * Dimensions.get('window').height,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -174,11 +171,11 @@ const styles = StyleSheet.create({
     resetPasswordInputLabel: {
         fontSize: 24,
         fontWeight: 'bold',
-        width: .3 * screenX,
-        marginRight: .05 * screenX,
+        width: 0.3 * screenX,
+        marginRight: 0.05 * screenX,
     },
     resetPasswordInput: {
-        width: .6 * screenX,
+        width: 0.6 * screenX,
         height: 60,
         borderRadius: 4,
         borderWidth: 2,
@@ -191,7 +188,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2f95dc',
         display: 'flex',
         height: 50,
-        width: .8 * screenX,
+        width: 0.8 * screenX,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
@@ -200,4 +197,4 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 24,
     },
-})
+});

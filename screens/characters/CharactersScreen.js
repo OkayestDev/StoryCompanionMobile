@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../store/Actions.js';
+import Actions from '../../store/Actions.js';
 import { Icon } from 'react-native-elements';
-import FloatingAddButton from '../components/FloatingAddButton.js';
-import GlobalAlert from '../components/GlobalAlert.js';
-import EditEntity from '../components/EditEntity.js';
-import CharacterRequests from '../utils/CharacterRequests.js';
-import StoryCompanion from '../utils/StoryCompanion.js';
+import FloatingAddButton from '../../components/FloatingAddButton.js';
+import GlobalAlert from '../../components/GlobalAlert.js';
+import EditEntity from '../../components/EditEntity.js';
+import CharacterRequests from '../../utils/CharacterRequests.js';
+import StoryCompanion from '../../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',

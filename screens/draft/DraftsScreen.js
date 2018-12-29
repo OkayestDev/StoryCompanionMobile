@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../store/Actions.js';
+import Actions from '../../store/Actions.js';
 import { Icon } from 'react-native-elements';
-import DraftRequests from '../utils/DraftRequests.js';
-import GlobalAlert from '../components/GlobalAlert.js';
-import StoryCompanion from '../utils/StoryCompanion.js';
+import DraftRequests from '../../utils/DraftRequests.js';
+import GlobalAlert from '../../components/GlobalAlert.js';
+import StoryCompanion from '../../utils/StoryCompanion.js';
 
 const headerTitle = {
     display: 'flex',

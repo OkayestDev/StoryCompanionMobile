@@ -1,22 +1,22 @@
 import React from 'react';
-import { 
-    View, 
+import {
+    View,
     StyleSheet,
-    Text, 
-    TouchableOpacity, 
+    Text,
+    TouchableOpacity,
     TextInput,
     Dimensions,
     KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../store/Actions.js';
+import Actions from '../../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import GlobalAlert from '../components/GlobalAlert.js';
-import FloatingButtons from '../components/FloatingButtons.js';
-import ConfirmationModal from '../components/ConfirmationModal.js';
-import SettingsRequests from '../utils/SettingsRequests.js';
-import UserRequests from '../utils/UserRequests.js';
-import StoryCompanion from '../utils/StoryCompanion.js';
+import GlobalAlert from '../../components/GlobalAlert.js';
+import FloatingButtons from '../../components/FloatingButtons.js';
+import ConfirmationModal from '../../components/ConfirmationModal.js';
+import SettingsRequests from '../../utils/SettingsRequests.js';
+import UserRequests from '../../utils/UserRequests.js';
+import StoryCompanion from '../../utils/StoryCompanion.js';
 
 const screenX = Dimensions.get('window').width;
 
@@ -28,16 +28,14 @@ const headerTitle = {
     flexDirection: 'row',
     backgroundColor: '#2f95dc',
     paddingLeft: 20,
-}
+};
 
 class SettingsScreen extends StoryCompanion {
     static navigationOptions = {
         title: 'Stories',
         headerTitle: (
             <View style={headerTitle}>
-                <Text style={{fontWeight: 'bold', color: 'white', fontSize: 28}}>
-                    Settings
-                </Text>
+                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 28 }}>Settings</Text>
             </View>
         ),
         headerStyle: { backgroundColor: '#2f95dc' },
@@ -59,7 +57,7 @@ class SettingsScreen extends StoryCompanion {
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
-        }
+        };
         this.SettingsRequests = new SettingsRequests();
         this.UserRequests = new UserRequests();
     }
@@ -78,7 +76,7 @@ class SettingsScreen extends StoryCompanion {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'warning',
-                globalAlertMessage: "Passwords cannot be empty",
+                globalAlertMessage: 'Passwords cannot be empty',
             });
             return;
         }
@@ -87,102 +85,102 @@ class SettingsScreen extends StoryCompanion {
             this.setState({
                 globalAlertVisible: true,
                 globalAlertType: 'warning',
-                globalAlertMessage: "Passwords do not match",
+                globalAlertMessage: 'Passwords do not match',
             });
             return;
         }
 
         let paramsObject = this.createParamsObject();
-        this.UserRequests.changePassword(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.UserRequests.changePassword(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'warning',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'success',
+                        globalAlertMessage: 'Successfully updated password',
+                        changingPassword: false,
+                        password: '',
+                        confirmPassword: '',
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
+                    globalAlertType: 'danger',
+                    globalAlertMessage: 'Unable to get response from server',
                 });
-            }
-            else {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'success',
-                    globalAlertMessage: "Successfully updated password",
-                    changingPassword: false,
-                    password: '',
-                    confirmPassword: '',
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: "Unable to get response from server",
             });
-        });
-    }
+    };
 
     bug = () => {
         let paramsObject = this.createParamsObject();
-        this.SettingsRequests.bug(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.SettingsRequests.bug(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'success',
+                        globalAlertMessage: 'Successfully submitted bug. Thank you!',
+                        submittingBug: false,
+                        bugDescription: '',
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: res.error,
+                    globalAlertMessage: 'Unable to submit bug at this time',
                 });
-            }
-            else {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'success',
-                    globalAlertMessage: 'Successfully submitted bug. Thank you!',
-                    submittingBug: false,
-                    bugDescription: '',
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: 'Unable to submit bug at this time',
             });
-        })
-    }
+    };
 
     feature = () => {
         let paramsObject = this.createParamsObject();
-        this.SettingsRequests.feature(paramsObject).then((res) => {
-            if ('error' in res) {
+        this.SettingsRequests.feature(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'danger',
+                        globalAlertMessage: res.error,
+                    });
+                } else {
+                    this.setState({
+                        globalAlertVisible: true,
+                        globalAlertType: 'success',
+                        globalAlertMessage: 'Successfully submitted feature. Thank you!',
+                        submittingFeature: false,
+                        featureDescription: '',
+                    });
+                }
+            })
+            .catch(() => {
                 this.setState({
                     globalAlertVisible: true,
                     globalAlertType: 'danger',
-                    globalAlertMessage: res.error,
+                    globalAlertMessage: 'Unable to submit feature at this time',
                 });
-            }
-            else {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'success',
-                    globalAlertMessage: 'Successfully submitted feature. Thank you!',
-                    submittingFeature: false,
-                    featureDescription: '',
-                });
-            }
-        })
-        .catch(() => {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'danger',
-                globalAlertMessage: 'Unable to submit feature at this time',
             });
-        })
-    }
+    };
 
     logout = () => {
         this.props.logout();
-        this.props.navigation.navigate("LoginTab");
-    }
+        this.props.navigation.navigate('LoginTab');
+    };
 
     render() {
         if (this.state.submittingBug) {
@@ -192,74 +190,72 @@ class SettingsScreen extends StoryCompanion {
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <FloatingButtons
-                        onCancel={() => this.setState({submittingBug: false})}
+                        onCancel={() => this.setState({ submittingBug: false })}
                         onSave={() => this.bug()}
                         onDelete={null}
                     />
                     <View style={styles.submissionLabelContainer}>
-                        <Text style={styles.submissionLabel}>
-                            Submitting a Bug
-                        </Text>
+                        <Text style={styles.submissionLabel}>Submitting a Bug</Text>
                     </View>
                     <View style={styles.submissionDescriptionContainer}>
                         <TextInput
                             placeholder="Feature description..."
-                            underlineColorAndroid='rgba(0,0,0,0)'
+                            underlineColorAndroid="rgba(0,0,0,0)"
                             style={styles.submissionDescription}
                             multiline={true}
                             value={this.state.description}
-                            onChangeText={(newDescription) => this.setState({description: newDescription})}
+                            onChangeText={newDescription =>
+                                this.setState({ description: newDescription })
+                            }
                         />
                     </View>
                 </View>
             );
-        }
-        else if (this.state.submittingFeature) {
+        } else if (this.state.submittingFeature) {
             return (
                 <View style={styles.submissionContainer}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <FloatingButtons
-                        onCancel={() => this.setState({submittingFeature: false})}
+                        onCancel={() => this.setState({ submittingFeature: false })}
                         onSave={() => this.feature()}
                         onDelete={null}
                     />
                     <View style={styles.submissionLabelContainer}>
-                        <Text style={styles.submissionLabel}>
-                            Submitting a Feature Request
-                        </Text>
+                        <Text style={styles.submissionLabel}>Submitting a Feature Request</Text>
                     </View>
                     <View style={styles.submissionDescriptionContainer}>
                         <TextInput
                             placeholder="Feature description..."
-                            underlineColorAndroid='rgba(0,0,0,0)'
+                            underlineColorAndroid="rgba(0,0,0,0)"
                             style={styles.submissionDescription}
                             multiline={true}
                             value={this.state.description}
-                            onChangeText={(newDescription) => this.setState({description: newDescription})}
+                            onChangeText={newDescription =>
+                                this.setState({ description: newDescription })
+                            }
                         />
                     </View>
                 </View>
             );
-        }
-        else if (this.state.changingPassword) {
+        } else if (this.state.changingPassword) {
             return (
                 <View style={styles.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <FloatingButtons
-                        onCancel={() => this.setState({changingPassword: false})}
+                        onCancel={() => this.setState({ changingPassword: false })}
                         onSave={null}
                         onDelete={null}
                     />
@@ -268,25 +264,20 @@ class SettingsScreen extends StoryCompanion {
                         keyboardShouldPersistTaps="handled"
                         scrollEnabled={true}
                     >
-                        <KeyboardAvoidingView
-                            enabled={true}
-                            behavior="position"
-                        >
+                        <KeyboardAvoidingView enabled={true} behavior="position">
                             <View style={styles.resetPasswordView}>
-                                <Text style={styles.forgotPassword}>
-                                    Change Your Password
-                                </Text>
+                                <Text style={styles.forgotPassword}>Change Your Password</Text>
                                 <View style={styles.resetPasswordLabelAndInputContainer}>
-                                    <Text style={styles.resetPasswordInputLabel}>
-                                        New Password
-                                    </Text>
+                                    <Text style={styles.resetPasswordInputLabel}>New Password</Text>
                                     <TextInput
                                         autoCapitalize="none"
                                         secureTextEntry={true}
                                         style={styles.resetPasswordInput}
-                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        underlineColorAndroid="rgba(0,0,0,0)"
                                         value={this.state.password}
-                                        onChangeText={(newText) => this.setState({password: newText})}
+                                        onChangeText={newText =>
+                                            this.setState({ password: newText })
+                                        }
                                     />
                                 </View>
                                 <View style={styles.resetPasswordLabelAndInputContainer}>
@@ -297,18 +288,18 @@ class SettingsScreen extends StoryCompanion {
                                         autoCapitalize="none"
                                         secureTextEntry={true}
                                         style={styles.resetPasswordInput}
-                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        underlineColorAndroid="rgba(0,0,0,0)"
                                         value={this.state.confirmPassword}
-                                        onChangeText={(newText) => this.setState({confirmPassword: newText})}
+                                        onChangeText={newText =>
+                                            this.setState({ confirmPassword: newText })
+                                        }
                                     />
                                 </View>
                                 <TouchableOpacity
                                     style={styles.resetPasswordButton}
                                     onPress={() => this.changePassword()}
                                 >
-                                    <Text
-                                        style={styles.resetPasswordButtonText}
-                                    >
+                                    <Text style={styles.resetPasswordButtonText}>
                                         Change Password
                                     </Text>
                                 </TouchableOpacity>
@@ -316,67 +307,67 @@ class SettingsScreen extends StoryCompanion {
                         </KeyboardAvoidingView>
                     </KeyboardAwareScrollView>
                 </View>
-            )
-        }
-        else {
+            );
+        } else {
             return (
-                <View style={[
-                    styles.container,
-                    this.state.isConfirmationModalOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
-                ]}>
+                <View
+                    style={[
+                        styles.container,
+                        this.state.isConfirmationModalOpen
+                            ? { backgroundColor: 'rgba(0,0,0,0.1)' }
+                            : '',
+                    ]}
+                >
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({globalAlertVisible: false})}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() => this.setState({isConfirmationModalOpen: false})}
-                        confirmationTitle={"Logout?"}
+                        closeConfirmationModal={() =>
+                            this.setState({ isConfirmationModalOpen: false })
+                        }
+                        confirmationTitle={'Logout?'}
                         onConfirm={() => this.logout()}
                     />
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => this.setState({submittingBug: true})}
+                            onPress={() => this.setState({ submittingBug: true })}
                         >
-                            <Text style={styles.buttonText}>
-                                Submit a Bug
-                            </Text>
+                            <Text style={styles.buttonText}>Submit a Bug</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => this.setState({submittingFeature: true})}
+                            onPress={() => this.setState({ submittingFeature: true })}
                         >
-                            <Text style={styles.buttonText}>
-                                Submit a Feature Request
-                            </Text>
+                            <Text style={styles.buttonText}>Submit a Feature Request</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => this.setState({changingPassword: true})}
+                            onPress={() => this.setState({ changingPassword: true })}
                         >
-                            <Text style={styles.buttonText}>
-                                Change Password
-                            </Text>
+                            <Text style={styles.buttonText}>Change Password</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => this.setState({isConfirmationModalOpen: true})}
+                            onPress={() => this.setState({ isConfirmationModalOpen: true })}
                         >
-                            <Text style={styles.buttonText}>
-                                Logout
-                            </Text>
+                            <Text style={styles.buttonText}>Logout</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-            )
+            );
         }
     }
 }
 
-export default connect(Actions.mapStateToProps, Actions.mapDispatchToProps)(SettingsScreen);
+export default connect(
+    Actions.mapStateToProps,
+    Actions.mapDispatchToProps
+)(SettingsScreen);
 
 const styles = StyleSheet.create({
     container: {
@@ -450,7 +441,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     resetPasswordView: {
-        height: .7 * Dimensions.get('window').height,
+        height: 0.7 * Dimensions.get('window').height,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -468,11 +459,11 @@ const styles = StyleSheet.create({
         color: '#CCCCCC',
         fontSize: 24,
         fontWeight: 'bold',
-        width: .3 * screenX,
-        marginRight: .05 * screenX,
+        width: 0.3 * screenX,
+        marginRight: 0.05 * screenX,
     },
     resetPasswordInput: {
-        width: .6 * screenX,
+        width: 0.6 * screenX,
         height: 60,
         borderRadius: 4,
         borderWidth: 2,
@@ -485,7 +476,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#2f95dc',
         display: 'flex',
         height: 50,
-        width: .8 * screenX,
+        width: 0.8 * screenX,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 4,
@@ -494,4 +485,4 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 24,
     },
-})
+});
