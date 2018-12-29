@@ -1,50 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Actions from '../../store/Actions.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
-import NoteRequests from '../../utils/NoteRequests.js';
-import { Icon } from 'react-native-elements';
+import ConfirmationModal from '../../components/ConfirmationModal.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
+import NotesUtils from './components/NotesUtils.js';
+import STYLE from './components/NotesStyle.js';
 
-const headerTitle = {
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#2f95dc',
-    paddingLeft: 20,
-};
-
-class NotesScreen extends StoryCompanion {
+class NotesScreen extends NotesUtils {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Notes',
             headerTitle: (
-                <View style={headerTitle}>
-                    <TouchableOpacity
-                        style={{ marginRight: 15 }}
-                        onPress={() => navigation.navigate('StoriesTab')}
-                    >
-                        <Icon color="white" name="chevron-left" type="font-awesome" size={24} />
-                    </TouchableOpacity>
-                    <Text
-                        numberOfLines={1}
-                        style={{ width: '75%', fontWeight: 'bold', color: 'white', fontSize: 28 }}
-                    >
-                        {navigation.getParam('title')}
-                    </Text>
-                    {'params' in navigation.state && 'exportNotes' in navigation.state.params && (
-                        <TouchableOpacity
-                            style={{ width: '15%' }}
-                            onPress={navigation.state.params.exportNotes}
-                        >
-                            <Icon color="white" name="envelope" type="font-awesome" size={28} />
-                        </TouchableOpacity>
+                <View style={StoryCompanion.headerTitle}>
+                    {StoryCompanion.renderNavigationTitle(navigation.getParam('title'), () =>
+                        navigation.navigate('StoriesTab')
                     )}
+                    {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
             ),
             headerStyle: { backgroundColor: '#2f95dc' },
@@ -60,161 +35,37 @@ class NotesScreen extends StoryCompanion {
             notes: null,
             selectedNoteId: null,
 
+            isConfirmationModalOpen: false,
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
         };
-        this.NoteRequests = new NoteRequests();
         props.navigation.setParams({
             title: this.props.stories[this.props.selectedStoryId].name,
-            exportNotes: () => this.exportNotes(),
+            onExport: this.exportNotes,
         });
-        this.getNotes();
     }
 
-    getNotes = () => {
-        let paramsObject = this.createParamsObject();
-        this.NoteRequests.getNotes(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedNoteId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                } else {
-                    this.setState({
-                        selectedNoteId: null,
-                        notes: res.success,
-                    });
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
-            });
-    };
-
-    createNote = () => {
-        let paramsObject = this.createParamsObject();
-        this.NoteRequests.createNote(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                } else {
-                    this.setState({
-                        name: '',
-                        description: '',
-                        notes: res.success,
-                        selectedNoteId: null,
-                    });
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
-            });
-    };
-
-    editNote = () => {
-        let paramsObject = this.createParamsObject();
-        this.NoteRequests.editNote(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
-                } else {
-                    let tempNotes = this.state.notes;
-                    tempNotes[this.state.selectedNoteId] = res.success;
-                    this.setState({
-                        selectedNoteId: null,
-                        name: '',
-                        description: '',
-                        notes: tempNotes,
-                    });
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
-            });
-    };
-
-    deleteNote = () => {
-        let paramsObject = this.createParamsObject();
-        this.NoteRequests.deleteNote(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
-                } else {
-                    let tempNotes = this.state.notes;
-                    delete tempNotes[this.state.selectedNoteId];
-                    this.setState({
-                        notes: tempNotes,
-                        name: '',
-                        description: '',
-                        selectedNoteId: null,
-                    });
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
-            });
-    };
-
-    exportNotes = () => {
-        const paramsObject = this.createParamsObject();
-        this.NoteRequests.exportNotes(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.showAlert(res.error, 'danger');
-                } else {
-                    this.showAlert(`Success emailed notes to ${this.props.email}`, 'success');
-                }
-            })
-            .catch(() => {
-                this.showAlert('Unable to export notes at this time', 'danger');
-            });
-    };
-
-    selectNote = id => {
-        this.setState({
-            selectedNoteId: id,
-            name: this.state.notes[id].name,
-            description: this.state.notes[id].description,
-        });
-    };
-
     cancelNoteEdit = () => {
+        this.removeNavigationActions();
         this.setState({
             selectedNoteId: null,
             name: '',
             description: '',
+        });
+    };
+
+    newNote = () => {
+        this.setNavigationActions(this.cancelNoteEdit, this.createNote, null);
+        this.setState({ selectedNoteId: 'new' });
+    };
+
+    selectNote = id => {
+        this.setNavigationActions(this.cancelNoteEdit, this.editNote, this.openConfirmation);
+        this.setState({
+            selectedNoteId: id,
+            name: this.state.notes[id].name,
+            description: this.state.notes[id].description,
         });
     };
 
@@ -231,15 +82,15 @@ class NotesScreen extends StoryCompanion {
                     <TouchableOpacity
                         key={id}
                         onPress={() => this.selectNote(id)}
-                        style={styles.noteContainer}
+                        style={STYLE.noteContainer}
                     >
-                        <View style={styles.notePictureAndName}>
-                            <View styles={styles.notePictureContainer} />
-                            <View style={styles.noteNameAndDescription}>
-                                <Text numberOfLines={1} style={styles.noteName}>
+                        <View style={STYLE.notePictureAndName}>
+                            <View styles={STYLE.notePictureContainer} />
+                            <View style={STYLE.noteNameAndDescription}>
+                                <Text numberOfLines={1} style={STYLE.noteName}>
                                     {this.state.notes[id].name}
                                 </Text>
-                                <Text numberOfLines={3} style={styles.noteDescription}>
+                                <Text numberOfLines={3} style={STYLE.noteDescription}>
                                     {this.state.notes[id].description}
                                 </Text>
                             </View>
@@ -250,11 +101,11 @@ class NotesScreen extends StoryCompanion {
             return notesRendered;
         } else {
             return (
-                <View style={styles.noNotesContainer}>
-                    <Text style={styles.noNotesText}>
+                <View style={STYLE.noNotesContainer}>
+                    <Text style={STYLE.noNotesText}>
                         Looks like you haven't created any notes yet.
                     </Text>
-                    <Text style={styles.noNotesText}>Press on the + to create a note!</Text>
+                    <Text style={STYLE.noNotesText}>Press on the + to create a note!</Text>
                 </View>
             );
         }
@@ -263,7 +114,7 @@ class NotesScreen extends StoryCompanion {
     render() {
         if (this.state.selectedNoteId === null) {
             return (
-                <View style={styles.container}>
+                <View style={STYLE.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
@@ -271,12 +122,12 @@ class NotesScreen extends StoryCompanion {
                         closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
                     <ScrollView>{this.renderNotes()}</ScrollView>
-                    <FloatingAddButton onPress={() => this.setState({ selectedNoteId: 'new' })} />
+                    <FloatingAddButton onPress={this.newNote} />
                 </View>
             );
         } else {
             return (
-                <View style={styles.container}>
+                <View style={STYLE.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
@@ -285,6 +136,7 @@ class NotesScreen extends StoryCompanion {
                     />
                     <EditEntity
                         selectedEntityId={this.state.selectedNoteId}
+                        isModalOpen={this.state.isConfirmationModalOpen}
                         entityType="Note"
                         inputOne={this.state.name}
                         inputOneName="Note Name"
@@ -292,10 +144,19 @@ class NotesScreen extends StoryCompanion {
                         inputThree={this.state.description}
                         inputThreeName="Description"
                         inputThreeOnChange={newValue => this.setState({ description: newValue })}
-                        createEntity={() => this.createNote()}
-                        editEntity={() => this.editNote()}
-                        deleteEntity={() => this.deleteNote()}
-                        cancelEntityEdit={() => this.cancelNoteEdit()}
+                    />
+                    <ConfirmationModal
+                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
+                        closeConfirmationModal={() =>
+                            this.setState({ isConfirmationModalOpen: false })
+                        }
+                        confirmationTitle={'Delete Note?'}
+                        entityDescription=""
+                        onConfirm={() => {
+                            this.deleteNote();
+                            this.onConfirmationConfirm();
+                        }}
+                        note=""
                     />
                 </View>
             );
@@ -307,37 +168,3 @@ export default connect(
     Actions.mapStateToProps,
     Actions.mapDispatchToProps
 )(NotesScreen);
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    noteContainer: {
-        width: '100%',
-        padding: 10,
-        height: 125,
-        borderBottomWidth: 2,
-        borderBottomColor: '#CCCCCC',
-    },
-    noteName: {
-        fontSize: 28,
-        fontWeight: 'bold',
-    },
-    noteDescription: {
-        fontSize: 18,
-    },
-    noNotesContainer: {
-        flex: 1,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    noNotesText: {
-        marginTop: 30,
-        textAlign: 'center',
-        fontSize: 36,
-        color: '#CCCCCC',
-        fontWeight: 'bold',
-    },
-});

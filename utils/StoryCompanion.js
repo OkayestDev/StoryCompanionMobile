@@ -1,4 +1,6 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
+import { Icon } from 'react-native-elements';
 import TagRequests from '../utils/TagRequests.js';
 
 export default class StoryCompanion extends Component {
@@ -87,10 +89,145 @@ export default class StoryCompanion extends Component {
         return tagByType;
     };
 
+    openConfirmation = () => {
+        this.setState({ isConfirmationModalOpen: true });
+    };
+
+    onConfirmationConfirm = () => {
+        this.setState({ isConfirmationModalOpen: false });
+        this.removeNavigationActions();
+    };
+
     /**
-     * Require function of component
+     * Sets props of navigation so the cancel, delete, and save button show up in nav bar
      */
-    render() {
-        return null;
-    }
+    setNavigationActions = (onCancel = null, onSave = null, onDelete = null) => {
+        this.props.navigation.setParams({
+            actionsAvailable: true,
+            onCancel,
+            onSave,
+            onDelete,
+        });
+    };
+
+    removeNavigationActions = () => {
+        this.props.navigation.setParams({
+            actionsAvailable: false,
+            onCancel: null,
+            onSave: null,
+            onDelete: null,
+        });
+    };
+
+    static renderNavigationTitle = (title, goBack = null) => {
+        return (
+            <View
+                style={{
+                    width: '50%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                }}
+            >
+                {goBack !== null && (
+                    <TouchableOpacity style={{ marginRight: 15 }} onPress={goBack}>
+                        <Icon color="white" name="chevron-left" type="font-awesome" size={24} />
+                    </TouchableOpacity>
+                )}
+                <Text
+                    numberOfLines={1}
+                    style={{ fontWeight: 'bold', color: 'white', fontSize: 28 }}
+                >
+                    {title}
+                </Text>
+            </View>
+        );
+    };
+
+    static renderFullWidthNavigationTitle = title => {
+        return (
+            <View style={{ width: '100%' }}>
+                <Text
+                    numberOfLines={1}
+                    style={{ fontWeight: 'bold', color: 'white', fontSize: 28 }}
+                >
+                    {title}
+                </Text>
+            </View>
+        );
+    };
+
+    static renderNavigationOptions = ({ navigation }) => {
+        const onCancel = navigation.getParam('onCancel');
+        const onSave = navigation.getParam('onSave');
+        const onDelete = navigation.getParam('onDelete');
+        const onExport = navigation.getParam('onExport');
+
+        return (
+            <View style={{ width: '50%' }}>
+                <View
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                        alignItems: 'center',
+                    }}
+                >
+                    {onExport && (
+                        <TouchableOpacity
+                            onPress={onExport}
+                            style={{
+                                marginRight: 30,
+                            }}
+                        >
+                            <Icon color="white" name="envelope" type="font-awesome" size={28} />
+                        </TouchableOpacity>
+                    )}
+                    {onDelete && (
+                        <TouchableOpacity
+                            onPress={onDelete}
+                            style={{
+                                marginRight: 30,
+                            }}
+                        >
+                            <Icon color="white" name="trash" type="font-awesome" size={28} />
+                        </TouchableOpacity>
+                    )}
+                    {onSave && (
+                        <TouchableOpacity
+                            onPress={onSave}
+                            style={{
+                                marginRight: 30,
+                            }}
+                        >
+                            <Icon color="white" name="check" type="font-awesome" size={28} />
+                        </TouchableOpacity>
+                    )}
+                    {onCancel && (
+                        <TouchableOpacity
+                            onPress={onCancel}
+                            style={{
+                                marginRight: 30,
+                            }}
+                        >
+                            <Icon color="white" name="close" type="font-awesome" size={28} />
+                        </TouchableOpacity>
+                    )}
+                </View>
+            </View>
+        );
+    };
+
+    /**;
+     * Used for navigation header bar styling
+     */
+    static headerTitle = {
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#2f95dc',
+        paddingLeft: 20,
+    };
 }

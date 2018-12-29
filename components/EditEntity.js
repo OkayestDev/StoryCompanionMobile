@@ -1,59 +1,37 @@
 import React, { Component } from 'react';
 import {
-    View, 
-    Text, 
-    StyleSheet, 
+    View,
+    Text,
+    StyleSheet,
     TextInput,
     TouchableOpacity,
     Image,
     Keyboard,
     KeyboardAvoidingView,
 } from 'react-native';
-import ConfirmationModal from '../components/ConfirmationModal.js';
 import ModalPicker from '../components/ModalPicker.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import FloatingButtons from '../components/FloatingButtons.js';
 import { ImagePicker, Permissions } from 'expo';
 
 export default class EditEntity extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isConfirmationModalOpen: false,
             isModalPickerOpen: false,
-            keyboardOpenPadding: 0,
-        }
+        };
         Permissions.askAsync(Permissions.CAMERA_ROLL);
-    }
-
-    componentDidMount () {
-        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-    }
-
-    componentWillUnmount () {
-        this.keyboardDidShowListener.remove();
-        this.keyboardDidHideListener.remove();
-    }
-
-    keyboardDidHide = () => {
-        this.setState({keyboardOpenPadding: 0});
-    }
-
-    keyboardDidShow = () => {
-        this.setState({keyboardOpenPadding: 60});
     }
 
     openImagePicker = () => {
         let imagePickerResult = ImagePicker.launchImageLibraryAsync({
             allowEditing: true,
         });
-        imagePickerResult.then((image) => {
+        imagePickerResult.then(image => {
             if (!image.cancelled) {
                 this.props.imagePickerOnChange(image);
             }
         });
-    }
+    };
 
     renderImage = () => {
         if ('image' in this.props) {
@@ -61,100 +39,80 @@ export default class EditEntity extends Component {
             if (this.props.image === '') {
                 return (
                     <View style={styles.imageViewContainer}>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styles.noImageSelectedView}
                             onPress={() => this.openImagePicker()}
                         >
-                            <Text style={styles.noImageSelectedText}>
-                                Add An Image
-                            </Text>
+                            <Text style={styles.noImageSelectedText}>Add An Image</Text>
                         </TouchableOpacity>
                     </View>
-                )
-            }
-            else {
+                );
+            } else {
                 // Render currently uploaded but not saved file
                 if (this.props.image instanceof Object) {
                     return (
                         <View style={styles.imageViewContainer}>
-                            <TouchableOpacity
-                                onPress={() => this.openImagePicker()}
-                            >
+                            <TouchableOpacity onPress={() => this.openImagePicker()}>
                                 <Image
-                                    source={{uri: this.props.image.uri}}
+                                    source={{ uri: this.props.image.uri }}
                                     style={styles.selectedImage}
                                 />
                             </TouchableOpacity>
                         </View>
-                    )
+                    );
                 }
                 // Render image already stored on s3 - image is the url to S3
                 else {
                     return (
                         <View style={styles.imageViewContainer}>
-                            <TouchableOpacity
-                                onPress={() => this.openImagePicker()}
-                            >
-                                <Image 
-                                    source={{uri: this.props.image}}
-                                    style={{width: 200, height: 200}}
+                            <TouchableOpacity onPress={() => this.openImagePicker()}>
+                                <Image
+                                    source={{ uri: this.props.image }}
+                                    style={{ width: 200, height: 200 }}
                                     style={styles.selectedImage}
                                 />
                             </TouchableOpacity>
                         </View>
-                    )
+                    );
                 }
             }
         }
         return null;
-    }
+    };
 
     render() {
         return (
-            <View 
+            <View
                 style={[
                     styles.container,
-                    this.state.isModalPickerOpen || this.state.isConfirmationModalOpen ? {backgroundColor: 'rgba(0,0,0,0.1)'} : '',
+                    this.state.isModalPickerOpen || this.props.isModalOpen
+                        ? { backgroundColor: 'rgba(0,0,0,0.1)' }
+                        : '',
                 ]}
             >
-                {
-                    this.props.selectedEntityId !== 'new' &&
-                    <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() => this.setState({isConfirmationModalOpen: false})}
-                        confirmationTitle={"Delete " + this.props.entityType + "?"}
-                        entityDescription={this.props.entityDescription}
-                        onConfirm={() => {
-                            this.props.deleteEntity();
-                            this.setState({isConfirmationModalOpen: false});
-                        }}
-                        note={'deleteNote' in this.props ? this.props.deleteNote : null}
-                    />
-                }
-                {
-                    'modalPickerList' in this.props &&
+                {'modalPickerList' in this.props && (
                     <ModalPicker
                         isModalPickerOpen={this.state.isModalPickerOpen}
-                        closeModalPicker={() => this.setState({isModalPickerOpen: false})}
+                        closeModalPicker={() => this.setState({ isModalPickerOpen: false })}
                         selectedValue={this.props.modalPickerSelectedValue}
                         list={this.props.modalPickerList}
-                        onChange={(newValue) => this.props.modalPickerOnChange(newValue)}
-                        removeIdFromList={'removeSelfFromList' in this.props ? this.props.removeSelfFromList : false}
+                        onChange={newValue => this.props.modalPickerOnChange(newValue)}
+                        removeIdFromList={
+                            'removeSelfFromList' in this.props
+                                ? this.props.removeSelfFromList
+                                : false
+                        }
                     />
-                }
+                )}
                 <KeyboardAwareScrollView
                     enableOnAndroid={true}
                     keyboardShouldPersistTaps="handled"
                     scrollEnabled={true}
                 >
-                    <KeyboardAvoidingView
-                        enabled={true}
-                        behavior="padding"
-                    >
-                        <View style={{paddingTop: this.state.keyboardOpenPadding}}>
+                    <KeyboardAvoidingView enabled={true} behavior="padding">
+                        <View>
                             {this.renderImage()}
-                            {
-                                'inputOne' in this.props &&
+                            {'inputOne' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
                                     <Text style={styles.entityInputLabel}>
                                         {this.props.inputOneName}
@@ -162,13 +120,14 @@ export default class EditEntity extends Component {
                                     <TextInput
                                         style={styles.entityInput}
                                         value={this.props.inputOne}
-                                        onChangeText={(newName) => this.props.inputOneOnChange(newName)}
-                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        onChangeText={newName =>
+                                            this.props.inputOneOnChange(newName)
+                                        }
+                                        underlineColorAndroid="rgba(0,0,0,0)"
                                     />
                                 </View>
-                            }
-                            {
-                                'inputTwo' in this.props &&
+                            )}
+                            {'inputTwo' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
                                     <Text style={styles.entityInputLabel}>
                                         {this.props.inputTwoName}
@@ -177,63 +136,61 @@ export default class EditEntity extends Component {
                                         keyboardType="numeric"
                                         style={styles.entityInput}
                                         value={this.props.inputTwo}
-                                        onChangeText={(newNumber) => this.props.inputTwoOnChange(newNumber)}
-                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        onChangeText={newNumber =>
+                                            this.props.inputTwoOnChange(newNumber)
+                                        }
+                                        underlineColorAndroid="rgba(0,0,0,0)"
                                     />
                                 </View>
-                            }
-                            {
-                                'modalPickerList' in this.props &&
+                            )}
+                            {'modalPickerList' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
                                     <Text style={styles.entityInputLabel}>
                                         {this.props.modalPicker}
                                     </Text>
                                     <TouchableOpacity
                                         style={styles.modalPickerOpenButton}
-                                        onPress={() => this.setState({isModalPickerOpen: true})}
+                                        onPress={() => this.setState({ isModalPickerOpen: true })}
                                     >
                                         <Text style={styles.modalPickerButtonText}>
                                             {this.props.modalPickerSelectedValue}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                            }
-                            {
-                                'inputThree' in this.props &&
+                            )}
+                            {'inputThree' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
                                     <TextInput
                                         placeholder={this.props.inputThreeName}
                                         multiline={true}
                                         style={styles.entityDescription}
                                         value={this.props.inputThree}
-                                        onChangeText={(newDescription) => this.props.inputThreeOnChange(newDescription)}
-                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        onChangeText={newDescription =>
+                                            this.props.inputThreeOnChange(newDescription)
+                                        }
+                                        underlineColorAndroid="rgba(0,0,0,0)"
                                     />
                                 </View>
-                            }
-                            {
-                                'inputFour' in this.props &&
+                            )}
+                            {'inputFour' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
                                     <TextInput
                                         placeholder={this.props.inputFourName}
                                         multiline={true}
                                         style={styles.entityDescription}
                                         value={this.props.inputFour}
-                                        onChangeText={(newDescription) => this.props.inputFourOnChange(newDescription)}
-                                        underlineColorAndroid='rgba(0,0,0,0)'
+                                        onChangeText={newDescription =>
+                                            this.props.inputFourOnChange(newDescription)
+                                        }
+                                        underlineColorAndroid="rgba(0,0,0,0)"
                                     />
                                 </View>
-                            }
+                            )}
                         </View>
                     </KeyboardAvoidingView>
                 </KeyboardAwareScrollView>
-                <FloatingButtons
-                    onSave={() => this.props.selectedEntityId === 'new' ? this.props.createEntity() : this.props.editEntity()}
-                    onDelete={this.props.selectedEntityId !== 'new' ? () => this.setState({isConfirmationModalOpen: true}) : null}
-                    onCancel={() => this.props.cancelEntityEdit()}
-                />
             </View>
-        )
+        );
     }
 }
 
@@ -320,5 +277,5 @@ const styles = StyleSheet.create({
     },
     modalPickerButtonText: {
         fontSize: 16,
-    }
+    },
 });

@@ -1,42 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Actions from '../../store/Actions.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
-import ChapterRequests from '../../utils/ChapterRequests.js';
 import EditEntity from '../../components/EditEntity.js';
-import { Icon } from 'react-native-elements';
 import StoryCompanion from '../../utils/StoryCompanion.js';
+import ChapterUtils from './components/ChaptersUtils.js';
+import ConfirmationModal from '../../components/ConfirmationModal.js';
+import STYLE from './components/ChaptersStyle.js';
 
-const headerTitle = {
-    display: 'flex',
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    flexDirection: 'row',
-    backgroundColor: '#2f95dc',
-    paddingLeft: 20,
-};
-
-class ChaptersScreen extends StoryCompanion {
+class ChaptersScreen extends ChapterUtils {
     static navigationOptions = ({ navigation }) => {
         return {
             title: 'Chapters',
             headerTitle: (
-                <View style={headerTitle}>
-                    <TouchableOpacity
-                        style={{ marginRight: 15 }}
-                        onPress={() => navigation.navigate('StoriesTab')}
-                    >
-                        <Icon color="white" name="chevron-left" type="font-awesome" size={24} />
-                    </TouchableOpacity>
-                    <Text
-                        numberOfLines={1}
-                        style={{ width: '80%', fontWeight: 'bold', color: 'white', fontSize: 28 }}
-                    >
-                        {navigation.getParam('title')}
-                    </Text>
+                <View style={StoryCompanion.headerTitle}>
+                    {StoryCompanion.renderNavigationTitle(navigation.getParam('title'), () =>
+                        navigation.navigate('StoriesTab')
+                    )}
+                    {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
             ),
             headerStyle: { backgroundColor: '#2f95dc' },
@@ -53,44 +36,16 @@ class ChaptersScreen extends StoryCompanion {
             chapters: null,
             selectedChapterId: null,
 
+            isConfirmationModalOpen: false,
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
         };
-        this.ChapterRequests = new ChapterRequests();
         props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
     }
 
-    componentDidMount() {
-        this.getChapters();
-    }
-
-    getChapters = () => {
-        let paramsObject = this.createParamsObject();
-        this.ChapterRequests.getChapters(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedChapterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                } else {
-                    this.setState({ chapters: res.success });
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    selectedChapterId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get Chapters at this time.',
-                });
-            });
-    };
-
     cancelChapterEdit = () => {
+        this.removeNavigationActions();
         this.setState({
             name: '',
             number: '',
@@ -99,91 +54,18 @@ class ChaptersScreen extends StoryCompanion {
         });
     };
 
+    newChapter = () => {
+        this.setNavigationActions(this.cancelChapterEdit, this.createChapter, null);
+        this.setState({ selectedChapterId: 'new' });
+    };
+
     selectChapter = id => {
+        this.setNavigationActions(this.cancelChapterEdit, this.editChapter, this.openConfirmation);
         this.setState({
             selectedChapterId: id,
             name: this.state.chapters[id].name,
             number: String(this.state.chapters[id].number),
             description: this.state.chapters[id].description,
-        });
-    };
-
-    // @TODO check all inputs are filled out
-    createChapter = () => {
-        let paramsObject = this.createParamsObject();
-        this.ChapterRequests.createChapter(paramsObject)
-            .then(res => {
-                if ('error' in res) {
-                    this.setState({
-                        selectedChapterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
-                } else {
-                    this.setState({
-                        chapters: res.success,
-                        description: '',
-                        name: '',
-                        number: '',
-                        selectedChapterId: null,
-                    });
-                }
-            })
-            .catch(() => {
-                this.setState({
-                    selectedChapterId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to add chapter at this time',
-                });
-            });
-    };
-
-    editChapter = () => {
-        let paramsObject = this.createParamsObject();
-        this.ChapterRequests.editChapter(paramsObject).then(res => {
-            if ('error' in res) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
-                });
-            } else {
-                let tempChapters = this.state.chapters;
-                tempChapters[this.state.selectedChapterId] = res.success;
-                this.setState({
-                    chapters: tempChapters,
-                    name: '',
-                    number: '',
-                    description: '',
-                    selectedChapterId: null,
-                });
-            }
-        });
-    };
-
-    deleteChapter = () => {
-        let paramsObject = this.createParamsObject();
-        this.ChapterRequests.deleteChapter(paramsObject).then(res => {
-            if ('error' in res) {
-                this.setState({
-                    selectedChapterId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
-                });
-            } else {
-                let tempChapters = this.state.chapters;
-                delete tempChapters[this.state.selectedChapterId];
-                this.setState({
-                    chapters: tempChapters,
-                    name: '',
-                    number: '',
-                    description: '',
-                    selectedChapterId: null,
-                });
-            }
         });
     };
 
@@ -198,16 +80,16 @@ class ChaptersScreen extends StoryCompanion {
                 chapterView.push(
                     <TouchableOpacity
                         key={id}
-                        style={styles.chapterViewChapterContainer}
+                        style={STYLE.chapterViewChapterContainer}
                         onPress={() => this.selectChapter(id)}
                     >
                         <View>
-                            <Text style={styles.chapterNumber}>
+                            <Text style={STYLE.chapterNumber}>
                                 {this.state.chapters[id].number}.
                             </Text>
                         </View>
                         <View>
-                            <Text style={styles.chapterName}>{this.state.chapters[id].name}</Text>
+                            <Text style={STYLE.chapterName}>{this.state.chapters[id].name}</Text>
                         </View>
                     </TouchableOpacity>
                 );
@@ -215,11 +97,11 @@ class ChaptersScreen extends StoryCompanion {
             return chapterView;
         } else {
             return (
-                <View style={styles.noChaptersContainer}>
-                    <Text style={styles.noChaptersText}>
+                <View style={STYLE.noChaptersContainer}>
+                    <Text style={STYLE.noChaptersText}>
                         Looks like you haven't created any chapters yet.
                     </Text>
-                    <Text style={styles.noChaptersText}>Press on the + to create a chapter!</Text>
+                    <Text style={STYLE.noChaptersText}>Press on the + to create a chapter!</Text>
                 </View>
             );
         }
@@ -228,24 +110,20 @@ class ChaptersScreen extends StoryCompanion {
     render() {
         if (this.state.selectedChapterId === null) {
             return (
-                <View style={styles.container}>
+                <View style={STYLE.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
                         type={this.state.globalAlertType}
                         closeAlert={() => this.setState({ globalAlertVisible: false })}
                     />
-                    <ScrollView style={styles.container}>{this.renderChapters()}</ScrollView>
-                    <FloatingAddButton
-                        onPress={() => this.setState({ selectedChapterId: 'new' })}
-                    />
+                    <ScrollView style={STYLE.container}>{this.renderChapters()}</ScrollView>
+                    <FloatingAddButton onPress={this.newChapter} />
                 </View>
             );
-        }
-        // will pass new as the selectedChapterId if we are creating a new chapter
-        else {
+        } else {
             return (
-                <View style={styles.container}>
+                <View style={STYLE.container}>
                     <GlobalAlert
                         visible={this.state.globalAlertVisible}
                         message={this.state.globalAlertMessage}
@@ -254,6 +132,7 @@ class ChaptersScreen extends StoryCompanion {
                     />
                     <EditEntity
                         selectedEntityId={this.state.selectedChapterId}
+                        isModalOpen={this.state.isConfirmationModalOpen}
                         entityType="Chapter"
                         inputOne={this.state.name}
                         inputOneName="Chapter Name"
@@ -264,10 +143,19 @@ class ChaptersScreen extends StoryCompanion {
                         inputThree={this.state.description}
                         inputThreeName="Description"
                         inputThreeOnChange={newValue => this.setState({ description: newValue })}
-                        createEntity={() => this.createChapter()}
-                        editEntity={() => this.editChapter()}
-                        deleteEntity={() => this.deleteChapter()}
-                        cancelEntityEdit={() => this.cancelChapterEdit()}
+                    />
+                    <ConfirmationModal
+                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
+                        closeConfirmationModal={() =>
+                            this.setState({ isConfirmationModalOpen: false })
+                        }
+                        confirmationTitle={'Delete Chapter?'}
+                        entityDescription=""
+                        onConfirm={() => {
+                            this.deleteChapter();
+                            this.onConfirmationConfirm();
+                        }}
+                        note=""
                     />
                 </View>
             );
@@ -279,45 +167,3 @@ export default connect(
     Actions.mapStateToProps,
     Actions.mapDispatchToProps
 )(ChaptersScreen);
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    chapterViewChapterContainer: {
-        width: '100%',
-        padding: 10,
-        height: 75,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    chapterNumber: {
-        fontSize: 48,
-        fontWeight: 'bold',
-        marginRight: 10,
-    },
-    chapterName: {
-        fontSize: 24,
-    },
-    chapterEditIcon: {
-        flex: 2,
-        display: 'flex',
-        paddingRight: 20,
-        justifyContent: 'flex-end',
-    },
-    noChaptersContainer: {
-        flex: 1,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    noChaptersText: {
-        marginTop: 30,
-        textAlign: 'center',
-        fontSize: 36,
-        color: '#CCCCCC',
-        fontWeight: 'bold',
-    },
-});
