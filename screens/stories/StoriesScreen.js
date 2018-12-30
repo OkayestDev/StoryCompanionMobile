@@ -16,7 +16,7 @@ class StoriesScreen extends StoriesUtils {
             title: 'Stories',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle('Stories')}
+                    {StoryCompanion.renderNavigationTitle({ navigation }, "Stories")}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
             ),

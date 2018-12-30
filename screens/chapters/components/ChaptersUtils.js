@@ -13,7 +13,9 @@ export default class ChapterUtils extends StoryCompanion {
             description: '',
             name: '',
             number: '',
+            content: '',
             selectedChapterId: null,
+            isWritingChapter: false,
         };
     };
 
@@ -115,5 +117,41 @@ export default class ChapterUtils extends StoryCompanion {
         });
     };
 
-    writeChapter = () => {};
+    writeChapter = () => {
+        const paramsObject = this.createParamsObject();
+        this.ChapterRequests.writeChapter(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.showAlert(res.error, 'warning');
+                } else {
+                    let tempChapters = this.state.chapters;
+                    tempChapters[this.state.selectedChapterId] = res.success;
+                    this.setState({
+                        chapters: tempChapters,
+                    });
+                    this.showAlert('Successfully saved chapter', 'success');
+                }
+            })
+            .catch(() => {
+                this.showAlert('Unable write chapter at this time', 'danger');
+            });
+    };
+
+    exportChapters = () => {
+        const paramsObject = this.createParamsObject();
+        this.ChapterRequests.exportChapters(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.showAlert(res.error, 'warning');
+                } else {
+                    this.showAlert(
+                        'Successfully emailed chapters to ' + paramsObject.email,
+                        'success'
+                    );
+                }
+            })
+            .catch(() => {
+                this.showAlert('Unable to export chapters at this time', 'danger');
+            });
+    };
 }

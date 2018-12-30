@@ -13,8 +13,22 @@ const STYLE = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
+    chapterNameContainer: {
+        width: '90%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    chapterWriteIconButton: {
+        width: '10%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     chapterNumber: {
-        fontSize: 48,
+        fontSize: 36,
         fontWeight: 'bold',
         marginRight: 10,
     },

@@ -17,8 +17,10 @@ class PlotsScreen extends PlotsUtils {
             title: 'Plots',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle(navigation.getParam('title'), () =>
-                        navigation.navigate('StoriesTab')
+                    {StoryCompanion.renderNavigationTitle(
+                        { navigation },
+                        navigation.getParam('title'),
+                        () => navigation.navigate('StoriesTab')
                     )}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>

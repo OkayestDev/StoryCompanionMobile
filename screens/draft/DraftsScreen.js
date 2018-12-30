@@ -13,8 +13,10 @@ class DraftsScreen extends DraftUtils {
             title: 'Draft',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle(navigation.getParam('title'), () =>
-                        navigation.navigate('StoriesTab')
+                    {StoryCompanion.renderNavigationTitle(
+                        { navigation },
+                        navigation.getParam('title'),
+                        () => navigation.navigate('StoriesTab')
                     )}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>

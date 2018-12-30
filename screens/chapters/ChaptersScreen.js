@@ -7,7 +7,9 @@ import FloatingAddButton from '../../components/FloatingAddButton.js';
 import EditEntity from '../../components/EditEntity.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import ChapterUtils from './components/ChaptersUtils.js';
+import { Icon } from 'react-native-elements';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
+import ChapterContent from './components/ChapterContent.js';
 import STYLE from './components/ChaptersStyle.js';
 
 class ChaptersScreen extends ChapterUtils {
@@ -16,8 +18,10 @@ class ChaptersScreen extends ChapterUtils {
             title: 'Chapters',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle(navigation.getParam('title'), () =>
-                        navigation.navigate('StoriesTab')
+                    {StoryCompanion.renderNavigationTitle(
+                        { navigation },
+                        navigation.getParam('title'),
+                        () => navigation.navigate('StoriesTab')
                     )}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
@@ -33,25 +37,28 @@ class ChaptersScreen extends ChapterUtils {
             name: '',
             number: '',
             description: '',
+            content: '',
             chapters: null,
             selectedChapterId: null,
+            isWritingChapter: false,
 
             isConfirmationModalOpen: false,
             globalAlertVisible: false,
             globalAlertType: '',
             globalAlertMessage: '',
         };
-        props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
+        props.navigation.setParams({
+            title: this.props.stories[this.props.selectedStoryId].name,
+            onExport: this.exportChapters,
+        });
     }
 
+    handleContentChanged = newContent => {
+        this.setState({ content: newContent });
+    };
+
     cancelChapterEdit = () => {
-        this.removeNavigationActions();
-        this.setState({
-            name: '',
-            number: '',
-            description: '',
-            selectedChapterId: null,
-        });
+        this.setState(this.resetChapter());
     };
 
     newChapter = () => {
@@ -66,6 +73,19 @@ class ChaptersScreen extends ChapterUtils {
             name: this.state.chapters[id].name,
             number: String(this.state.chapters[id].number),
             description: this.state.chapters[id].description,
+            content: this.state.chapters[id].content,
+        });
+    };
+
+    selectChapterToWriteContent = id => {
+        this.setNavigationActions(this.cancelChapterEdit, this.writeChapter);
+        this.setState({
+            selectedChapterId: id,
+            name: this.state.chapters[id].name,
+            number: String(this.state.chapters[id].number),
+            description: this.state.chapters[id].description,
+            content: this.state.chapters[id].content,
+            isWritingChapter: true,
         });
     };
 
@@ -83,14 +103,20 @@ class ChaptersScreen extends ChapterUtils {
                         style={STYLE.chapterViewChapterContainer}
                         onPress={() => this.selectChapter(id)}
                     >
-                        <View>
+                        <View style={STYLE.chapterNameContainer}>
                             <Text style={STYLE.chapterNumber}>
-                                {this.state.chapters[id].number}.
+                                {this.state.chapters[id].number + '.'}
+                            </Text>
+                            <Text style={STYLE.chapterName} numberOfLines={1}>
+                                {this.state.chapters[id].name}
                             </Text>
                         </View>
-                        <View>
-                            <Text style={STYLE.chapterName}>{this.state.chapters[id].name}</Text>
-                        </View>
+                        <TouchableOpacity
+                            style={STYLE.chapterWriteIconButton}
+                            onPress={() => this.selectChapterToWriteContent(id)}
+                        >
+                            <Icon color="#2f95dc" type="font-awesome" name="pencil" size={28} />
+                        </TouchableOpacity>
                     </TouchableOpacity>
                 );
             });
@@ -119,6 +145,23 @@ class ChaptersScreen extends ChapterUtils {
                     />
                     <ScrollView style={STYLE.container}>{this.renderChapters()}</ScrollView>
                     <FloatingAddButton onPress={this.newChapter} />
+                </View>
+            );
+        } else if (this.state.isWritingChapter) {
+            return (
+                <View style={STYLE.container}>
+                    <GlobalAlert
+                        visible={this.state.globalAlertVisible}
+                        message={this.state.globalAlertMessage}
+                        type={this.state.globalAlertType}
+                        closeAlert={() => this.setState({ globalAlertVisible: false })}
+                    />
+                    <ChapterContent
+                        chapterName={this.state.name}
+                        chapterNumber={this.state.number}
+                        chapterContent={this.state.content}
+                        handleContentChanged={this.handleContentChanged}
+                    />
                 </View>
             );
         } else {

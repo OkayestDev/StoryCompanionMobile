@@ -22,6 +22,7 @@ export default class StoryCompanion extends Component {
             character: 'selectedCharacterId' in this.state ? this.state.selectedCharacterId : '',
             chapter: 'selectedChapterId' in this.state ? this.state.selectedChapterId : '',
             number: 'number' in this.state ? this.state.number : '',
+            content: 'content' in this.state ? this.state.content : '',
             user: 'userId' in this.state ? this.state.userId : this.props.userId,
             story:
                 'selectedStoryId' in this.state
@@ -119,11 +120,24 @@ export default class StoryCompanion extends Component {
         });
     };
 
-    static renderNavigationTitle = (title, goBack = null) => {
+    static renderNavigationTitle = ({ navigation }, title, goBack = null) => {
+        const onCancel = navigation.getParam('onCancel');
+        const onSave = navigation.getParam('onSave');
+        const onDelete = navigation.getParam('onDelete');
+        const onExport = navigation.getParam('onExport');
+
+        const actionCount = StoryCompanion.actionCount({
+            onCancel,
+            onSave,
+            onDelete,
+            onExport,
+        });
+        const width = 100 - 15 * actionCount + '%';
+
         return (
             <View
                 style={{
-                    width: '50%',
+                    width: width,
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -163,8 +177,16 @@ export default class StoryCompanion extends Component {
         const onDelete = navigation.getParam('onDelete');
         const onExport = navigation.getParam('onExport');
 
+        const actionCount = StoryCompanion.actionCount({
+            onCancel,
+            onSave,
+            onDelete,
+            onExport,
+        });
+        const width = 15 * actionCount + '%';
+
         return (
-            <View style={{ width: '50%' }}>
+            <View style={{ width: width }}>
                 <View
                     style={{
                         display: 'flex',
@@ -177,7 +199,8 @@ export default class StoryCompanion extends Component {
                         <TouchableOpacity
                             onPress={onExport}
                             style={{
-                                marginRight: 30,
+                                marginRight: 12,
+                                marginLeft: 12,
                             }}
                         >
                             <Icon color="white" name="envelope" type="font-awesome" size={28} />
@@ -187,7 +210,8 @@ export default class StoryCompanion extends Component {
                         <TouchableOpacity
                             onPress={onDelete}
                             style={{
-                                marginRight: 30,
+                                marginRight: 12,
+                                marginLeft: 12,
                             }}
                         >
                             <Icon color="white" name="trash" type="font-awesome" size={28} />
@@ -197,7 +221,8 @@ export default class StoryCompanion extends Component {
                         <TouchableOpacity
                             onPress={onSave}
                             style={{
-                                marginRight: 30,
+                                marginRight: 12,
+                                marginLeft: 12,
                             }}
                         >
                             <Icon color="white" name="check" type="font-awesome" size={28} />
@@ -207,7 +232,8 @@ export default class StoryCompanion extends Component {
                         <TouchableOpacity
                             onPress={onCancel}
                             style={{
-                                marginRight: 30,
+                                marginRight: 12,
+                                marginLeft: 12,
                             }}
                         >
                             <Icon color="white" name="close" type="font-awesome" size={28} />
@@ -216,6 +242,16 @@ export default class StoryCompanion extends Component {
                 </View>
             </View>
         );
+    };
+
+    static actionCount = actions => {
+        let actionCount = 0;
+        for (let key in actions) {
+            if (actions[key]) {
+                actionCount++;
+            }
+        }
+        return actionCount;
     };
 
     /**;

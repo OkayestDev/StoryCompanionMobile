@@ -15,7 +15,7 @@ class SettingsScreen extends SettingsUtils {
             title: 'Stories',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle('Settings')}
+                    {StoryCompanion.renderNavigationTitle({ navigation }, 'Settings')}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
             ),

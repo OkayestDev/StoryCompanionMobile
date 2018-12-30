@@ -18,7 +18,7 @@ class TagsScreen extends TagsUtils {
             title: 'Stories',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle('Tags')}
+                    {StoryCompanion.renderNavigationTitle({ navigation }, 'Tags')}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
             ),

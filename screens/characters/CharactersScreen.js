@@ -17,8 +17,10 @@ class CharactersScreen extends CharacterUtils {
             title: 'Characters',
             headerTitle: (
                 <View style={StoryCompanion.headerTitle}>
-                    {StoryCompanion.renderNavigationTitle(navigation.getParam('title'), () =>
-                        navigation.navigate('StoriesTab')
+                    {StoryCompanion.renderNavigationTitle(
+                        { navigation },
+                        navigation.getParam('title'),
+                        () => navigation.navigate('StoriesTab')
                     )}
                     {StoryCompanion.renderNavigationOptions({ navigation })}
                 </View>
