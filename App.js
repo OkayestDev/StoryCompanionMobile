@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View,  } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { AdMobBanner } from 'expo';
 import { Provider } from 'react-redux';
@@ -24,30 +24,26 @@ export default class App extends React.Component {
                     onFinish={this.handleFinishLoading}
                 />
             </View>
-        )
-    }
+        );
+    };
 
     render() {
         return (
             <Provider store={AppStore}>
-                <PersistGate 
-                    persistor={Persistor}
-                    loading={this.renderLoading()}
-                >
+                <PersistGate persistor={Persistor} loading={this.renderLoading()}>
                     <View style={styles.container}>
-                        {/* Remove ad in paid version */}
                         <AppNavigator />
-                        {/* <View style={styles.adContainer}>
+                        <View style={styles.adContainer}>
                             <AdMobBanner
                                 bannerSize="smartBannerPortrait"
                                 adUnitID={
                                     Platform.OS === 'android'
-                                        ? "ca-app-pub-5830175342552944/7130625883"
-                                        : "ca-app-pub-5830175342552944/4205993347"
+                                        ? 'ca-app-pub-5830175342552944/7130625883'
+                                        : 'ca-app-pub-5830175342552944/4205993347'
                                 }
                                 testDeviceID="EMULATOR"
                             />
-                        </View> */}
+                        </View>
                     </View>
                 </PersistGate>
             </Provider>
@@ -63,9 +59,7 @@ export default class App extends React.Component {
         ]);
     };
 
-    handleLoadingError = () => {
-        
-    };
+    handleLoadingError = () => {};
 
     handleFinishLoading = () => {
         this.setState({ isLoadingComplete: true });
@@ -73,14 +67,14 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  adContainer: {
-    width: '100%',
-    height: 'auto',
-    margin: 0,
-    backgroundColor: 'black'
-  }
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    },
+    adContainer: {
+        width: '100%',
+        height: 'auto',
+        margin: 0,
+        backgroundColor: 'black',
+    },
 });
