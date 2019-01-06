@@ -138,7 +138,7 @@ export default class StoryCompanion extends Component {
             <View
                 style={{
                     width: width,
-                    paddingRight: 25,
+                    paddingRight: 40,
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
