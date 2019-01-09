@@ -9,12 +9,12 @@ export default class TagUtils extends StoryCompanion {
 
     resetTag = () => {
         this.removeNavigationActions();
-        this.setState({
+        return {
             selectedTagId: null,
             name: '',
             description: '',
             type: '',
-        });
+        };
     };
 
     componentDidMount() {
@@ -58,11 +58,12 @@ export default class TagUtils extends StoryCompanion {
                         globalAlertMessage: res.error,
                     });
                 } else {
-                    this.setState(...this.resetTag());
+                    this.setState(this.resetTag());
                     this.props.setTags(res.success);
                 }
             })
-            .catch(() => {
+            .catch(error => {
+                console.info(error);
                 this.setState({
                     selectedTagId: null,
                     globalAlertVisible: true,
