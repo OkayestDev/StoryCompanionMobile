@@ -7,9 +7,6 @@ import { AppStore, Persistor } from './store/AppStore.js';
 import { PersistGate } from 'redux-persist/integration/react';
 import AppNavigator from './navigation/AppNavigator';
 
-/**
- * @TODO add auto rehydrate
- */
 export default class App extends React.Component {
     state = {
         isLoadingComplete: false,
