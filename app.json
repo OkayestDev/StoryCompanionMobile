@@ -1,12 +1,12 @@
 {
     "expo": {
-        "name": "Story Companion Free",
+        "name": "Story Companion",
         "description": "Story Writing Companion App",
-        "slug": "story_companion_free",
+        "slug": "story_companion",
         "privacy": "public",
         "sdkVersion": "30.0.0",
         "platforms": ["ios", "android"],
-        "version": "1.1.2",
+        "version": "1.1.3",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "splash": {
@@ -27,8 +27,8 @@
             }
         },
         "android": {
-            "versionCode": 12,
-            "package": "com.isjustgame.storycompanion.free",
+            "versionCode": 13,
+            "package": "com.isjustgame.storycompanion",
             "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
         }
     }
