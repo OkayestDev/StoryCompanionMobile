@@ -9,7 +9,7 @@ import { LOGS } from '../config/Logs.js';
 const PERSIST_CONFIG = {
     key: '1.0.0',
     storage: AsyncStorage,
-}
+};
 
 const INITIAL_STATE = {
     apiKey: null,
@@ -21,12 +21,14 @@ const INITIAL_STATE = {
     tags: null,
     plots: null,
     characters: null,
-}
+    prompt: null,
+    promptUpdatedAt: null, // ms timestamp when prompt was updated
+};
 
 const reducer = (state = INITIAL_STATE, action) => {
     let newState = state;
     switch (action.type) {
-        case "LOGIN":
+        case 'LOGIN':
             newState = {
                 ...state,
                 apiKey: action.payload.apiKey,
@@ -34,38 +36,45 @@ const reducer = (state = INITIAL_STATE, action) => {
                 userId: action.payload.id,
             };
             break;
-        case "SET_STORIES":
+        case 'SET_STORIES':
             newState = {
                 ...state,
                 stories: action.payload,
-            }
-            break;
-        case "EDIT_COMPONENTS":
-            newState = {
-                ...state,
-                selectedStoryId: action.payload
             };
             break;
-        case "SET_TAGS":
+        case 'EDIT_COMPONENTS':
             newState = {
                 ...state,
-                tags: action.payload
+                selectedStoryId: action.payload,
             };
             break;
-        case "LOGOUT":
+        case 'SET_TAGS':
+            newState = {
+                ...state,
+                tags: action.payload,
+            };
+            break;
+        case 'SET_PROMPT':
+            newState = {
+                ...state,
+                prompt: action.payload,
+                promptUpdatedAt: new Date().getTime(),
+            };
+            break;
+        case 'LOGOUT':
             newState = INITIAL_STATE;
             break;
     }
 
     if (LOGS.ENABLE_LOGS) {
-        console.info("Updating AppStore: ", {
+        console.info('Updating AppStore: ', {
             state: newState,
             action: action,
         });
     }
 
     return newState;
-}
+};
 
 const persistedReducer = persistReducer(PERSIST_CONFIG, reducer);
 
