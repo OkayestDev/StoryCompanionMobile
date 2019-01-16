@@ -7,6 +7,8 @@ import FloatingAddButton from '../../components/FloatingAddButton.js';
 import StoriesUtils from './components/StoriesUtils.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
+import * as storyActions from '../../actions/StoryActions.js';
+import { showAlert } from '../../actions/Actions.js';
 import STYLE from './components/StoriesStyle.js';
 
 class StoriesScreen extends StoriesUtils {
@@ -26,44 +28,7 @@ class StoriesScreen extends StoriesUtils {
 
     constructor(props) {
         super(props);
-        // this.state = {
-        //     name: '',
-        //     description: '',
-        //     image: '',
-        //     selectedTagId: null,
-        //     selectedStoryId: null,
-
-        //     isConfirmationModalOpen: false,
-        //     globalAlertVisible: false,
-        //     globalAlertType: '',
-        //     globalAlertMessage: '',
-        // };
     }
-
-    cancelStoryEdit = () => {
-        this.setState(this.resetStory());
-    };
-
-    newStory = () => {
-        this.setNavigationActions(this.cancelStoryEdit, this.createStory, null);
-        this.setState({ selectedStoryId: 'new' });
-    };
-
-    selectStory = id => {
-        this.setNavigationActions(this.cancelStoryEdit, this.editStory, this.openConfirmation);
-        this.setState({
-            selectedStoryId: id,
-            name: this.props.stories[id].name,
-            description: this.props.stories[id].description,
-            image: this.props.stories[id].image,
-            selectedTagId: this.props.stories[id].tag,
-        });
-    };
-
-    selectStoryToEditComponents = storyId => {
-        this.props.editStoryComponents(storyId);
-        this.props.navigation.navigate('StoryTab');
-    };
 
     renderStories = () => {
         if (this.props.stories === null) {
@@ -127,80 +92,73 @@ class StoriesScreen extends StoriesUtils {
     };
 
     render() {
-        // if (this.state.selectedStoryId === null) {
-        return (
-            <View style={STYLE.container}>
-                {/* <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    /> */}
-                <ScrollView style={STYLE.container}>{this.renderStories()}</ScrollView>
-                <FloatingAddButton onPress={this.newStory} />
-            </View>
-        );
-        // } else {
-        //     return (
-        //         <View style={STYLE.container}>
-        //             <GlobalAlert
-        //                 visible={this.state.globalAlertVisible}
-        //                 message={this.state.globalAlertMessage}
-        //                 type={this.state.globalAlertType}
-        //                 closeAlert={() => this.setState({ globalAlertVisible: false })}
-        //             />
-        //             <EditEntity
-        //                 selectedEntityId={this.state.selectedStoryId}
-        //                 isModalOpen={this.state.isConfirmationModalOpen}
-        //                 entityType="Story"
-        //                 image={this.state.image}
-        //                 imagePickerTitle="Add an image to this story"
-        //                 imagePickerOnChange={newImage => this.setState({ image: newImage })}
-        //                 inputOne={this.state.name}
-        //                 inputOneName="Story Name"
-        //                 inputOneOnChange={newValue => this.setState({ name: newValue })}
-        //                 modalPicker="Tag"
-        //                 modalPickerSelectedValue={
-        //                     this.state.selectedTagId in this.props.tags
-        //                         ? this.props.tags[this.state.selectedTagId].name
-        //                         : ''
-        //                 }
-        //                 modalPickerList={this.filterTagsByType('Story')}
-        //                 modalPickerOnChange={newTag => this.setState({ selectedTagId: newTag })}
-        //                 inputThree={this.state.description}
-        //                 inputThreeName="Summary"
-        //                 inputThreeOnChange={newValue => this.setState({ description: newValue })}
-        //             />
-        //             <ConfirmationModal
-        //                 isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-        //                 closeConfirmationModal={() =>
-        //                     this.setState({ isConfirmationModalOpen: false })
-        //                 }
-        //                 confirmationTitle={'Delete Story?'}
-        //                 entityDescription=""
-        //                 onConfirm={() => {
-        //                     this.deleteStory();
-        //                     this.onConfirmationConfirm();
-        //                 }}
-        //                 note="All components will be deleted"
-        //             />
-        //         </View>
-        //     );
-        // }
+        if (this.props.selectedStoryId === null) {
+            return (
+                <View style={STYLE.container}>
+                    <GlobalAlert />
+                    <ScrollView style={STYLE.container}>{this.renderStories()}</ScrollView>
+                    <FloatingAddButton onPress={this.newStory} />
+                </View>
+            );
+        } else {
+            return (
+                <View style={STYLE.container}>
+                    <GlobalAlert />
+                    <EditEntity
+                        selectedEntityId={this.props.selectedStoryId}
+                        isModalOpen={this.props.isConfirmationModalOpen}
+                        entityType="Story"
+                        image={this.props.image}
+                        imagePickerTitle="Add an image to this story"
+                        imagePickerOnChange={this.props.handleImageChanged}
+                        inputOne={this.props.name}
+                        inputOneName="Story Name"
+                        inputOneOnChange={this.props.handleNameChanged}
+                        modalPicker="Tag"
+                        modalPickerSelectedValue={
+                            this.props.selectedTagId in this.props.tags
+                                ? this.props.tags[this.props.selectedTagId].name
+                                : ''
+                        }
+                        modalPickerList={this.filterTagsByType('Story')}
+                        modalPickerOnChange={this.props.handleTagChanged}
+                        inputThree={this.props.description}
+                        inputThreeName="Summary"
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
+                    />
+                    <ConfirmationModal
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.openConfirmation}
+                        confirmationTitle={'Delete Story?'}
+                        entityDescription=""
+                        onConfirm={() => {
+                            this.deleteStory();
+                            this.onConfirmationConfirm();
+                        }}
+                        note="All components will be deleted"
+                    />
+                </View>
+            );
+        }
     }
 }
 
-function mapStateToProps(state) {
+function mappropsToProps(props) {
     return {
-        tags: state.tags,
-        stories: { ...state.stories },
-        apiKey: state.apiKey,
-        email: state.email,
-        userId: state.userId,
+        ...props.storyStore,
+        tags: props.tagsStore.tags,
+        apiKey: props.apiKey,
+        email: props.email,
+        userId: props.userId,
     };
 }
 
+const mapDispatchToProps = {
+    ...storyActions,
+    showAlert,
+};
+
 export default connect(
-    mapStateToProps,
-    Actions.mapDispatchToProps
+    mappropsToProps,
+    mapDispatchToProps
 )(StoriesScreen);

@@ -148,16 +148,14 @@ function mapStateToProps(state) {
         email: state.email,
         apiKey: state.apiKey,
         userId: state.userId,
+        stories: state.storyStore.stories,
     };
 }
 
-function mapDispatchToProps() {
-    console.info(ChapterActions);
-    return {
-        ...ChapterActions,
-        showAlert,
-    };
-}
+const mapDispatchToProps = {
+    ...ChapterActions,
+    showAlert,
+};
 
 export default connect(
     mapStateToProps,

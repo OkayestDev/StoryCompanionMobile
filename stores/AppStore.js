@@ -2,6 +2,7 @@ import { AsyncStorage } from 'react-native';
 import { createStore, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { chapterStore } from './ChapterStore.js';
+import { storyStore } from './StoryStore.js';
 import { LOGS } from '../config/Logs.js';
 
 /**
@@ -16,8 +17,6 @@ const INITIAL_STATE = {
     apiKey: null,
     email: null,
     userId: null,
-    selectedStoryId: null,
-    stories: null,
     tags: null,
     globalAlertVisible: false,
     globalAlertType: '',
@@ -39,12 +38,6 @@ const reducer = (state = INITIAL_STATE, action) => {
             newState = {
                 ...state,
                 stories: action.payload,
-            };
-            break;
-        case 'EDIT_COMPONENTS':
-            newState = {
-                ...state,
-                selectedStoryId: action.payload,
             };
             break;
         case 'SET_TAGS':
@@ -92,6 +85,7 @@ const reducer = (state = INITIAL_STATE, action) => {
 const reducers = combineReducers({
     ...reducer,
     chapterStore,
+    storyStore,
 });
 
 const persistedReducer = persistReducer(PERSIST_CONFIG, reducers);

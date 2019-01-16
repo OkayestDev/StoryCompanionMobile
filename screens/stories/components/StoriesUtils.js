@@ -9,18 +9,27 @@ export default class StoryUtils extends StoryCompanion {
 
     resetStory = () => {
         this.removeNavigationActions();
-        return {
-            name: '',
-            description: '',
-            image: '',
-            selectedTagId: '',
-            selectedStoryId: null,
-        };
+        this.props.resetStory();
+    };
+
+    newStory = () => {
+        this.setNavigationActions(this.resetStory, this.createStory, null);
+        this.props.newStory();
+    };
+
+    selectStory = id => {
+        this.setNavigationActions(this.resetStory, this.editStory, this.props.openConfirmation);
+        this.props.selectStory(id);
+    };
+
+    selectStoryToEditComponents = id => {
+        this.props.selectStory(id);
+        this.props.navigation.navigate('StoryTab');
     };
 
     componentDidMount() {
-        // this.getStories();
-        // this.getTags();
+        this.getStories();
+        this.getTags();
     }
 
     getStories = () => {
@@ -28,30 +37,22 @@ export default class StoryUtils extends StoryCompanion {
         this.StoryRequests.getStories(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     this.props.setStories(res.success);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get response from server', 'warning');
             });
     };
 
     createStory = async () => {
-        let image = this.state.image;
+        let image = this.props.image;
         if (image instanceof Object) {
             image = await this.StoryRequests.uploadImageToS3(
                 'story',
-                this.state.image,
+                this.props.image,
                 this.props.userId
             );
         }
@@ -60,32 +61,24 @@ export default class StoryUtils extends StoryCompanion {
         this.StoryRequests.createStory(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState(this.resetStory());
+                    this.resetStory();
                     this.props.setStories(res.success);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to create story at this time',
-                });
+                this.props.showAlert('Unable to create story at this time', 'warning');
             });
     };
 
     editStory = async () => {
-        let image = this.state.image;
+        let image = this.props.image;
         if (image instanceof Object) {
             image = await this.StoryRequests.uploadImageToS3(
                 'story',
-                this.state.image,
-                this.state.selectedStoryId
+                this.props.image,
+                this.props.userId
             );
         }
         let paramsObject = this.createParamsObject();
@@ -93,24 +86,16 @@ export default class StoryUtils extends StoryCompanion {
         this.StoryRequests.editStory(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempStories = this.props.stories;
-                    tempStories[this.state.selectedStoryId] = res.success;
-                    this.setState(this.resetStory());
+                    tempStories[this.props.selectedStoryId] = res.success;
+                    this.resetStory();
                     this.props.setStories(tempStories);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to edit story at this time', 'warning');
             });
     };
 
@@ -119,24 +104,16 @@ export default class StoryUtils extends StoryCompanion {
         this.StoryRequests.deleteStory(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempStories = this.props.stories;
-                    delete tempStories[this.state.selectedStoryId];
-                    this.setState(this.resetStory());
+                    delete tempStories[this.props.selectedStoryId];
+                    this.resetStory();
                     this.props.setStories(tempStories);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to delet story at this time', 'danger');
             });
     };
 }
