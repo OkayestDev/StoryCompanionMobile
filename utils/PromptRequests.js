@@ -12,4 +12,8 @@ export default class PromptRequests {
     createPrompt = paramsObject => {
         return postRequestWithFormData(paramsObject, 'prompt/creation', {}).then(res => res);
     };
+
+    promptToStory = paramsObject => {
+        return postRequestWithFormData(paramsObject, 'prompt/to_story', {}).then(res => res);
+    };
 }

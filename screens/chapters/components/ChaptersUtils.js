@@ -7,44 +7,42 @@ export default class ChapterUtils extends StoryCompanion {
         this.ChapterRequests = new ChapterRequests();
     }
 
-    resetChapter = () => {
-        this.removeNavigationActions();
-        return {
-            description: '',
-            name: '',
-            number: '',
-            content: '',
-            selectedChapterId: null,
-            isWritingChapter: false,
-        };
-    };
-
     componentDidMount() {
         this.getChapters();
     }
+
+    resetChapter = () => {
+        this.removeNavigationActions();
+        this.props.resetChapter();
+    };
+
+    newChapter = () => {
+        this.setNavigationActions(this.resetChapter, this.createChapter, null);
+        this.props.newChapter();
+    };
+
+    selectChapter = id => {
+        this.setNavigationActions(this.resetChapter, this.editChapter, this.props.openConfirmation);
+        this.props.selectChapter(id);
+    };
+
+    selectChapterToWriteContent = id => {
+        this.setNavigationActions(this.resetChapter, this.writeChapter);
+        this.props.selectChapterToWriteContent(id);
+    };
 
     getChapters = () => {
         let paramsObject = this.createParamsObject();
         this.ChapterRequests.getChapters(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedChapterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({ chapters: res.success });
+                    this.props.setChapters(res.success);
                 }
             })
             .catch(() => {
-                this.setState({
-                    selectedChapterId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get Chapters at this time.',
-                });
+                this.props.showAlert('Unable to get Chapters at this time.', 'danger');
             });
     };
 
@@ -53,66 +51,45 @@ export default class ChapterUtils extends StoryCompanion {
         this.ChapterRequests.createChapter(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedChapterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        chapters: res.success,
-                        ...this.resetChapter(),
-                    });
+                    this.props.setChapters(res.success);
+                    this.resetChapter();
                 }
             })
             .catch(() => {
-                this.setState({
-                    selectedChapterId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to add chapter at this time',
-                });
+                this.props.showAlert('Unable to add chapter at this time', 'danger');
             });
     };
 
     editChapter = () => {
         let paramsObject = this.createParamsObject();
-        this.ChapterRequests.editChapter(paramsObject).then(res => {
-            if ('error' in res) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
-                });
-            } else {
-                let tempChapters = this.state.chapters;
-                tempChapters[this.state.selectedChapterId] = res.success;
-                this.setState({
-                    chapters: tempChapters,
-                    ...this.resetChapter(),
-                });
-            }
-        });
+        this.ChapterRequests.editChapter(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.props.showAlert(res.error, 'warning');
+                } else {
+                    let tempChapters = this.props.chapters;
+                    tempChapters[this.props.selectedChapterId] = res.success;
+                    this.props.setChapters(tempChapters);
+                    this.resetChapter();
+                }
+            })
+            .catch(() => {
+                this.props.showAlert('Unable to edit chapter at this time', 'danger');
+            });
     };
 
     deleteChapter = () => {
         let paramsObject = this.createParamsObject();
         this.ChapterRequests.deleteChapter(paramsObject).then(res => {
             if ('error' in res) {
-                this.setState({
-                    selectedChapterId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: res.error,
-                });
+                this.props.showAlert(res.error, 'warning');
             } else {
-                let tempChapters = this.state.chapters;
-                delete tempChapters[this.state.selectedChapterId];
-                this.setState({
-                    chapters: tempChapters,
-                    ...this.resetChapter(),
-                });
+                let tempChapters = this.props.chapters;
+                delete tempChapters[this.props.selectedChapterId];
+                this.props.setChapters(tempChapters);
+                this.resetChapter();
             }
         });
     };
@@ -122,18 +99,16 @@ export default class ChapterUtils extends StoryCompanion {
         this.ChapterRequests.writeChapter(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.showAlert(res.error, 'warning');
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempChapters = this.state.chapters;
-                    tempChapters[this.state.selectedChapterId] = res.success;
-                    this.setState({
-                        chapters: tempChapters,
-                    });
-                    this.showAlert('Successfully saved chapter', 'success');
+                    let tempChapters = this.props.chapters;
+                    tempChapters[this.props.selectedChapterId] = res.success;
+                    this.props.setChapters(tempChapters);
+                    this.props.showAlert('Successfully saved chapter', 'success');
                 }
             })
             .catch(() => {
-                this.showAlert('Unable write chapter at this time', 'danger');
+                this.props.showAlert('Unable write chapter at this time', 'danger');
             });
     };
 
@@ -142,16 +117,16 @@ export default class ChapterUtils extends StoryCompanion {
         this.ChapterRequests.exportChapters(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.showAlert(res.error, 'warning');
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.showAlert(
+                    this.props.showAlert(
                         'Successfully emailed chapters to ' + paramsObject.email,
                         'success'
                     );
                 }
             })
             .catch(() => {
-                this.showAlert('Unable to export chapters at this time', 'danger');
+                this.props.showAlert('Unable to export chapters at this time', 'danger');
             });
     };
 }

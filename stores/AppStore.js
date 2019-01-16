@@ -1,6 +1,7 @@
 import { AsyncStorage } from 'react-native';
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
+import { chapterStore } from './ChapterStore.js';
 import { LOGS } from '../config/Logs.js';
 
 /**
@@ -17,12 +18,10 @@ const INITIAL_STATE = {
     userId: null,
     selectedStoryId: null,
     stories: null,
-    chapters: null,
     tags: null,
-    plots: null,
-    characters: null,
-    prompt: null,
-    promptUpdatedAt: null, // ms timestamp when prompt was updated
+    globalAlertVisible: false,
+    globalAlertType: '',
+    globalAlertMessage: '',
 };
 
 const reducer = (state = INITIAL_STATE, action) => {
@@ -54,11 +53,25 @@ const reducer = (state = INITIAL_STATE, action) => {
                 tags: action.payload,
             };
             break;
-        case 'SET_PROMPT':
+        // case 'SET_PROMPT':
+        //     newState = {
+        //         ...state,
+        //         prompt: action.payload,
+        //         promptUpdatedAt: new Date().getTime(),
+        //     };
+        //     break;
+        case 'SHOW_ALERT':
             newState = {
                 ...state,
-                prompt: action.payload,
-                promptUpdatedAt: new Date().getTime(),
+                globalAlertVisible: true,
+                globalAlertType: action.type,
+                globalAlertMessage: action.message,
+            };
+            break;
+        case 'CLOSE_ALERT':
+            newState = {
+                ...state,
+                globalAlertVisible: false,
             };
             break;
         case 'LOGOUT':
@@ -76,7 +89,12 @@ const reducer = (state = INITIAL_STATE, action) => {
     return newState;
 };
 
-const persistedReducer = persistReducer(PERSIST_CONFIG, reducer);
+const reducers = combineReducers({
+    ...reducer,
+    chapterStore,
+});
+
+const persistedReducer = persistReducer(PERSIST_CONFIG, reducers);
 
 export const AppStore = createStore(persistedReducer);
 export const Persistor = persistStore(AppStore);

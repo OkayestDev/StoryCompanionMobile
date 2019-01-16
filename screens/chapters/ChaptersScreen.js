@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
 import EditEntity from '../../components/EditEntity.js';
@@ -10,6 +9,9 @@ import ChapterUtils from './components/ChaptersUtils.js';
 import { Icon } from 'react-native-elements';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import ChapterContent from './components/ChapterContent.js';
+import * as ChapterActions from '../../actions/ChapterActions.js';
+import { showAlert } from '../../actions/Actions.js';
+
 import STYLE from './components/ChaptersStyle.js';
 
 class ChaptersScreen extends ChapterUtils {
@@ -33,67 +35,17 @@ class ChaptersScreen extends ChapterUtils {
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            number: '',
-            description: '',
-            content: '',
-            chapters: null,
-            selectedChapterId: null,
-            isWritingChapter: false,
-
-            isConfirmationModalOpen: false,
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        };
         props.navigation.setParams({
             title: this.props.stories[this.props.selectedStoryId].name,
             onExport: this.exportChapters,
         });
     }
 
-    handleContentChanged = newContent => {
-        this.setState({ content: newContent });
-    };
-
-    cancelChapterEdit = () => {
-        this.setState(this.resetChapter());
-    };
-
-    newChapter = () => {
-        this.setNavigationActions(this.cancelChapterEdit, this.createChapter, null);
-        this.setState({ selectedChapterId: 'new' });
-    };
-
-    selectChapter = id => {
-        this.setNavigationActions(this.cancelChapterEdit, this.editChapter, this.openConfirmation);
-        this.setState({
-            selectedChapterId: id,
-            name: this.state.chapters[id].name,
-            number: String(this.state.chapters[id].number),
-            description: this.state.chapters[id].description,
-            content: this.state.chapters[id].content,
-        });
-    };
-
-    selectChapterToWriteContent = id => {
-        this.setNavigationActions(this.cancelChapterEdit, this.writeChapter);
-        this.setState({
-            selectedChapterId: id,
-            name: this.state.chapters[id].name,
-            number: String(this.state.chapters[id].number),
-            description: this.state.chapters[id].description,
-            content: this.state.chapters[id].content,
-            isWritingChapter: true,
-        });
-    };
-
     renderChapters = () => {
-        if (this.state.chapters === null) {
+        if (this.props.chapters === null) {
             return null;
         }
-        let sortedChapterIds = this.sortEntitiesByNumber(this.state.chapters);
+        let sortedChapterIds = this.sortEntitiesByNumber(this.props.chapters);
         let chapterView = [];
         if (sortedChapterIds.length > 0) {
             sortedChapterIds.forEach(id => {
@@ -105,10 +57,10 @@ class ChaptersScreen extends ChapterUtils {
                     >
                         <View style={STYLE.chapterNameContainer}>
                             <Text style={STYLE.chapterNumber}>
-                                {this.state.chapters[id].number + '.'}
+                                {this.props.chapters[id].number + '.'}
                             </Text>
                             <Text style={STYLE.chapterName} numberOfLines={1}>
-                                {this.state.chapters[id].name}
+                                {this.props.chapters[id].name}
                             </Text>
                         </View>
                         <TouchableOpacity
@@ -134,64 +86,47 @@ class ChaptersScreen extends ChapterUtils {
     };
 
     render() {
-        if (this.state.selectedChapterId === null) {
+        if (this.props.selectedChapterId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <ScrollView style={STYLE.container}>{this.renderChapters()}</ScrollView>
                     <FloatingAddButton onPress={this.newChapter} />
                 </View>
             );
-        } else if (this.state.isWritingChapter) {
+        } else if (this.props.isWritingChapter) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <ChapterContent
-                        chapterName={this.state.name}
-                        chapterNumber={this.state.number}
-                        chapterContent={this.state.content}
-                        handleContentChanged={this.handleContentChanged}
+                        chapterName={this.props.name}
+                        chapterNumber={this.props.number}
+                        chapterContent={this.props.content}
+                        handleContentChanged={this.props.handleContentChanged}
                     />
                 </View>
             );
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <EditEntity
-                        selectedEntityId={this.state.selectedChapterId}
-                        isModalOpen={this.state.isConfirmationModalOpen}
+                        selectedEntityId={this.props.selectedChapterId}
+                        isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Chapter"
-                        inputOne={this.state.name}
+                        inputOne={this.props.name}
                         inputOneName="Chapter Name"
-                        inputOneOnChange={newValue => this.setState({ name: newValue })}
-                        inputTwo={this.state.number}
+                        inputOneOnChange={this.props.handleNameChanged}
+                        inputTwo={this.props.number}
                         inputTwoName="Chapter Number"
-                        inputTwoOnChange={newValue => this.setState({ number: newValue })}
-                        inputThree={this.state.description}
+                        inputTwoOnChange={this.props.handleNumberChanged}
+                        inputThree={this.props.description}
                         inputThreeName="Description"
-                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() =>
-                            this.setState({ isConfirmationModalOpen: false })
-                        }
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.closeConfirmationModal}
                         confirmationTitle={'Delete Chapter?'}
                         entityDescription=""
                         onConfirm={() => {
@@ -206,7 +141,25 @@ class ChaptersScreen extends ChapterUtils {
     }
 }
 
+function mapStateToProps(state) {
+    console.info(state);
+    return {
+        ...state.chapterStore,
+        email: state.email,
+        apiKey: state.apiKey,
+        userId: state.userId,
+    };
+}
+
+function mapDispatchToProps() {
+    console.info(ChapterActions);
+    return {
+        ...ChapterActions,
+        showAlert,
+    };
+}
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(ChaptersScreen);

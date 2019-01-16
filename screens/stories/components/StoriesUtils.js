@@ -19,8 +19,8 @@ export default class StoryUtils extends StoryCompanion {
     };
 
     componentDidMount() {
-        this.getStories();
-        this.getTags();
+        // this.getStories();
+        // this.getTags();
     }
 
     getStories = () => {

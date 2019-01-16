@@ -15,28 +15,25 @@ export default class StoryCompanion extends Component {
         }
 
         const paramsObject = {
-            plot: 'selectedPlotId' in this.state ? this.state.selectedPlotId : '',
-            plotParent: 'plotParent' in this.state ? this.state.plotParent : '',
-            draft: 'selectedDraftId' in this.state ? this.state.selectedDraftId : '',
-            note: 'selectedNoteId' in this.state ? this.state.selectedNoteId : '',
-            character: 'selectedCharacterId' in this.state ? this.state.selectedCharacterId : '',
-            chapter: 'selectedChapterId' in this.state ? this.state.selectedChapterId : '',
-            number: 'number' in this.state ? this.state.number : '',
-            content: 'content' in this.state ? this.state.content : '',
-            user: 'userId' in this.state ? this.state.userId : this.props.userId,
-            story:
-                'selectedStoryId' in this.state
-                    ? this.state.selectedStoryId
-                    : this.props.selectedStoryId,
-            tag: 'selectedTagId' in this.state ? this.state.selectedTagId : '',
-            type: 'type' in this.state ? this.state.type : '',
-            description: 'description' in this.state ? this.state.description : '',
-            attribute: 'attribute' in this.state ? this.state.attribute : '',
-            name: 'name' in this.state ? this.state.name : '',
-            email: 'email' in this.state ? this.state.email : this.props.email,
-            confirmEmail: 'confirmEmail' in this.state ? this.state.confirmEmail : '',
-            password: 'password' in this.state ? this.state.password : '',
-            confirmPassword: 'confirmPassword' in this.state ? this.state.confirmPassword : '',
+            plot: 'selectedPlotId' in this.props ? this.props.selectedPlotId : '',
+            plotParent: 'plotParent' in this.props ? this.props.plotParent : '',
+            draft: 'selectedDraftId' in this.props ? this.props.selectedDraftId : '',
+            note: 'selectedNoteId' in this.props ? this.props.selectedNoteId : '',
+            character: 'selectedCharacterId' in this.props ? this.props.selectedCharacterId : '',
+            chapter: 'selectedChapterId' in this.props ? this.props.selectedChapterId : '',
+            number: 'number' in this.props ? this.props.number : '',
+            content: 'content' in this.props ? this.props.content : '',
+            user: 'userId' in this.props ? this.props.userId : this.props.userId,
+            story: 'selectedStoryId' in this.props ? this.props.selectedStoryId : '',
+            tag: 'selectedTagId' in this.props ? this.props.selectedTagId : '',
+            type: 'type' in this.props ? this.props.type : '',
+            description: 'description' in this.props ? this.props.description : '',
+            attribute: 'attribute' in this.props ? this.props.attribute : '',
+            name: 'name' in this.props ? this.props.name : '',
+            email: 'email' in this.props ? this.props.email : this.props.email,
+            confirmEmail: 'confirmEmail' in this.props ? this.props.confirmEmail : '',
+            password: 'password' in this.props ? this.props.password : '',
+            confirmPassword: 'confirmPassword' in this.props ? this.props.confirmPassword : '',
             apiKey: this.props.apiKey,
         };
         return paramsObject;
@@ -52,14 +49,6 @@ export default class StoryCompanion extends Component {
         });
         return entityIds;
     };
-
-    showAlert(message, type) {
-        this.setState({
-            globalAlertVisible: true,
-            globalAlertType: type,
-            globalAlertMessage: message,
-        });
-    }
 
     getTags = () => {
         // Instance of array means tags is empty
@@ -90,12 +79,8 @@ export default class StoryCompanion extends Component {
         return tagByType;
     };
 
-    openConfirmation = () => {
-        this.setState({ isConfirmationModalOpen: true });
-    };
-
     onConfirmationConfirm = () => {
-        this.setState({ isConfirmationModalOpen: false });
+        this.props.closeConfirmation();
         this.removeNavigationActions();
     };
 

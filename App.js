@@ -30,7 +30,7 @@ export default class App extends React.Component {
                 <PersistGate persistor={Persistor} loading={this.renderLoading()}>
                     <View style={styles.container}>
                         <AppNavigator />
-                        <View style={styles.adContainer}>
+                        {/* <View style={styles.adContainer}>
                             <AdMobBanner
                                 bannerSize="smartBannerPortrait"
                                 adUnitID={
@@ -40,7 +40,7 @@ export default class App extends React.Component {
                                 }
                                 testDeviceID="EMULATOR"
                             />
-                        </View>
+                        </View> */}
                     </View>
                 </PersistGate>
             </Provider>

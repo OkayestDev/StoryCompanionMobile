@@ -7,6 +7,14 @@ export default class PromptUtils extends StoryCompanion {
         this.PromptRequests = new PromptRequests();
     }
 
+    componentDidMount() {
+        let now = new Date().getTime();
+        let anHour = 1000 * 60 * 60;
+        if (!this.props.prompt || this.props.prompt + anHour <= now) {
+            this.getPrompt();
+        }
+    }
+
     resetPrompt = () => {
         this.removeNavigationActions();
         return {
@@ -18,7 +26,7 @@ export default class PromptUtils extends StoryCompanion {
 
     getPrompt = () => {
         const paramsObject = this.createParamsObject();
-        this.PromptRequests.createPrompt(paramsObject)
+        this.PromptRequests.getPrompt(paramsObject)
             .then(res => {
                 if ('error' in res) {
                     this.showAlert(res.error, 'warning');
@@ -29,15 +37,15 @@ export default class PromptUtils extends StoryCompanion {
             .catch(() => this.showAlert('Unable to fetch prompt at this time', 'danger'));
     };
 
-    downVotePrompt = id => {
+    downVotePrompt = () => {
         let paramsObject = this.createParamsObject();
-        paramsObject['prompt'] = id;
+        paramsObject['prompt'] = this.props.prompt.id;
         this.PromptRequests.downVotePrompt(paramsObject)
             .then(res => {
                 if ('error' in res) {
                     this.showAlert(res.error, 'warning');
                 } else {
-                    this.props.setPrompt(null);
+                    this.props.getPrompt();
                 }
             })
             .catch(() => this.showAlert('Unable to down vote prompt at this time', 'darning'));
@@ -50,8 +58,31 @@ export default class PromptUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.showAlert(res.error, 'warning');
                 } else {
+                    this.showAlert(res.success, 'success');
+                    this.setState(this.resetPrompt());
                 }
             })
             .catch(() => this.showAlert('Unable to create prompt at this time', 'danger'));
+    };
+
+    promptToStory = () => {
+        let paramsObject = this.createParamsObject();
+        paramsObject['prompt'] = this.props.prompt.id;
+        this.PromptRequests.promptToStory(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.showAlert(res.error, 'warning');
+                } else {
+                    let tempStories = this.props.stories;
+                    tempStories[res.success.id] = res.success;
+                    this.props.setStories(tempStories);
+                    this.showAlert('Successfully created story', 'success');
+                    this.setState({
+                        creatingPrompt: null,
+                        isConfirmationModalOpen: false,
+                    });
+                }
+            })
+            .catch(() => this.showAlert('Unable to create a story at this time', 'danger'));
     };
 }
