@@ -3,6 +3,7 @@ import { createStore, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { chapterStore } from './ChapterStore.js';
 import { storyStore } from './StoryStore.js';
+import { tagStore } from './TagStore.js';
 import { LOGS } from '../config/Logs.js';
 
 /**
@@ -17,7 +18,6 @@ const INITIAL_STATE = {
     apiKey: null,
     email: null,
     userId: null,
-    tags: null,
     globalAlertVisible: false,
     globalAlertType: '',
     globalAlertMessage: '',
@@ -34,25 +34,9 @@ const reducer = (state = INITIAL_STATE, action) => {
                 userId: action.payload.id,
             };
             break;
-        case 'SET_STORIES':
-            newState = {
-                ...state,
-                stories: action.payload,
-            };
+        case 'LOGOUT':
+            newState = INITIAL_STATE;
             break;
-        case 'SET_TAGS':
-            newState = {
-                ...state,
-                tags: action.payload,
-            };
-            break;
-        // case 'SET_PROMPT':
-        //     newState = {
-        //         ...state,
-        //         prompt: action.payload,
-        //         promptUpdatedAt: new Date().getTime(),
-        //     };
-        //     break;
         case 'SHOW_ALERT':
             newState = {
                 ...state,
@@ -66,9 +50,6 @@ const reducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 globalAlertVisible: false,
             };
-            break;
-        case 'LOGOUT':
-            newState = INITIAL_STATE;
             break;
     }
 
@@ -86,6 +67,7 @@ const reducers = combineReducers({
     ...reducer,
     chapterStore,
     storyStore,
+    tagStore,
 });
 
 const persistedReducer = persistReducer(PERSIST_CONFIG, reducers);

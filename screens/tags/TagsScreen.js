@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
 import EditEntity from '../../components/EditEntity.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import TagsUtils from './components/TagsUtils.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
+import * as tagActions from '../../actions/TagActions.js';
+import { showAlert } from '../../actions/Actions.js';
 import STYLE from './components/TagsStyle.js';
 
 const tagTypes = ['Story', 'Character'];
@@ -29,44 +30,7 @@ class TagsScreen extends TagsUtils {
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            description: '',
-            type: '',
-            selectedTagId: null,
-
-            isConfirmationModalOpen: false,
-
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        };
     }
-
-    cancelTagEdit = () => {
-        this.removeNavigationActions();
-        this.setState({
-            selectedTagId: null,
-            name: '',
-            description: '',
-            type: '',
-        });
-    };
-
-    newTag = () => {
-        this.setNavigationActions(this.cancelTagEdit, this.createTag, null);
-        this.setState({ selectedTagId: 'new' });
-    };
-
-    selectTag = id => {
-        this.setNavigationActions(this.cancelTagEdit, this.editTag, this.openConfirmation);
-        this.setState({
-            selectedTagId: id,
-            name: this.props.tags[id].name,
-            description: this.props.tags[id].description,
-            type: this.props.tags[id].type,
-        });
-    };
 
     renderTags = () => {
         if (this.props.tags === null) {
@@ -107,15 +71,10 @@ class TagsScreen extends TagsUtils {
     };
 
     render() {
-        if (this.state.selectedTagId === null) {
+        if (this.props.selectedTagId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <ScrollView style={STYLE.container}>{this.renderTags()}</ScrollView>
                     <FloatingAddButton onPress={this.newTag} />
                 </View>
@@ -123,32 +82,25 @@ class TagsScreen extends TagsUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <EditEntity
-                        selectedEntityId={this.state.selectedTagId}
-                        isModalOpen={this.state.isConfirmationModalOpen}
+                        selectedEntityId={this.props.selectedTagId}
+                        isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Tag"
-                        inputOne={this.state.name}
+                        inputOne={this.props.name}
                         inputOneName="Tag Name"
-                        inputOneOnChange={newValue => this.setState({ name: newValue })}
+                        inputOneOnChange={this.props.handleNameChanged}
                         modalPicker="Tag Type"
-                        modalPickerSelectedValue={this.state.type}
+                        modalPickerSelectedValue={this.props.type}
                         modalPickerList={tagTypes}
-                        modalPickerOnChange={newType => this.setState({ type: newType })}
-                        inputThree={this.state.description}
+                        modalPickerOnChange={this.props.handleTypeChanged}
+                        inputThree={this.props.description}
                         inputThreeName="Tag Description"
-                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() =>
-                            this.setState({ isConfirmationModalOpen: false })
-                        }
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.closeConfirmation}
                         confirmationTitle={'Delete Tag?'}
                         entityDescription=""
                         onConfirm={() => {
@@ -163,7 +115,21 @@ class TagsScreen extends TagsUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        ...state.tagStore,
+        apiKey: state.apiKey,
+        email: state.email,
+        userId: state.userId,
+    };
+}
+
+const mapDispatchToProps = {
+    ...tagActions,
+    showAlert,
+};
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(TagsScreen);

@@ -9,12 +9,17 @@ export default class TagUtils extends StoryCompanion {
 
     resetTag = () => {
         this.removeNavigationActions();
-        return {
-            selectedTagId: null,
-            name: '',
-            description: '',
-            type: '',
-        };
+        this.props.resetTag();
+    };
+
+    newTag = () => {
+        this.setNavigationActions(this.resetTag, this.createTag, null);
+        this.props.newTag();
+    };
+
+    selectTag = id => {
+        this.setNavigationActions(this.resetTag, this.editTag, this.props.openConfirmation);
+        this.props.selectTag(id);
     };
 
     componentDidMount() {
@@ -26,23 +31,13 @@ export default class TagUtils extends StoryCompanion {
         this.TagRequests.getTags(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedTagId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     this.props.setTags(res.success);
                 }
             })
             .catch(() => {
-                this.setState({
-                    selectedTagId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get Tags at this time.',
-                });
+                this.props.showAlert('Unable to get Tags at this time', 'danger');
             });
     };
 
@@ -51,25 +46,14 @@ export default class TagUtils extends StoryCompanion {
         this.TagRequests.createTag(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedTagId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState(this.resetTag());
+                    this.resetState();
                     this.props.setTags(res.success);
                 }
             })
-            .catch(error => {
-                console.info(error);
-                this.setState({
-                    selectedTagId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to create tag at this time',
-                });
+            .catch(() => {
+                this.props.showAlert('Unable to create tag at this time', 'danger');
             });
     };
 
@@ -78,26 +62,16 @@ export default class TagUtils extends StoryCompanion {
         this.TagRequests.deleteTag(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedTagId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempTags = this.props.tags;
                     delete tempTags[this.state.selectedTagId];
-                    this.setState(this.resetTag());
+                    this.resetTag();
                     this.props.setTags(tempTags);
                 }
             })
             .catch(() => {
-                this.setState({
-                    selectedTagId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to delete tag at this time',
-                });
+                this.props.showAlert('Unable to delete tag at this time', 'danger');
             });
     };
 
@@ -106,26 +80,16 @@ export default class TagUtils extends StoryCompanion {
         this.TagRequests.editTag(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedTagId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempTags = this.props.tags;
                     tempTags[this.state.selectedTagId] = res.success;
-                    this.setState(this.resetTag());
+                    this.resetTag();
                     this.props.setTags(tempTags);
                 }
             })
             .catch(() => {
-                this.setState({
-                    selectedTagId: null,
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to edit tag at this time',
-                });
+                this.props.showAlert('Unable to edit tag at this time', 'warning');
             });
     };
 }

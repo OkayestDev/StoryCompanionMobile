@@ -143,13 +143,13 @@ class StoriesScreen extends StoriesUtils {
     }
 }
 
-function mappropsToProps(props) {
+function mapStateToProps(state) {
     return {
-        ...props.storyStore,
-        tags: props.tagsStore.tags,
-        apiKey: props.apiKey,
-        email: props.email,
-        userId: props.userId,
+        ...state.storyStore,
+        tags: state.tagsStore.tags,
+        apiKey: state.apiKey,
+        email: state.email,
+        userId: state.userId,
     };
 }
 
@@ -159,6 +159,6 @@ const mapDispatchToProps = {
 };
 
 export default connect(
-    mappropsToProps,
+    mapStateToProps,
     mapDispatchToProps
 )(StoriesScreen);

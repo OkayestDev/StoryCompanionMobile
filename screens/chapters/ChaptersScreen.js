@@ -149,6 +149,7 @@ function mapStateToProps(state) {
         apiKey: state.apiKey,
         userId: state.userId,
         stories: state.storyStore.stories,
+        selectedStoryId: state.storyStore.selectedStoryId,
     };
 }
 
