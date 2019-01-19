@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'r
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import LoginUtils from './components/LoginUtils.js';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
+import { showAlert, login } from '../../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import STYLE from './components/LoginStyle.js';
@@ -25,9 +25,6 @@ class LoginScreen extends LoginUtils {
         this.state = {
             email: '',
             password: '',
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
         };
     }
 
@@ -35,12 +32,7 @@ class LoginScreen extends LoginUtils {
     render() {
         return (
             <View style={STYLE.container}>
-                <GlobalAlert
-                    visible={this.state.globalAlertVisible}
-                    message={this.state.globalAlertMessage}
-                    type={this.state.globalAlertType}
-                    closeAlert={() => this.setState({ globalAlertVisible: false })}
-                />
+                <GlobalAlert />
                 <KeyboardAwareScrollView
                     style={STYLE.container}
                     enableOnAndroid={true}
@@ -86,7 +78,12 @@ class LoginScreen extends LoginUtils {
     }
 }
 
+const mapDispatchToProps = {
+    showAlert,
+    login,
+};
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    {},
+    mapDispatchToProps
 )(LoginScreen);

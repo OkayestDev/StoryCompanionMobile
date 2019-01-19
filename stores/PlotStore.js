@@ -1,0 +1,93 @@
+import { createStore } from 'redux';
+import { LOGS } from '../config/Logs.js';
+
+const INITIAL_STATE = {
+    name: '',
+    description: '',
+    plotParent: null,
+    selectedPlotId: null,
+    plots: null,
+    isConfirmationModalOpen: false,
+};
+
+const plotReducer = (state = INITIAL_STATE, action) => {
+    let newState = state;
+
+    switch (action.type) {
+        case 'HANDLE_NAME_CHANGED':
+            newState = {
+                ...state,
+                name: action.payload,
+            };
+            break;
+        case 'HANDLE_DESCRIPTION_CHANGED':
+            newState = {
+                ...state,
+                description: action.payload,
+            };
+            break;
+        case 'RESET_PLOT':
+            newState = {
+                ...state,
+                name: '',
+                description: '',
+                plotParent: null,
+                selectedPlotId: null,
+            };
+            break;
+        case 'NEW_PLOT':
+            newState = {
+                ...state,
+                selectedPlotId: 'new',
+            };
+            break;
+        case 'SELECT_PLOT':
+            let plot = state.plots[action.payload];
+            newState = {
+                ...state,
+                selectedPlotId: action.payload,
+                plotParent: plot.plotParent,
+                name: plot.name,
+                description: plot.description,
+            };
+            break;
+        case 'SET_PLOTS':
+            newState = {
+                ...state,
+                plots: action.payload,
+            };
+            break;
+        case 'ADD_CHILD_PLOT':
+            newState = {
+                ...state,
+                plotParent: action.payload,
+                name: '',
+                description: '',
+                selectedPlotId: 'new',
+            };
+            break;
+        case 'OPEN_CONFIRMATION':
+            newState = {
+                ...state,
+                isConfirmationModalOpen: true,
+            };
+            break;
+        case 'CLOSE_CONFIRMATION':
+            newState = {
+                ...state,
+                isConfirmationModalOpen: false,
+            };
+            break;
+    }
+
+    if (LOGS.ENABLE_LOGS) {
+        console.info('Updating PlotStore: ', {
+            state: newState,
+            action: action,
+        });
+    }
+
+    return newState;
+};
+
+export const plotStore = createStore(plotReducer);

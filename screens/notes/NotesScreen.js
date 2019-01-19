@@ -8,6 +8,8 @@ import FloatingAddButton from '../../components/FloatingAddButton.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import NotesUtils from './components/NotesUtils.js';
+import * as noteActions from '../../actions/NoteActions.js';
+import { showAlert } from '../../actions/Actions.js';
 import STYLE from './components/NotesStyle.js';
 
 class NotesScreen extends NotesUtils {
@@ -31,52 +33,18 @@ class NotesScreen extends NotesUtils {
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            description: '',
-            notes: null,
-            selectedNoteId: null,
-
-            isConfirmationModalOpen: false,
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        };
         props.navigation.setParams({
             title: this.props.stories[this.props.selectedStoryId].name,
             onExport: this.exportNotes,
         });
     }
 
-    cancelNoteEdit = () => {
-        this.removeNavigationActions();
-        this.setState({
-            selectedNoteId: null,
-            name: '',
-            description: '',
-        });
-    };
-
-    newNote = () => {
-        this.setNavigationActions(this.cancelNoteEdit, this.createNote, null);
-        this.setState({ selectedNoteId: 'new' });
-    };
-
-    selectNote = id => {
-        this.setNavigationActions(this.cancelNoteEdit, this.editNote, this.openConfirmation);
-        this.setState({
-            selectedNoteId: id,
-            name: this.state.notes[id].name,
-            description: this.state.notes[id].description,
-        });
-    };
-
     renderNotes = () => {
-        if (this.state.notes === null) {
+        if (this.props.notes === null) {
             return null;
         }
 
-        noteIds = Object.keys(this.state.notes);
+        noteIds = Object.keys(this.props.notes);
         if (noteIds.length > 0) {
             let notesRendered = [];
             noteIds.forEach(id => {
@@ -90,10 +58,10 @@ class NotesScreen extends NotesUtils {
                             <View styles={STYLE.notePictureContainer} />
                             <View style={STYLE.noteNameAndDescription}>
                                 <Text numberOfLines={1} style={STYLE.noteName}>
-                                    {this.state.notes[id].name}
+                                    {this.props.notes[id].name}
                                 </Text>
                                 <Text numberOfLines={3} style={STYLE.noteDescription}>
-                                    {this.state.notes[id].description}
+                                    {this.props.notes[id].description}
                                 </Text>
                             </View>
                         </View>
@@ -114,15 +82,10 @@ class NotesScreen extends NotesUtils {
     };
 
     render() {
-        if (this.state.selectedNoteId === null) {
+        if (this.props.selectedNoteId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <ScrollView>{this.renderNotes()}</ScrollView>
                     <FloatingAddButton onPress={this.newNote} />
                 </View>
@@ -130,28 +93,21 @@ class NotesScreen extends NotesUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <EditEntity
-                        selectedEntityId={this.state.selectedNoteId}
-                        isModalOpen={this.state.isConfirmationModalOpen}
+                        selectedEntityId={this.props.selectedNoteId}
+                        isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Note"
-                        inputOne={this.state.name}
+                        inputOne={this.props.name}
                         inputOneName="Note Name"
-                        inputOneOnChange={newValue => this.setState({ name: newValue })}
-                        inputThree={this.state.description}
+                        inputOneOnChange={this.props.handleNameChanged}
+                        inputThree={this.props.description}
                         inputThreeName="Description"
-                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() =>
-                            this.setState({ isConfirmationModalOpen: false })
-                        }
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.closeConfirmation}
                         confirmationTitle={'Delete Note?'}
                         entityDescription=""
                         onConfirm={() => {
@@ -166,7 +122,23 @@ class NotesScreen extends NotesUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        ...state.noteStore,
+        email: state.email,
+        apiKey: state.apiKey,
+        userId: state.userId,
+        stories: state.storyStore.stories,
+        selectedStoryId: state.storyStore.selectedStoryId,
+    };
+}
+
+const mapDispatchToProps = {
+    ...noteActions,
+    showAlert,
+};
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(NotesScreen);

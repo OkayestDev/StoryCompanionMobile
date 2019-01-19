@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import SettingsUtils from './components/SettingsUtils.js';
+import { showAlert, logout } from '../../actions/Actions.js';
+import * as settingsActions from '../../actions/SettingsActions.js';
 import STYLE from './components/SettingsStyle.js';
 
 class SettingsScreen extends SettingsUtils {
@@ -26,84 +27,66 @@ class SettingsScreen extends SettingsUtils {
 
     constructor(props) {
         super(props);
-        this.state = {
-            isConfirmationModalOpen: false,
-            isSubmittingBug: false,
-            isSubmittingFeature: false,
-            description: '',
-            isChangingPassword: false,
-
-            password: '',
-            confirmPassword: '',
-
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        };
     }
 
     submitFeature = () => {
         this.feature();
-        this.setState({
-            description: '',
-            isSubmittingFeature: false,
-        });
+        this.props.resetSettings();
         this.removeNavigationActions();
     };
 
     submitBug = () => {
         this.bug();
-        this.setState({
-            description: '',
-            isSubmittingBug: false,
-        });
+        this.props.resetSettings();
         this.removeNavigationActions();
     };
 
     submitChangePassword = () => {
         this.changePassword();
-        this.setState({
-            password: '',
-            confirmPassword: '',
-            isSubmittingPassword: false,
-        });
+        this.props.resetSettings();
         this.removeNavigationActions();
     };
 
+    // prettier-ignore
     submittingBug = () => {
-        this.setNavigationActions(() => {
-            this.removeNavigationActions();
-            this.setState({ isSubmittingBug: false });
-        }, this.submitBug);
-        this.setState({ isSubmittingBug: true });
+        this.setNavigationActions(
+            () => {
+                this.removeNavigationActions();
+                this.props.resetSettings();
+            }, 
+            this.submitBug
+        );
+        this.props.submittingBug();
     };
 
+    // prettier-ignore
     submittingFeature = () => {
-        this.setNavigationActions(() => {
-            this.removeNavigationActions();
-            this.setState({ isSubmittingFeature: false });
-        }, this.submitFeature);
-        this.setState({ isSubmittingFeature: true });
+        this.setNavigationActions(
+            () => {
+                this.removeNavigationActions();
+                this.props.resetSettings();
+            },
+            this.submitFeature
+        );
+        this.props.submittingFeature();
     };
 
+    // prettier-ignore
     changingPassword = () => {
-        this.setNavigationActions(() => {
-            this.removeNavigationActions();
-            this.setState({ isChangingPassword: false });
-        });
-        this.setState({ isChangingPassword: true });
+        this.setNavigationActions(
+            () => {
+                this.removeNavigationActions();
+                this.props.resetSettings();
+            },
+        );
+        this.props.changingPassword();
     };
 
     render() {
-        if (this.state.isSubmittingBug) {
+        if (this.props.isSubmittingBug) {
             return (
                 <View style={STYLE.submissionContainer}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <View style={STYLE.submissionLabelContainer}>
                         <Text style={STYLE.submissionLabel}>Submitting a Bug</Text>
                     </View>
@@ -113,23 +96,16 @@ class SettingsScreen extends SettingsUtils {
                             underlineColorAndroid="rgba(0,0,0,0)"
                             style={STYLE.submissionDescription}
                             multiline={true}
-                            value={this.state.description}
-                            onChangeText={newDescription =>
-                                this.setState({ description: newDescription })
-                            }
+                            value={this.props.description}
+                            onChangeText={this.props.handleDescriptionChanged}
                         />
                     </View>
                 </View>
             );
-        } else if (this.state.isSubmittingFeature) {
+        } else if (this.props.isSubmittingFeature) {
             return (
                 <View style={STYLE.submissionContainer}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <View style={STYLE.submissionLabelContainer}>
                         <Text style={STYLE.submissionLabel}>Submitting a Feature Request</Text>
                     </View>
@@ -139,23 +115,16 @@ class SettingsScreen extends SettingsUtils {
                             underlineColorAndroid="rgba(0,0,0,0)"
                             style={STYLE.submissionDescription}
                             multiline={true}
-                            value={this.state.description}
-                            onChangeText={newDescription =>
-                                this.setState({ description: newDescription })
-                            }
+                            value={this.props.description}
+                            onChangeText={this.props.handleDescriptionChanged}
                         />
                     </View>
                 </View>
             );
-        } else if (this.state.isChangingPassword) {
+        } else if (this.props.isChangingPassword) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <KeyboardAwareScrollView
                         enableOnAndroid={true}
                         keyboardShouldPersistTaps="handled"
@@ -171,10 +140,8 @@ class SettingsScreen extends SettingsUtils {
                                         secureTextEntry={true}
                                         style={STYLE.resetPasswordInput}
                                         underlineColorAndroid="rgba(0,0,0,0)"
-                                        value={this.state.password}
-                                        onChangeText={newText =>
-                                            this.setState({ password: newText })
-                                        }
+                                        value={this.props.password}
+                                        onChangeText={this.props.handlePasswordChanged}
                                     />
                                 </View>
                                 <View style={STYLE.resetPasswordLabelAndInputContainer}>
@@ -186,10 +153,8 @@ class SettingsScreen extends SettingsUtils {
                                         secureTextEntry={true}
                                         style={STYLE.resetPasswordInput}
                                         underlineColorAndroid="rgba(0,0,0,0)"
-                                        value={this.state.confirmPassword}
-                                        onChangeText={newText =>
-                                            this.setState({ confirmPassword: newText })
-                                        }
+                                        value={this.props.confirmPassword}
+                                        onChangeText={this.props.handleConfirmPasswordChanged}
                                     />
                                 </View>
                                 <TouchableOpacity
@@ -210,22 +175,15 @@ class SettingsScreen extends SettingsUtils {
                 <View
                     style={[
                         STYLE.container,
-                        this.state.isConfirmationModalOpen
+                        this.props.isConfirmationModalOpen
                             ? { backgroundColor: 'rgba(0,0,0,0.1)' }
                             : '',
                     ]}
                 >
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() =>
-                            this.setState({ isConfirmationModalOpen: false })
-                        }
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.closeConfirmation}
                         confirmationTitle={'Logout?'}
                         onConfirm={this.logout}
                     />
@@ -241,7 +199,7 @@ class SettingsScreen extends SettingsUtils {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={STYLE.button}
-                            onPress={() => this.setState({ isConfirmationModalOpen: true })}
+                            onPress={this.props.openConfirmation}
                         >
                             <Text style={STYLE.buttonText}>Logout</Text>
                         </TouchableOpacity>
@@ -252,7 +210,21 @@ class SettingsScreen extends SettingsUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        email: state.email,
+        apiKey: state.apiKey,
+        userId: state.userId,
+    };
+}
+
+const mapDispatchToProps = {
+    showAlert,
+    logout,
+    ...settingsActions,
+};
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(SettingsScreen);

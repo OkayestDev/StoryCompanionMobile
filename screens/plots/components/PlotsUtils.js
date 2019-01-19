@@ -7,44 +7,43 @@ export default class PlotsUtils extends StoryCompanion {
         this.PlotRequests = new PlotRequests();
     }
 
-    resetPlot = () => {
-        this.removeNavigationActions();
-        return {
-            description: '',
-            name: '',
-            plotParent: null,
-            selectedPlotId: null,
-        };
-    };
-
     componentDidMount() {
         this.getPlots();
     }
+
+    resetPlot = () => {
+        this.removeNavigationActions();
+        this.props.resetPlot();
+    };
+
+    newPlot = () => {
+        this.setNavigationActions(this.resetPlot, this.createPlot, null);
+        this.props.newPlot();
+    };
+
+    selectPlot = id => {
+        this.setNavigationActions(this.resetPlot, this.editPlot, this.props.openConfirmation);
+        this.props.selectPlot(id);
+    };
+
+    addChildPlot = parentId => {
+        this.setNavigationActions(this.cancelPlotEdit, this.createPlot, null);
+        this.props.addChildPlot(parentId);
+    };
 
     getPlots = () => {
         let paramsObject = this.createParamsObject();
         this.PlotRequests.getPlots(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedPlotId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'danger');
                 } else {
-                    this.setState({
-                        ...this.resetPlot(),
-                        plots: res.success,
-                    });
+                    this.props.setPlot(res.success);
+                    this.resetPlot();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 
@@ -53,54 +52,32 @@ export default class PlotsUtils extends StoryCompanion {
         this.PlotRequests.createPlot(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'danger');
                 } else {
-                    this.setState({
-                        plots: res.success,
-                        ...this.resetPlot(),
-                    });
+                    this.props.setPlots(res.success);
+                    this.resetPlot();
                 }
             })
-            .catch(error => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+            .catch(() => {
+                this.props.showAlert('Unable to get a response from the server', 'danger');
             });
     };
 
     editPlot = () => {
         let paramsObject = this.createParamsObject();
-        console.info(paramsObject);
         this.PlotRequests.editPlot(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedPlotId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempPlots = this.state.plots;
-                    tempPlots[this.state.selectedPlotId] = res.success;
-                    this.setState({
-                        plots: tempPlots,
-                        ...this.resetPlot(),
-                    });
+                    let tempPlots = this.props.plots;
+                    tempPlots[this.props.selectedPlotId] = res.success;
+                    this.props.setPlots(tempPlots);
+                    this.resetPlot();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get response from server', 'danger');
             });
     };
 
@@ -109,27 +86,16 @@ export default class PlotsUtils extends StoryCompanion {
         this.PlotRequests.deletePlot(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedPlotId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempPlots = this.state.plots;
-                    delete tempPlots[this.state.selectedPlotId];
-                    this.setState({
-                        plots: tempPlots,
-                        ...this.resetPlot(),
-                    });
+                    let tempPlots = this.props.plots;
+                    delete tempPlots[this.props.selectedPlotId];
+                    this.props.setPlots(tempPlots);
+                    this.resetPlot();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get response from server', 'danger');
             });
     };
 }

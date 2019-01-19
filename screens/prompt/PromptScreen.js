@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import PromptUtils from './components/PromptUtils.js';
-import Actions from '../../store/Actions.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
@@ -9,6 +8,9 @@ import FloatingAddButton from '../../components/FloatingAddButton.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
+import * as promptActions from '../../actions/PromptActions.js';
+import { setStories } from '../../actions/StoryActions.js';
+import { showAlert } from '../../actions/Actions.js';
 import STYLE from './components/PromptStyle.js';
 
 class PromptScreen extends PromptUtils {
@@ -28,48 +30,7 @@ class PromptScreen extends PromptUtils {
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            description: '',
-            creatingPrompt: null,
-
-            isConfirmationModalOpen: false,
-            confirmationTitle: '',
-            confirmationNote: '',
-            confirmationOnConfirm: null,
-
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        };
     }
-
-    handleDownVotePressed = () => {
-        this.setState({
-            isConfirmationModalOpen: true,
-            confirmationTitle: 'Down Vote Prompt?',
-            confirmationNote: "This prompt won't show up for you anymore",
-            confirmationOnConfirm: () => this.downVotePrompt(),
-        });
-    };
-
-    handlePromptToStoryPressed = () => {
-        this.setState({
-            isConfirmationModalOpen: true,
-            confirmationTitle: 'Create a Story?',
-            confirmationNote: 'creates a story based on this prompt',
-            confirmationOnConfirm: () => this.promptToStory(),
-        });
-    };
-
-    cancelPromptEdit = () => {
-        this.setState(this.resetPrompt());
-    };
-
-    newPrompt = () => {
-        this.setNavigationActions(this.cancelPromptEdit, this.createPrompt, null);
-        this.setState({ creatingPrompt: 'new' });
-    };
 
     renderPrompt = () => {
         if (!this.props.prompt) {
@@ -80,11 +41,12 @@ class PromptScreen extends PromptUtils {
             <View
                 style={[
                     STYLE.container,
-                    this.state.isConfirmationModalOpen
+                    this.props.isConfirmationModalOpen
                         ? { backgroundColor: 'rgba(0,0,0,0.1)' }
                         : '',
                 ]}
             >
+                <GlobalAlert />
                 <View style={STYLE.nameAndDownVoteContainer}>
                     <Text numberOfLines={1} style={STYLE.name}>
                         {this.props.prompt.name}
@@ -107,53 +69,56 @@ class PromptScreen extends PromptUtils {
     };
 
     render() {
-        if (this.state.creatingPrompt) {
+        if (this.props.creatingPrompt) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <EditEntity
-                        selectedEntityId={this.state.creatingPrompt}
-                        inputOne={this.state.name}
+                        selectedEntityId={this.props.creatingPrompt}
+                        inputOne={this.props.name}
                         inputOneName="Prompt Name"
-                        inputOneOnChange={newValue => this.setState({ name: newValue })}
-                        inputThree={this.state.description}
+                        inputOneOnChange={this.props.handleNameChanged}
+                        inputThree={this.props.description}
                         inputThreeName="Summary"
-                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                 </View>
             );
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <View style={STYLE.container}>{this.renderPrompt()}</View>
                     <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() =>
-                            this.setState({ isConfirmationModalOpen: false })
-                        }
-                        confirmationTitle={this.state.confirmationTitle}
-                        note={this.state.confirmationNote}
-                        onConfirm={this.state.confirmationOnConfirm}
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.closeConfirmation}
+                        confirmationTitle={this.props.confirmationTitle}
+                        note={this.props.confirmationNote}
+                        onConfirm={this.props.confirmationOnConfirm}
                     />
-                    <FloatingAddButton onPress={this.newPrompt} />
+                    <FloatingAddButton onPress={this.props.newPrompt} />
                 </View>
             );
         }
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        ...state.promptStore,
+        apiKey: state.apiKey,
+        email: state.email,
+        userId: state.userId,
+    };
+}
+
+const mapDispatchToProp = {
+    ...promptActions,
+    setStories,
+    showAlert,
+};
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProp
 )(PromptScreen);

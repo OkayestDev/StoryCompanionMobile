@@ -81,4 +81,4 @@ const tagReducer = (state = INITIAL_STATE, action) => {
     return newState;
 };
 
-export const tagStore = createStore(tag);
+export const tagStore = createStore(tagReducer);

@@ -18,17 +18,9 @@ export default class DraftUtils extends StoryCompanion {
         this.DraftRequests.getDrafts(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        draft: res.success,
-                        description: 'description' in res.success ? res.success.description : '',
-                        selectedDraftId: 'id' in res.success ? res.success.id : '',
-                    });
+                    this.props.setDraft(res.success);
                     if ('id' in res.success) {
                         this.props.navigation.setParams({
                             onSave: this.editDraft,
@@ -38,11 +30,7 @@ export default class DraftUtils extends StoryCompanion {
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 
@@ -51,13 +39,13 @@ export default class DraftUtils extends StoryCompanion {
         this.DraftRequests.exportDraft(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.showAlert(res.error, 'warning');
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.showAlert(res.success, 'success');
+                    this.props.showAlert(res.success, 'success');
                 }
             })
             .catch(() => {
-                this.showAlert('Unable to export draft at this time', 'danger');
+                this.props.showAlert('Unable to export draft at this time', 'danger');
             });
     };
 
@@ -66,16 +54,9 @@ export default class DraftUtils extends StoryCompanion {
         this.DraftRequests.createDraft(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: false,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        draft: res.success,
-                        selectedDraftId: 'id' in res.success ? res.success.id : '',
-                    });
+                    this.props.setDraft(res.success);
                     this.props.navigation.setParams({
                         onSave: this.editDraft,
                         onExport: this.exportDraft,
@@ -83,11 +64,7 @@ export default class DraftUtils extends StoryCompanion {
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: false,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to create draft at this time',
-                });
+                this.props.showAlert('Unable to create draft at this time', 'danger');
             });
     };
 
@@ -98,27 +75,14 @@ export default class DraftUtils extends StoryCompanion {
         this.DraftRequests.editDraft(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: false,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: 'Unable to edit draft at this time',
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        draft: res.success,
-                        description: res.success.description,
-                        globalAlertVisible: true,
-                        globalAlertType: 'success',
-                        globalAlertMessage: 'Successfully saved draft changes!',
-                    });
+                    this.props.setDraft(res.success);
+                    this.props.showAlert('Successfully saved draft changes!', 'success');
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to edit draft at this time',
-                });
+                this.props.showAlert('Unable to edit draft at this time', 'danger');
             });
     };
 
@@ -127,22 +91,14 @@ export default class DraftUtils extends StoryCompanion {
         this.DraftRequests.editDraft(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: 'Unable to edit draft at this time',
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     // As of right now - we only allow one draft. set to an empty array
-                    this.setState({ draft: [] });
+                    this.props.setDraft([]);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to edit draft at this time',
-                });
+                this.props.showAlert('Unable to edit draft at this time', 'danger');
             });
     };
 }

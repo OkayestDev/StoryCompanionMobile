@@ -10,38 +10,27 @@ export default class PasswordResetUtils extends StoryCompanion {
 
     passwordReset = () => {
         if (!PATTERNS.email.test(this.state.email)) {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'warning',
-                globalAlertMessage: 'Please enter a valid email',
-            });
+            this.props.showAlert('Please enter a valid email', 'warning');
             return;
         }
         let paramsObject = this.createParamsObject();
         this.UserRequests.passwordReset(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
+                    this.props.showAlert(
+                        'Temporary password sent to ' + this.state.email,
+                        'success'
+                    );
                     this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'success',
-                        globalAlertMessage: 'Temporary password sent to ' + this.state.email,
                         email: '',
                     });
                     setTimeout(() => this.props.navigation.navigate('Login'), 3000);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get a response from the server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 }

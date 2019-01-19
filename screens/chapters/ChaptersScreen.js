@@ -142,7 +142,6 @@ class ChaptersScreen extends ChapterUtils {
 }
 
 function mapStateToProps(state) {
-    console.info(state);
     return {
         ...state.chapterStore,
         email: state.email,

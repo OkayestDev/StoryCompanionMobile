@@ -8,27 +8,22 @@ export const handleDescriptionChanged = payload => ({
     payload,
 });
 
-export const resetPlot = () => ({
-    type: 'RESET_PLOT',
+export const resetNote = () => ({
+    type: 'RESET_NOTE',
 });
 
-export const newPlot = () => ({
-    type: 'NEW_PLOT',
-});
-
-export const selectPlot = id => ({
-    type: 'SELECT_PLOT',
-    payload: id,
-});
-
-export const setPlots = payload => ({
-    type: 'SET_PLOTS',
+export const setNotes = payload => ({
+    type: 'SET_NOTES',
     payload,
 });
 
-export const addChildPlot = parentId => ({
-    type: 'ADD_CHILD_PLOT',
-    payload: parentId,
+export const selectNote = payload => ({
+    type: 'SELECT_NOTE',
+    payload,
+});
+
+export const newNote = () => ({
+    type: 'NEW_NOTE',
 });
 
 export const openConfirmation = () => ({

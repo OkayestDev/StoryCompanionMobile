@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, Dimensions, Text, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
+import { closeAlert } from '../actions/Actions.js';
 import { Icon } from 'react-native-elements';
 
-export default class GlobalAlert extends Component {
+class GlobalAlert extends Component {
     figureAlertColor = () => {
         switch (this.props.type) {
             case 'success':
@@ -66,3 +68,20 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
 });
+
+function mapStateToProps(state) {
+    return {
+        message: state.globalAlertMessage,
+        type: state.globalAlertType,
+        visible: state.globalAlertVisible,
+    };
+}
+
+const mapDispatchToProps = {
+    closeAlert,
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(GlobalAlert);

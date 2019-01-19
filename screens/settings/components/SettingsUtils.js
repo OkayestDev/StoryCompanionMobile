@@ -10,30 +10,18 @@ export default class SettingsUtils extends StoryCompanion {
     }
 
     changePassword = () => {
-        if (this.state.password.length < 6) {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'warning',
-                globalAlertMessage: 'Ensure passwords are at least 6 characters long',
-            });
+        if (this.props.password.length < 6) {
+            this.props.showAlert('Ensure passwords are at least 6 characters long', 'warning');
             return;
         }
 
-        if (this.state.password === '') {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'warning',
-                globalAlertMessage: 'Passwords cannot be empty',
-            });
+        if (this.props.password === '') {
+            this.props.showAlert('Passwords cannot be empty', 'warning');
             return;
         }
 
-        if (this.state.password !== this.state.confirmPassword) {
-            this.setState({
-                globalAlertVisible: true,
-                globalAlertType: 'warning',
-                globalAlertMessage: 'Passwords do not match',
-            });
+        if (this.props.password !== this.props.confirmPassword) {
+            this.props.showAlert('Passwords do not match', 'warning');
             return;
         }
 
@@ -41,28 +29,14 @@ export default class SettingsUtils extends StoryCompanion {
         this.UserRequests.changePassword(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'success',
-                        globalAlertMessage: 'Successfully updated password',
-                        changingPassword: false,
-                        password: '',
-                        confirmPassword: '',
-                    });
+                    this.props.showAlert('Successfully updated password!', 'success');
+                    this.props.resetSettings();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 
@@ -71,27 +45,14 @@ export default class SettingsUtils extends StoryCompanion {
         this.SettingsRequests.bug(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'success',
-                        globalAlertMessage: 'Successfully submitted bug. Thank you!',
-                        submittingBug: false,
-                        bugDescription: '',
-                    });
+                    this.props.resetSettings();
+                    this.props.showAlert('Successfully submitted bug. Thank you!', 'success');
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to submit bug at this time',
-                });
+                this.props.showAlert('Unable to submit bug at this time', 'danger');
             });
     };
 
@@ -100,27 +61,14 @@ export default class SettingsUtils extends StoryCompanion {
         this.SettingsRequests.feature(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'success',
-                        globalAlertMessage: 'Successfully submitted feature. Thank you!',
-                        submittingFeature: false,
-                        featureDescription: '',
-                    });
+                    this.props.resetSettings();
+                    this.props.showAlert('Successfully submitted feature. Thank you!', 'success');
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to submit feature at this time',
-                });
+                this.props.showAlert('Unable to submit feature at this time', 'danger');
             });
     };
 

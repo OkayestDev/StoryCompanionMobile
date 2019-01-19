@@ -22,22 +22,14 @@ export default class LoginUtils extends StoryCompanion {
         this.UserRequests.login(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     this.props.login(res.success);
                     this.props.navigation.navigate('StoriesTab');
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 }

@@ -8,6 +8,15 @@ export default class CreateAccountUtils extends StoryCompanion {
         this.UserRequests = new UserRequests();
     }
 
+    resetState = () => {
+        this.setState({
+            email: '',
+            confirmEmail: '',
+            password: '',
+            confirmPassword: '',
+        });
+    };
+
     doEmailsMatch = () => {
         if (this.state.email === this.state.confirmEmail) {
             return true;
@@ -48,56 +57,27 @@ export default class CreateAccountUtils extends StoryCompanion {
             this.UserRequests.createAccount(paramsObject)
                 .then(res => {
                     if ('error' in res) {
-                        this.setState({
-                            globalAlertVisible: true,
-                            globalAlertType: 'danger',
-                            globalAlertMessage: res.error,
-                        });
+                        this.props.showAlert(res.error, 'danger');
                     } else {
-                        this.setState({
-                            globalAlertVisible: true,
-                            globalAlertType: 'success',
-                            globalAlertMessage: 'Successfully Created Account',
-                        });
-
+                        this.props.showAlert('Successfully Created Account', 'success');
                         setTimeout(() => {
                             this.resetState();
                             this.props.navigation.navigate('Login');
                         }, 2000);
                     }
                 })
-                .catch(error => {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: 'Unable to get response from server',
-                    });
+                .catch(() => {
+                    this.props.showAlert('Unable to get a response from server', 'danger');
                 });
         } else {
             if (!this.doEmailsMatch()) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: 'Ensure Emails Match',
-                });
+                this.props.showAlert('Ensure Emails Match', 'warning');
             } else if (!this.doPasswordsMatch()) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: 'Ensure Passwords Match',
-                });
+                this.props.showAlert('Ensure Passwords Match', 'warning');
             } else if (!this.isEmailValid()) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: 'Please provide a valid email',
-                });
+                this.props.showAlert('Please provide a valid email', 'warning');
             } else if (!this.isPasswordValid()) {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'warning',
-                    globalAlertMessage: 'Ensure passwords are at least 6 characters long',
-                });
+                this.props.showAlert('Ensure passwords are at least 6 characters long', 'warning');
             }
         }
     };

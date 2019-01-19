@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CreateAccountUtils from './components/CreateAccountUtils.js';
+import { showAlert } from '../../actions/Actions.js';
 import STYLE from './components/CreateAccountStyle.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 
@@ -31,34 +31,13 @@ class CreateAccountScreen extends CreateAccountUtils {
             confirmEmail: '',
             password: '',
             confirmPassword: '',
-
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
         };
     }
-
-    resetState = () => {
-        this.setState({
-            email: '',
-            confirmEmail: '',
-            password: '',
-            confirmPassword: '',
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        });
-    };
 
     render() {
         return (
             <View style={STYLE.container}>
-                <GlobalAlert
-                    visible={this.state.globalAlertVisible}
-                    message={this.state.globalAlertMessage}
-                    type={this.state.globalAlertType}
-                    closeAlert={() => this.setState({ globalAlertVisible: false })}
-                />
+                <GlobalAlert />
                 <KeyboardAwareScrollView
                     style={STYLE.container}
                     enableOnAndroid={true}
@@ -143,7 +122,11 @@ class CreateAccountScreen extends CreateAccountUtils {
     }
 }
 
+const mapDispatchToProps = {
+    showAlert,
+};
+
 export default connect(
-    Actions.mapStateToProps,
-    Actions.mapDispatchToProps
+    {},
+    mapDispatchToProps
 )(CreateAccountScreen);

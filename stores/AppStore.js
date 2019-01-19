@@ -2,8 +2,14 @@ import { AsyncStorage } from 'react-native';
 import { createStore, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { chapterStore } from './ChapterStore.js';
+import { promptStore } from './PromptStore.js';
 import { storyStore } from './StoryStore.js';
+import { characterStore } from './CharacterStore.js';
+import { draftStore } from './DraftStore.js';
+import { noteStore } from './NoteStore.js';
 import { tagStore } from './TagStore.js';
+import { plotStore } from './PlotStore.js';
+import { settingsStore } from './SettingsStore.js';
 import { LOGS } from '../config/Logs.js';
 
 /**
@@ -65,9 +71,15 @@ const reducer = (state = INITIAL_STATE, action) => {
 
 const reducers = combineReducers({
     ...reducer,
-    chapterStore,
     storyStore,
     tagStore,
+    promptStore,
+    characterStore,
+    chapterStore,
+    draftStore,
+    noteStore,
+    plotStore,
+    settingsStore,
 });
 
 const persistedReducer = persistReducer(PERSIST_CONFIG, reducers);

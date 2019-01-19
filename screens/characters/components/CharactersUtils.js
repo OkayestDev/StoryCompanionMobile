@@ -7,21 +7,25 @@ export default class CharactersUtils extends StoryCompanion {
         this.CharacterRequests = new CharacterRequests();
     }
 
-    resetCharacter = () => {
-        this.removeNavigationActions();
-        return {
-            name: '',
-            image: '',
-            attribute: '',
-            description: '',
-            selectedCharacterId: null,
-        };
-    };
-
     componentDidMount() {
         this.getCharacters();
         this.getTags();
     }
+
+    resetCharacter = () => {
+        this.removeNavigationActions();
+        this.props.resetCharacter();
+    };
+
+    newCharacter = () => {
+        this.setNavigationActions(this.resetCharacter, this.createCharacter, null);
+        this.props.newCharacter();
+    };
+
+    selectCharacter = id => {
+        this.setNavigationActions(this.resetCharacter, this.editCharacter, this.props.openConfirmation);
+        this.props.selectCharacter(id);
+    };
 
     moveCharacterDown = id => {
         const paramsObject = {
@@ -35,9 +39,7 @@ export default class CharactersUtils extends StoryCompanion {
                 } else {
                     let tempCharacters = this.state.characters;
                     tempCharacters[id] = res.success;
-                    this.setState({
-                        characters: tempCharacters,
-                    });
+                    this.props.setCharacters(tempCharacters);
                 }
             })
             .catch(() => {
@@ -53,25 +55,15 @@ export default class CharactersUtils extends StoryCompanion {
         this.CharacterRequests.moveCharacterUp(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: 'Unable to move character up at this time',
-                    });
+                    this.props.showAlert('Unable to move character up at this time', 'warning');
                 } else {
                     let tempCharacters = this.state.characters;
                     tempCharacters[id] = res.success;
-                    this.setState({
-                        characters: tempCharacters,
-                    });
+                    this.props.setCharacters(tempCharacters);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to move character up at this time',
-                });
+                this.props.showAlert('Unable to move character up at this time', 'danger');
             });
     };
 
@@ -80,35 +72,23 @@ export default class CharactersUtils extends StoryCompanion {
         this.CharacterRequests.getCharacters(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        selectedCharacterId: null,
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        ...this.resetCharacter(),
-                        characters: res.success,
-                    });
+                    this.props.setCharacters(res.success);
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 
     createCharacter = async () => {
-        let image = this.state.image;
+        let image = this.props.image;
         // Check if new image has been uploaded
         if (image instanceof Object) {
             image = await this.CharacterRequests.uploadImageToS3(
                 'character',
-                this.state.image,
+                this.props.image,
                 this.props.selectedStoryId
             );
         }
@@ -117,33 +97,23 @@ export default class CharactersUtils extends StoryCompanion {
         this.CharacterRequests.createCharacter(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'danger',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.setState({
-                        ...this.resetCharacter(),
-                        characters: res.success,
-                    });
+                    this.props.setCharacters(res.success);
+                    this.props.resetCharacter();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 
     editCharacter = async () => {
-        let image = this.state.image;
+        let image = this.props.image;
         if (image instanceof Object) {
             image = await this.CharacterRequests.uploadImageToS3(
                 'character',
-                this.state.image,
+                this.props.image,
                 this.props.selectedStoryId
             );
         }
@@ -152,26 +122,16 @@ export default class CharactersUtils extends StoryCompanion {
         this.CharacterRequests.editCharacter(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempCharacters = this.state.characters;
                     tempCharacters[this.state.selectedCharacterId] = res.success;
-                    this.setState({
-                        characters: tempCharacters,
-                        ...this.resetCharacter(),
-                    });
+                    this.props.setCharacters(tempCharacters);
+                    this.props.resetCharacter();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 
@@ -180,11 +140,7 @@ export default class CharactersUtils extends StoryCompanion {
         this.CharacterRequests.deleteCharacter(paramsObject)
             .then(res => {
                 if ('error' in res) {
-                    this.setState({
-                        globalAlertVisible: true,
-                        globalAlertType: 'warning',
-                        globalAlertMessage: res.error,
-                    });
+                    this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempCharacters = this.state.characters;
                     delete tempCharacters[this.state.selectedCharacterId];
@@ -192,14 +148,12 @@ export default class CharactersUtils extends StoryCompanion {
                         characters: tempCharacters,
                         ...this.resetCharacter(),
                     });
+                    this.props.setCharacters(tempCharacters);
+                    this.props.resetCharacter();
                 }
             })
             .catch(() => {
-                this.setState({
-                    globalAlertVisible: true,
-                    globalAlertType: 'danger',
-                    globalAlertMessage: 'Unable to get response from server',
-                });
+                this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
 }

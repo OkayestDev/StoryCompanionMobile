@@ -10,10 +10,6 @@ export default class StoryCompanion extends Component {
     }
 
     createParamsObject = () => {
-        if (typeof this.state === 'undefined') {
-            this.state = {};
-        }
-
         const paramsObject = {
             plot: 'selectedPlotId' in this.props ? this.props.selectedPlotId : '',
             plotParent: 'plotParent' in this.props ? this.props.plotParent : '',
@@ -57,13 +53,13 @@ export default class StoryCompanion extends Component {
             this.TagRequests.getTags(paramsObject)
                 .then(res => {
                     if ('error' in res) {
-                        this.showAlert('Unable to fetch tags at this time', 'danger');
+                        this.props.showAlert('Unable to fetch tags at this time', 'danger');
                     } else {
                         this.props.setTags(res.success);
                     }
                 })
                 .catch(() => {
-                    this.showAlert('Unable to fetch tags at this time', 'danger');
+                    this.props.showAlert('Unable to fetch tags at this time', 'danger');
                 });
         }
     };

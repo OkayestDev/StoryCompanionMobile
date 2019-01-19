@@ -32,63 +32,15 @@ class PlotsScreen extends PlotsUtils {
 
     constructor(props) {
         super(props);
-        this.state = {
-            name: '',
-            description: '',
-            plotParent: null,
-            selectedPlotId: null,
-            plots: null,
-
-            isConfirmationModalOpen: false,
-            globalAlertVisible: false,
-            globalAlertType: '',
-            globalAlertMessage: '',
-        };
         props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
     }
-
-    cancelPlotEdit = () => {
-        this.removeNavigationActions();
-        this.setState({
-            name: '',
-            number: '',
-            description: '',
-            plotParent: '',
-            selectedPlotId: null,
-        });
-    };
-
-    newPlot = () => {
-        this.setNavigationActions(this.cancelPlotEdit, this.createPlot, null);
-        this.setState({ selectedPlotId: 'new' });
-    };
-
-    selectPlot = id => {
-        this.setNavigationActions(this.cancelPlotEdit, this.editPlot, this.openConfirmation);
-        this.setState({
-            plotParent: this.state.plots[id].plot,
-            description: this.state.plots[id].description,
-            name: this.state.plots[id].name,
-            selectedPlotId: id,
-        });
-    };
-
-    addChildPlot = parentId => {
-        this.setNavigationActions(this.cancelPlotEdit, this.createPlot, null);
-        this.setState({
-            plotParent: parentId,
-            description: '',
-            name: '',
-            selectedPlotId: 'new',
-        });
-    };
 
     returnPlot = (styleName = 'parentPlots', id, addIcon = true) => {
         let plot = (
             <View key={id} style={STYLE.plotContainer}>
                 <TouchableOpacity onPress={() => this.selectPlot(id)} style={STYLE[styleName]}>
                     <Text numberOfLines={1} style={STYLE.plotsText}>
-                        {this.state.plots[id].name}
+                        {this.props.plots[id].name}
                     </Text>
                 </TouchableOpacity>
                 {addIcon && (
@@ -108,26 +60,26 @@ class PlotsScreen extends PlotsUtils {
     };
 
     renderPlots = () => {
-        if (this.state.plots === null) {
+        if (this.props.plots === null) {
             return null;
         }
         let plots = [];
-        let plotIds = Object.keys(this.state.plots);
+        let plotIds = Object.keys(this.props.plots);
         if (plotIds.length > 0) {
             plotIds.forEach(id => {
-                if (this.state.plots[id].plot !== '') {
+                if (this.props.plots[id].plot !== '') {
                     return;
                 } else {
                     plots.push(this.returnPlot('parentPlots', id));
                     let parentOneId = id;
                     // Render childrenOne
                     plotIds.forEach(id => {
-                        if (this.state.plots[id].plot == parentOneId) {
+                        if (this.props.plots[id].plot == parentOneId) {
                             plots.push(this.returnPlot('childOnePlots', id));
                             // Render childrenTwo
                             let parentTwoId = id;
                             plotIds.forEach(id => {
-                                if (this.state.plots[id].plot == parentTwoId) {
+                                if (this.props.plots[id].plot == parentTwoId) {
                                     plots.push(this.returnPlot('childTwoPlots', id, false));
                                 }
                             });
@@ -151,15 +103,10 @@ class PlotsScreen extends PlotsUtils {
     };
 
     render() {
-        if (this.state.selectedPlotId === null) {
+        if (this.props.selectedPlotId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <ScrollView>{this.renderPlots()}</ScrollView>
                     <FloatingAddButton onPress={this.newPlot} />
                 </View>
@@ -167,29 +114,22 @@ class PlotsScreen extends PlotsUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert
-                        visible={this.state.globalAlertVisible}
-                        message={this.state.globalAlertMessage}
-                        type={this.state.globalAlertType}
-                        closeAlert={() => this.setState({ globalAlertVisible: false })}
-                    />
+                    <GlobalAlert />
                     <EditEntity
-                        selectedEntityId={this.state.selectedPlotId}
-                        isModalOpen={this.state.isConfirmationModalOpen}
+                        selectedEntityId={this.props.selectedPlotId}
+                        isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Plot"
                         deleteNote="Note: all children will be deleted"
-                        inputOne={this.state.name}
+                        inputOne={this.props.name}
                         inputOneName="Plot Name"
-                        inputOneOnChange={newValue => this.setState({ name: newValue })}
-                        inputThree={this.state.description}
+                        inputOneOnChange={this.props.handleNameChanged}
+                        inputThree={this.props.description}
                         inputThreeName="Description"
-                        inputThreeOnChange={newValue => this.setState({ description: newValue })}
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal
-                        isConfirmationModalOpen={this.state.isConfirmationModalOpen}
-                        closeConfirmationModal={() =>
-                            this.setState({ isConfirmationModalOpen: false })
-                        }
+                        isConfirmationModalOpen={this.props.isConfirmationModalOpen}
+                        closeConfirmationModal={this.props.closeConfirmation}
                         confirmationTitle={'Delete Plot?'}
                         entityDescription=""
                         onConfirm={() => {
@@ -205,6 +145,6 @@ class PlotsScreen extends PlotsUtils {
 }
 
 export default connect(
-    Actions.mapStateToProps,
+    Actions.mappropsToProps,
     Actions.mapDispatchToProps
 )(PlotsScreen);
