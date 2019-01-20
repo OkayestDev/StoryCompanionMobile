@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { connect } from 'react-redux';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import CreateAccountUtils from './components/CreateAccountUtils.js';
 import { showAlert } from '../../actions/Actions.js';
@@ -37,7 +36,6 @@ class CreateAccountScreen extends CreateAccountUtils {
     render() {
         return (
             <View style={STYLE.container}>
-                <GlobalAlert />
                 <KeyboardAwareScrollView
                     style={STYLE.container}
                     enableOnAndroid={true}

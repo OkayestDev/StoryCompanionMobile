@@ -8,6 +8,7 @@ export default class ChapterUtils extends StoryCompanion {
     }
 
     componentDidMount() {
+        this.props.resetChapter();
         this.getChapters();
     }
 

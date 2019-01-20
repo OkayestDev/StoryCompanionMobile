@@ -1,50 +1,50 @@
 export const handleContentChanged = payload => ({
-    type: 'HANDLE_CONTENT_CHANGED',
+    type: 'HANDLE_CHAPTER_CONTENT_CHANGED',
     payload,
 });
 
 export const handleNameChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_CHAPTER_NAME_CHANGED',
     payload,
 });
 
 export const handleNumberChanged = payload => ({
-    type: 'HANDLE_NUMBER_CHANGED',
+    type: 'HANDLE_CHAPTER_NUMBER_CHANGED',
     payload,
 });
 
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_CHAPTER_DESCRIPTION_CHANGED',
     payload,
 });
 
 export const newChapter = () => ({
-    TYPE: 'NEW_CHAPTER',
+    type: 'NEW_CHAPTER',
 });
 
 export const selectChapter = id => ({
-    TYPE: 'SELECT_CHAPTER',
+    type: 'SELECT_CHAPTER',
     payload: id,
 });
 
 export const selectChapterToWriteContent = id => ({
-    TYPE: 'SELECT_CHAPTER_TO_WRITE_CONTENT',
+    type: 'SELECT_CHAPTER_TO_WRITE_CONTENT',
     payload: id,
 });
 
 export const resetChapter = () => ({
-    TYPE: 'RESET_CHAPTER',
+    type: 'RESET_CHAPTER',
 });
 
 export const setChapters = payload => ({
-    TYPE: 'SET_CHAPTERS',
+    type: 'SET_CHAPTERS',
     payload,
 });
 
 export const openConfirmation = () => ({
-    TYPE: 'OPEN_CONFIRMATION',
+    type: 'OPEN_CHAPTER_CONFIRMATION',
 });
 
 export const closeConfirmation = () => ({
-    TYPE: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_CHAPTER_CONFIRMATION',
 });

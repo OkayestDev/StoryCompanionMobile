@@ -1,15 +1,15 @@
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_SETTINGS_DESCRIPTION_CHANGED',
     payload,
 });
 
-export const handlePasswordChange = payload => ({
-    type: 'HANDLE_PASSWORD_CHANGED',
+export const handlePasswordChanged = payload => ({
+    type: 'HANDLE_SETTINGS_PASSWORD_CHANGED',
     payload,
 });
 
-export const handleConfirmPasswordChange = payload => ({
-    type: 'HANDLE_CONFIRM_PASSWORD_CHANGED',
+export const handleConfirmPasswordChanged = payload => ({
+    type: 'HANDLE_SETTINGS_CONFIRM_PASSWORD_CHANGED',
     payload,
 });
 
@@ -30,9 +30,9 @@ export const resetSettings = () => ({
 });
 
 export const openConfirmation = () => ({
-    type: 'OPEN_CONFIRMATION',
+    type: 'OPEN_SETTINGS_CONFIRMATION',
 });
 
 export const closeConfirmation = () => ({
-    type: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_SETTINGS_CONFIRMATION',
 });

@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
@@ -84,7 +83,6 @@ class NotesScreen extends NotesUtils {
         if (this.props.selectedNoteId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ScrollView>{this.renderNotes()}</ScrollView>
                     <FloatingAddButton onPress={this.newNote} />
                 </View>
@@ -92,7 +90,6 @@ class NotesScreen extends NotesUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.selectedNoteId}
                         isModalOpen={this.props.isConfirmationModalOpen}

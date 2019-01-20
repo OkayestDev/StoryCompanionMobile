@@ -10,7 +10,7 @@ export const draftReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_DRAFT_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
@@ -26,6 +26,7 @@ export const draftReducer = (state = INITIAL_STATE, action) => {
                         : state.description,
                 selectedDraftId: 'id' in action.payload ? action.payload.id : state.selectedDraftId,
             };
+            break;
         default:
             newState = state;
             break;

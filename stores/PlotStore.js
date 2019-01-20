@@ -13,13 +13,13 @@ export const plotReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_PLOT_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_PLOT_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
@@ -45,7 +45,7 @@ export const plotReducer = (state = INITIAL_STATE, action) => {
             newState = {
                 ...state,
                 selectedPlotId: action.payload,
-                plotParent: plot.plotParent,
+                plotParent: plot.plot,
                 name: plot.name,
                 description: plot.description,
             };
@@ -65,13 +65,13 @@ export const plotReducer = (state = INITIAL_STATE, action) => {
                 selectedPlotId: 'new',
             };
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_PLOT_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_PLOT_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,

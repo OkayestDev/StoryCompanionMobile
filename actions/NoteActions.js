@@ -1,10 +1,10 @@
 export const handleNameChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_NOTE_NAME_CHANGED',
     payload,
 });
 
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_NOTE_DESCRIPTION_CHANGED',
     payload,
 });
 
@@ -27,9 +27,9 @@ export const newNote = () => ({
 });
 
 export const openConfirmation = () => ({
-    type: 'OPEN_CONFIRMATION',
+    type: 'OPEN_NOTE_CONFIRMATION',
 });
 
 export const closeConfirmation = () => ({
-    type: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_NOTE_CONFIRMATION',
 });

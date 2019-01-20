@@ -7,6 +7,7 @@ export default class SettingsUtils extends StoryCompanion {
         super(props);
         this.SettingsRequests = new SettingRequests();
         this.UserRequests = new UserRequests();
+        this.props.resetSettings();
     }
 
     changePassword = () => {
@@ -74,6 +75,8 @@ export default class SettingsUtils extends StoryCompanion {
 
     logout = () => {
         this.props.logout();
+        this.props.resetSettings();
+        this.props.closeConfirmation();
         this.props.navigation.navigate('LoginTab');
     };
 }

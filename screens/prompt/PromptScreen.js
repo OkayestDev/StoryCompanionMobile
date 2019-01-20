@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import PromptUtils from './components/PromptUtils.js';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
@@ -46,7 +45,6 @@ class PromptScreen extends PromptUtils {
                         : '',
                 ]}
             >
-                <GlobalAlert />
                 <View style={STYLE.nameAndDownVoteContainer}>
                     <Text numberOfLines={1} style={STYLE.name}>
                         {this.props.prompt.name}
@@ -72,7 +70,6 @@ class PromptScreen extends PromptUtils {
         if (this.props.creatingPrompt) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.creatingPrompt}
                         inputOne={this.props.name}
@@ -87,7 +84,6 @@ class PromptScreen extends PromptUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <View style={STYLE.container}>{this.renderPrompt()}</View>
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}
@@ -106,6 +102,7 @@ class PromptScreen extends PromptUtils {
 function mapStateToProps(state) {
     return {
         ...state.promptStore,
+        stories: state.storyStore.stories,
         apiKey: state.appStore.apiKey,
         email: state.appStore.email,
         userId: state.appStore.userId,

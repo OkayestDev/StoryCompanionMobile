@@ -8,6 +8,7 @@ export default class PromptUtils extends StoryCompanion {
     }
 
     componentDidMount() {
+        this.props.resetPrompt();
         let now = new Date().getTime();
         let anHour = 1000 * 60 * 60;
         if (!this.props.prompt || this.props.prompt + anHour <= now) {
@@ -62,12 +63,11 @@ export default class PromptUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.props.getPrompt();
+                    this.props.closeConfirmation();
+                    this.getPrompt();
                 }
             })
-            .catch(() =>
-                this.props.showAlert('Unable to down vote prompt at this time', 'darning')
-            );
+            .catch(() => this.props.showAlert('Unable to down vote prompt at this time', 'danger'));
     };
 
     createPrompt = () => {
@@ -77,7 +77,7 @@ export default class PromptUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.showAlert(res.success, 'success');
+                    this.props.showAlert(res.success, 'success');
                     this.resetPrompt();
                 }
             })
@@ -93,6 +93,8 @@ export default class PromptUtils extends StoryCompanion {
                     this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempStories = this.props.stories;
+                    // @TODO having to set to null here so Stories Screen re-renders - Figure why
+                    this.props.setStories(null);
                     tempStories[res.success.id] = res.success;
                     this.props.setStories(tempStories);
                     this.props.showAlert('Successfully created story', 'success');

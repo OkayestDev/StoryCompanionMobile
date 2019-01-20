@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { connect } from 'react-redux';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import DraftUtils from './components/DraftUtils.js';
 import * as draftActions from '../../actions/DraftActions.js';
@@ -36,14 +35,12 @@ class DraftsScreen extends DraftUtils {
         if (this.props.draft === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <View style={STYLE.noDraftContainer} />
                 </View>
             );
         } else if ('id' in this.props.draft) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <TextInput
                         placeholder="Start writing your draft"
                         style={STYLE.draftInput}
@@ -60,7 +57,6 @@ class DraftsScreen extends DraftUtils {
             return (
                 <View style={STYLE.container}>
                     <View style={STYLE.noDraftContainer}>
-                        <GlobalAlert />
                         <Text style={STYLE.noDraftText}>
                             Looks like you haven't started a draft for this story yet
                         </Text>

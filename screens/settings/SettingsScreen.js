@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import SettingsUtils from './components/SettingsUtils.js';
@@ -86,7 +85,6 @@ class SettingsScreen extends SettingsUtils {
         if (this.props.isSubmittingBug) {
             return (
                 <View style={STYLE.submissionContainer}>
-                    <GlobalAlert />
                     <View style={STYLE.submissionLabelContainer}>
                         <Text style={STYLE.submissionLabel}>Submitting a Bug</Text>
                     </View>
@@ -105,7 +103,6 @@ class SettingsScreen extends SettingsUtils {
         } else if (this.props.isSubmittingFeature) {
             return (
                 <View style={STYLE.submissionContainer}>
-                    <GlobalAlert />
                     <View style={STYLE.submissionLabelContainer}>
                         <Text style={STYLE.submissionLabel}>Submitting a Feature Request</Text>
                     </View>
@@ -124,7 +121,6 @@ class SettingsScreen extends SettingsUtils {
         } else if (this.props.isChangingPassword) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <KeyboardAwareScrollView
                         enableOnAndroid={true}
                         keyboardShouldPersistTaps="handled"
@@ -171,7 +167,6 @@ class SettingsScreen extends SettingsUtils {
                 </View>
             );
         } else {
-            console.info(this.props);
             return (
                 <View
                     style={[
@@ -181,7 +176,6 @@ class SettingsScreen extends SettingsUtils {
                             : '',
                     ]}
                 >
-                    <GlobalAlert />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}
                         closeConfirmationModal={this.props.closeConfirmation}

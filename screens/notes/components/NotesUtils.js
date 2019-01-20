@@ -8,6 +8,7 @@ export default class NotesUtils extends StoryCompanion {
     }
 
     componentDidMount() {
+        this.props.resetNote();
         this.getNotes();
     }
 
@@ -65,8 +66,8 @@ export default class NotesUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempNotes = this.state.notes;
-                    tempNotes[this.state.selectedNoteId] = res.success;
+                    let tempNotes = this.props.notes;
+                    tempNotes[this.props.selectedNoteId] = res.success;
                     this.props.setNotes(tempNotes);
                     this.resetNote();
                 }
@@ -83,8 +84,8 @@ export default class NotesUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempNotes = this.state.notes;
-                    delete tempNotes[this.state.selectedNoteId];
+                    let tempNotes = this.props.notes;
+                    delete tempNotes[this.props.selectedNoteId];
                     this.props.setNotes(tempNotes);
                     this.resetNote();
                 }

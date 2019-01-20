@@ -8,6 +8,7 @@ export default class PlotsUtils extends StoryCompanion {
     }
 
     componentDidMount() {
+        this.props.resetPlot();
         this.getPlots();
     }
 
@@ -38,7 +39,7 @@ export default class PlotsUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'danger');
                 } else {
-                    this.props.setPlot(res.success);
+                    this.props.setPlots(res.success);
                     this.resetPlot();
                 }
             })

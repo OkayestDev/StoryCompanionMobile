@@ -1,30 +1,30 @@
 export const handleNameChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_CHARACTER_NAME_CHANGED',
     payload,
 });
 
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_CHARACTER_DESCRIPTION_CHANGED',
     payload,
 });
 
 export const handleAttributeChanged = payload => ({
-    type: 'HANDLE_ATTRIBUTE_CHANGED',
+    type: 'HANDLE_CHARACTER_ATTRIBUTE_CHANGED',
     payload,
 });
 
 export const handleImageChanged = payload => ({
-    type: 'HANDLE_IMAGE_CHANGED',
+    type: 'HANDLE_CHARACTER_IMAGE_CHANGED',
     payload,
 });
 
 export const handleNumberChanged = payload => ({
-    type: 'HANDLE_NUMBER_CHANGED',
+    type: 'HANDLE_CHARACTER_NUMBER_CHANGED',
     payload,
 });
 
 export const handleTagChanged = id => ({
-    type: 'HANDLE_TAG_CHANGED',
+    type: 'HANDLE_CHARACTER_TAG_CHANGED',
     payload: id,
 });
 
@@ -47,9 +47,9 @@ export const setCharacters = payload => ({
 });
 
 export const openConfirmation = () => ({
-    type: 'OPEN_CONFIRMATION',
+    type: 'OPEN_CHARACTER_CONFIRMATION',
 });
 
 export const closeConfirmation = () => ({
-    type: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_CHARACTER_CONFIRMATION',
 });

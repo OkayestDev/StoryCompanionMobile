@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
 import EditEntity from '../../components/EditEntity.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
@@ -89,7 +88,6 @@ class ChaptersScreen extends ChapterUtils {
         if (this.props.selectedChapterId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ScrollView style={STYLE.container}>{this.renderChapters()}</ScrollView>
                     <FloatingAddButton onPress={this.newChapter} />
                 </View>
@@ -97,7 +95,6 @@ class ChaptersScreen extends ChapterUtils {
         } else if (this.props.isWritingChapter) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ChapterContent
                         chapterName={this.props.name}
                         chapterNumber={this.props.number}
@@ -109,7 +106,6 @@ class ChaptersScreen extends ChapterUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.selectedChapterId}
                         isModalOpen={this.props.isConfirmationModalOpen}

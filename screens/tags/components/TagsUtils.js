@@ -23,6 +23,7 @@ export default class TagUtils extends StoryCompanion {
     };
 
     componentDidMount() {
+        this.props.resetTag();
         this.getTags();
     }
 
@@ -48,7 +49,7 @@ export default class TagUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.resetState();
+                    this.resetTag();
                     this.props.setTags(res.success);
                 }
             })
@@ -65,7 +66,7 @@ export default class TagUtils extends StoryCompanion {
                     this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempTags = this.props.tags;
-                    delete tempTags[this.state.selectedTagId];
+                    delete tempTags[this.props.selectedTagId];
                     this.resetTag();
                     this.props.setTags(tempTags);
                 }
@@ -83,7 +84,7 @@ export default class TagUtils extends StoryCompanion {
                     this.props.showAlert(res.error, 'warning');
                 } else {
                     let tempTags = this.props.tags;
-                    tempTags[this.state.selectedTagId] = res.success;
+                    tempTags[this.props.selectedTagId] = res.success;
                     this.resetTag();
                     this.props.setTags(tempTags);
                 }

@@ -1,20 +1,20 @@
 export const handleNameChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_PROMPT_NAME_CHANGED',
     payload,
 });
 
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_PROMPT_DESCRIPTION_CHANGED',
     payload,
 });
 
 export const openConfirmation = payload => ({
-    type: 'OPEN_CONFIRMATION',
+    type: 'OPEN_PROMPT_CONFIRMATION',
     payload,
 });
 
 export const closeConfirmation = () => ({
-    type: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_PROMPT_CONFIRMATION',
 });
 
 export const newPrompt = () => ({

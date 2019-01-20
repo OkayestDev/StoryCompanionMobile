@@ -15,19 +15,19 @@ export const promptReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_PROMPT_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_PROMPT_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.description,
             };
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_PROMPT_CONFIRMATION':
             let payload = action.payload;
             newState = {
                 ...state,
@@ -37,7 +37,7 @@ export const promptReducer = (state = INITIAL_STATE, action) => {
                 confirmationOnConfirm: payload.onConfirm,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_PROMPT_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,
@@ -48,6 +48,7 @@ export const promptReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 creatingPrompt: 'new',
             };
+            break;
         case 'RESET_PROMPT':
             newState = {
                 ...state,

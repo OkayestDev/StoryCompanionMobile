@@ -1,10 +1,10 @@
 export const handleNameChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_PLOT_NAME_CHANGED',
     payload,
 });
 
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_PLOT_DESCRIPTION_CHANGED',
     payload,
 });
 
@@ -32,9 +32,9 @@ export const addChildPlot = parentId => ({
 });
 
 export const openConfirmation = () => ({
-    type: 'OPEN_CONFIRMATION',
+    type: 'OPEN_PLOT_CONFIRMATION',
 });
 
 export const closeConfirmation = () => ({
-    type: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_PLOT_CONFIRMATION',
 });

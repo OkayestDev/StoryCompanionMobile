@@ -10,22 +10,22 @@ const INITIAL_STATE = {
 };
 
 export const tagReducer = (state = INITIAL_STATE, action) => {
-    let newState = INITIAL_STATE;
+    let newState = state;
 
     switch (action.type) {
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_TAG_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_TAG_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
             };
             break;
-        case 'HANDLE_TYPE_CHANGED':
+        case 'HANDLE_TAG_TYPE_CHANGED':
             newState = {
                 ...state,
                 type: action.payload,
@@ -42,6 +42,7 @@ export const tagReducer = (state = INITIAL_STATE, action) => {
             break;
         case 'SELECT_TAG':
             let id = action.payload;
+            console.info(state);
             newState = {
                 ...state,
                 selectedTagId: id,
@@ -62,13 +63,13 @@ export const tagReducer = (state = INITIAL_STATE, action) => {
                 selectedTagId: 'new',
             };
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_TAG_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_TAG_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,

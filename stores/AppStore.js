@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native';
-import { createStore, combineReducers } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { persistStore, persistReducer, purgeStoredState } from 'redux-persist';
 import { chapterReducer } from './ChapterStore.js';
 import { promptReducer } from './PromptStore.js';
 import { storyReducer } from './StoryStore.js';
@@ -10,12 +10,13 @@ import { noteReducer } from './NoteStore.js';
 import { tagReducer } from './TagStore.js';
 import { plotReducer } from './PlotStore.js';
 import { settingsReducer } from './SettingsStore.js';
+import logger from 'redux-logger';
 
 /**
  * Changing key will cause the storage to be reset
  */
 const PERSIST_CONFIG = {
-    key: '1.0.1',
+    key: '1.0.0',
     storage: AsyncStorage,
 };
 
@@ -40,14 +41,15 @@ const reducer = (state = INITIAL_STATE, action) => {
             };
             break;
         case 'LOGOUT':
+            purgeStoredState(PERSIST_CONFIG);
             newState = INITIAL_STATE;
             break;
         case 'SHOW_ALERT':
             newState = {
                 ...state,
                 globalAlertVisible: true,
-                globalAlertType: action.type,
-                globalAlertMessage: action.message,
+                globalAlertType: action.payload.type,
+                globalAlertMessage: action.payload.message,
             };
             break;
         case 'CLOSE_ALERT':
@@ -79,5 +81,5 @@ const reducers = combineReducers({
 
 const persistedReducer = persistReducer(PERSIST_CONFIG, reducers);
 
-export const AppStore = createStore(persistedReducer);
+export const AppStore = createStore(persistedReducer, applyMiddleware(logger));
 export const Persistor = persistStore(AppStore);

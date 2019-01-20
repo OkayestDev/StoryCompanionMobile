@@ -8,6 +8,7 @@ export default class CharactersUtils extends StoryCompanion {
     }
 
     componentDidMount() {
+        this.props.resetCharacter();
         this.getCharacters();
         this.getTags();
     }
@@ -23,7 +24,11 @@ export default class CharactersUtils extends StoryCompanion {
     };
 
     selectCharacter = id => {
-        this.setNavigationActions(this.resetCharacter, this.editCharacter, this.props.openConfirmation);
+        this.setNavigationActions(
+            this.resetCharacter,
+            this.editCharacter,
+            this.props.openConfirmation
+        );
         this.props.selectCharacter(id);
     };
 
@@ -37,9 +42,10 @@ export default class CharactersUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempCharacters = this.state.characters;
+                    let tempCharacters = this.props.characters;
                     tempCharacters[id] = res.success;
                     this.props.setCharacters(tempCharacters);
+                    this.forceUpdate();
                 }
             })
             .catch(() => {
@@ -57,9 +63,10 @@ export default class CharactersUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert('Unable to move character up at this time', 'warning');
                 } else {
-                    let tempCharacters = this.state.characters;
+                    let tempCharacters = this.props.characters;
                     tempCharacters[id] = res.success;
                     this.props.setCharacters(tempCharacters);
+                    this.forceUpdate();
                 }
             })
             .catch(() => {
@@ -124,8 +131,8 @@ export default class CharactersUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempCharacters = this.state.characters;
-                    tempCharacters[this.state.selectedCharacterId] = res.success;
+                    let tempCharacters = this.props.characters;
+                    tempCharacters[this.props.selectedCharacterId] = res.success;
                     this.props.setCharacters(tempCharacters);
                     this.props.resetCharacter();
                 }
@@ -142,8 +149,8 @@ export default class CharactersUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    let tempCharacters = this.state.characters;
-                    delete tempCharacters[this.state.selectedCharacterId];
+                    let tempCharacters = this.props.characters;
+                    delete tempCharacters[this.props.selectedCharacterId];
                     this.setState({
                         characters: tempCharacters,
                         ...this.resetCharacter(),

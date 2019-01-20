@@ -3,7 +3,6 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import EditEntity from '../../components/EditEntity.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import TagsUtils from './components/TagsUtils.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
@@ -71,12 +70,9 @@ class TagsScreen extends TagsUtils {
     };
 
     render() {
-        console.info(this.props);
-
         if (this.props.selectedTagId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ScrollView style={STYLE.container}>{this.renderTags()}</ScrollView>
                     <FloatingAddButton onPress={this.newTag} />
                 </View>
@@ -84,7 +80,6 @@ class TagsScreen extends TagsUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.selectedTagId}
                         isModalOpen={this.props.isConfirmationModalOpen}

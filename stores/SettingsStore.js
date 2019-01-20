@@ -12,21 +12,20 @@ const INITIAL_STATE = {
 
 export const settingsReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
-
     switch (action.type) {
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_SETTINGS_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
             };
             break;
-        case 'HANDLE_PASSWORD_CHANGED':
+        case 'HANDLE_SETTINGS_PASSWORD_CHANGED':
             newState = {
                 ...state,
                 password: action.payload,
             };
             break;
-        case 'HANDLE_CONFIRM_PASSWORD_CHANGED':
+        case 'HANDLE_SETTINGS_CONFIRM_PASSWORD_CHANGED':
             newState = {
                 ...state,
                 confirmPassword: action.payload,
@@ -53,13 +52,13 @@ export const settingsReducer = (state = INITIAL_STATE, action) => {
         case 'RESET_SETTINGS':
             newState = INITIAL_STATE;
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_SETTINGS_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_SETTINGS_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,

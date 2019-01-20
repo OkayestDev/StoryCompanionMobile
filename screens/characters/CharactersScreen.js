@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import CharacterUtils from './components/CharactersUtils.js';
@@ -44,6 +43,7 @@ class CharactersScreen extends CharacterUtils {
 
         characterIds = this.sortEntitiesByNumber(this.props.characters);
         characterIds = characterIds.reverse();
+
         if (characterIds.length > 0) {
             let charactersRendered = [];
             characterIds.forEach(id => {
@@ -122,7 +122,6 @@ class CharactersScreen extends CharacterUtils {
         if (this.props.selectedCharacterId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ScrollView>{this.renderCharacters()}</ScrollView>
                     <FloatingAddButton onPress={this.newCharacter} />
                 </View>
@@ -130,7 +129,6 @@ class CharactersScreen extends CharacterUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.selectedCharacterId}
                         isModalOpen={this.props.isConfirmationModalOpen}
@@ -151,7 +149,7 @@ class CharactersScreen extends CharacterUtils {
                         modalPickerOnChange={this.props.handleTagChanged}
                         inputThree={this.props.description}
                         inputThreeName="Description"
-                        inputThreeOnChange={this.handleDescriptionChanged}
+                        inputThreeOnChange={this.props.handleDescriptionChanged}
                         inputFour={this.props.attribute}
                         inputFourName="Attributes"
                         inputFourOnChange={this.props.handleAttributeChanged}

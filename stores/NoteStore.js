@@ -11,13 +11,13 @@ const INITIAL_STATE = {
 export const noteReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
     switch (action.type) {
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_NOTE_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_NOTE_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
@@ -52,16 +52,16 @@ export const noteReducer = (state = INITIAL_STATE, action) => {
                 selectedNoteId: 'new',
             };
             break;
-        case 'OPEN_CONFIRMATION':
-            newState = {
-                ...state,
-                isConfirmationModalOpen: false,
-            };
-            break;
-        case 'CLOSE_CONFIRMATION':
+        case 'OPEN_NOTE_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
+            };
+            break;
+        case 'CLOSE_NOTE_CONFIRMATION':
+            newState = {
+                ...state,
+                isConfirmationModalOpen: false,
             };
             break;
         default:

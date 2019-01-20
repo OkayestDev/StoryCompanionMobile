@@ -52,7 +52,7 @@ class GlobalAlert extends Component {
 const styles = StyleSheet.create({
     globalAlertContainer: {
         position: 'absolute',
-        top: 0,
+        top: 25,
         width: Dimensions.get('window').width,
         height: 60,
         zIndex: 10,

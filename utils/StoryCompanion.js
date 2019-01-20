@@ -13,7 +13,7 @@ export default class StoryCompanion extends Component {
         if (this.state === null || typeof this.state === 'undefined') {
             this.state = {};
         }
-        
+
         const paramsObject = {
             plot: 'selectedPlotId' in this.props ? this.props.selectedPlotId : '',
             plotParent: 'plotParent' in this.props ? this.props.plotParent : '',
@@ -23,7 +23,7 @@ export default class StoryCompanion extends Component {
             chapter: 'selectedChapterId' in this.props ? this.props.selectedChapterId : '',
             number: 'number' in this.props ? this.props.number : '',
             content: 'content' in this.props ? this.props.content : '',
-            user: 'userId' in this.props ? this.props.userId : this.props.userId,
+            user: 'userId' in this.props ? this.props.userId : '',
             story: 'selectedStoryId' in this.props ? this.props.selectedStoryId : '',
             tag: 'selectedTagId' in this.props ? this.props.selectedTagId : '',
             type: 'type' in this.props ? this.props.type : '',
@@ -36,15 +36,20 @@ export default class StoryCompanion extends Component {
                     : 'email' in this.state
                     ? this.state.email
                     : '',
-            confirmEmail: 'confirmEmail' in this.props ? this.props.confirmEmail : '',
+            confirmEmail: 'confirmEmail' in this.state ? this.state.confirmEmail : '',
             password:
                 'password' in this.props
                     ? this.props.password
                     : 'password' in this.state
                     ? this.state.password
                     : '',
-            confirmPassword: 'confirmPassword' in this.props ? this.props.confirmPassword : '',
-            apiKey: this.props.apiKey,
+            confirmPassword:
+                'confirmPassword' in this.props
+                    ? this.props.confirmPassword
+                    : 'confirmPassword' in this.state
+                    ? this.state.confirmPassword
+                    : '',
+            apiKey: 'apiKey' in this.props ? this.props.apiKey : '',
         };
         return paramsObject;
     };

@@ -5,7 +5,6 @@ import LoginUtils from './components/LoginUtils.js';
 import { connect } from 'react-redux';
 import { showAlert, login } from '../../actions/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import STYLE from './components/LoginStyle.js';
 
 class LoginScreen extends LoginUtils {
@@ -32,7 +31,6 @@ class LoginScreen extends LoginUtils {
     render() {
         return (
             <View style={STYLE.container}>
-                <GlobalAlert />
                 <KeyboardAwareScrollView
                     style={STYLE.container}
                     enableOnAndroid={true}

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
+import { AppLoading, Font, Icon } from 'expo';
 import { AdMobBanner } from 'expo';
+import GlobalAlert from './components/GlobalAlert.js';
 import { Provider } from 'react-redux';
 import { AppStore, Persistor } from './stores/AppStore.js';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -29,8 +30,9 @@ export default class App extends React.Component {
             <Provider store={AppStore}>
                 <PersistGate persistor={Persistor} loading={this.renderLoading()}>
                     <View style={styles.container}>
+                        <GlobalAlert />
                         <AppNavigator />
-                        {/* <View style={styles.adContainer}>
+                        <View style={styles.adContainer}>
                             <AdMobBanner
                                 bannerSize="smartBannerPortrait"
                                 adUnitID={
@@ -40,7 +42,7 @@ export default class App extends React.Component {
                                 }
                                 testDeviceID="EMULATOR"
                             />
-                        </View> */}
+                        </View>
                     </View>
                 </PersistGate>
             </Provider>

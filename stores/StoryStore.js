@@ -13,25 +13,25 @@ const INITIAL_STATE = {
 export const storyReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
     switch (action.type) {
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_STORY_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_STORY_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
             };
             break;
-        case 'HANDLE_IMAGE_CHANGED':
+        case 'HANDLE_STORY_IMAGE_CHANGED':
             newState = {
                 ...state,
                 image: action.payload,
             };
             break;
-        case 'HANDLE_TAG_CHANGED':
+        case 'HANDLE_STORY_TAG_CHANGED':
             newState = {
                 ...state,
                 selectedTagId: action.payload,
@@ -59,23 +59,24 @@ export const storyReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 name: story.name,
                 image: story.image,
-                description: story.image,
+                description: story.description,
                 selectedTagId: story.tag,
                 selectedStoryId: action.payload,
             };
+            break;
         case 'SET_STORIES':
             newState = {
                 ...state,
                 stories: action.payload,
             };
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_STORY_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_STORY_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,

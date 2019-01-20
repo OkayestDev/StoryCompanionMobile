@@ -7,6 +7,12 @@ export default class StoryUtils extends StoryCompanion {
         this.StoryRequests = new StoryRequests();
     }
 
+    componentDidMount() {
+        this.props.resetStory();
+        this.getStories();
+        this.getTags();
+    }
+
     resetStory = () => {
         this.removeNavigationActions();
         this.props.resetStory();
@@ -26,11 +32,6 @@ export default class StoryUtils extends StoryCompanion {
         this.props.selectStory(id);
         this.props.navigation.navigate('StoryTab');
     };
-
-    componentDidMount() {
-        this.getStories();
-        this.getTags();
-    }
 
     getStories = () => {
         let paramsObject = this.createParamsObject();

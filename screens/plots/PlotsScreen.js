@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import { Icon } from 'react-native-elements';
 import StoryCompanion from '../../utils/StoryCompanion.js';
@@ -107,7 +106,6 @@ class PlotsScreen extends PlotsUtils {
         if (this.props.selectedPlotId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ScrollView>{this.renderPlots()}</ScrollView>
                     <FloatingAddButton onPress={this.newPlot} />
                 </View>
@@ -115,7 +113,6 @@ class PlotsScreen extends PlotsUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.selectedPlotId}
                         isModalOpen={this.props.isConfirmationModalOpen}

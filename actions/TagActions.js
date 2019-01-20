@@ -1,15 +1,15 @@
 export const handleNameChanged = payload => ({
-    type: 'HANDLE_NAME_CHANGED',
+    type: 'HANDLE_TAG_NAME_CHANGED',
     payload,
 });
 
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_TAG_DESCRIPTION_CHANGED',
     payload,
 });
 
 export const handleTypeChanged = payload => ({
-    type: 'HANDLE_TYPE_CHANGED',
+    type: 'HANDLE_TAG_TYPE_CHANGED',
     payload,
 });
 
@@ -32,9 +32,9 @@ export const newTag = () => ({
 });
 
 export const openConfirmation = () => ({
-    type: 'OPEN_CONFIRMATION',
+    type: 'OPEN_TAG_CONFIRMATION',
 });
 
 export const closeConfirmation = () => ({
-    type: 'CLOSE_CONFIRMATION',
+    type: 'CLOSE_TAG_CONFIRMATION',
 });

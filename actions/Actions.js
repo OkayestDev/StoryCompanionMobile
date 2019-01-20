@@ -5,8 +5,10 @@ export const login = payload => ({
 
 export const showAlert = (message, type) => ({
     type: 'SHOW_ALERT',
-    message,
-    type,
+    payload: {
+        message,
+        type,
+    },
 });
 
 export const closeAlert = () => ({

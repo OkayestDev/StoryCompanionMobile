@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { connect } from 'react-redux';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
 import StoriesUtils from './components/StoriesUtils.js';
@@ -96,7 +95,6 @@ class StoriesScreen extends StoriesUtils {
         if (this.props.selectedStoryId === null) {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <ScrollView style={STYLE.container}>{this.renderStories()}</ScrollView>
                     <FloatingAddButton onPress={this.newStory} />
                 </View>
@@ -104,7 +102,6 @@ class StoriesScreen extends StoriesUtils {
         } else {
             return (
                 <View style={STYLE.container}>
-                    <GlobalAlert />
                     <EditEntity
                         selectedEntityId={this.props.selectedStoryId}
                         isModalOpen={this.props.isConfirmationModalOpen}
@@ -147,6 +144,7 @@ class StoriesScreen extends StoriesUtils {
 function mapStateToProps(state) {
     return {
         ...state.storyStore,
+        stories: state.storyStore.stories,
         tags: state.tagStore.tags,
         apiKey: state.appStore.apiKey,
         email: state.appStore.email,

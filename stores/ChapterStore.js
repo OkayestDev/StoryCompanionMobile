@@ -16,25 +16,25 @@ export const chapterReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
-        case 'HANDLE_CONTENT_CHANGED':
+        case 'HANDLE_CHAPTER_CONTENT_CHANGED':
             newState = {
                 ...state,
                 content: action.payload,
             };
             break;
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_CHAPTER_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_NUMBER_CHANGED':
+        case 'HANDLE_CHAPTER_NUMBER_CHANGED':
             newState = {
                 ...state,
                 number: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_CHAPTER_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
@@ -51,10 +51,10 @@ export const chapterReducer = (state = INITIAL_STATE, action) => {
             newState = {
                 ...state,
                 selectedChapterId: id,
-                name: this.state.chapters[id].name,
-                number: String(this.state.chapters[id].number),
-                description: this.state.chapters[id].description,
-                content: this.state.chapters[id].content,
+                name: state.chapters[id].name,
+                number: String(state.chapters[id].number),
+                description: state.chapters[id].description,
+                content: state.chapters[id].content,
             };
             break;
         case 'SELECT_CHAPTER_TO_WRITE_CONTENT':
@@ -62,10 +62,10 @@ export const chapterReducer = (state = INITIAL_STATE, action) => {
             newState = {
                 ...state,
                 selectedChapterId: id,
-                name: this.state.chapters[id].name,
-                number: String(this.state.chapters[id].number),
-                description: this.state.chapters[id].description,
-                content: this.state.chapters[id].content,
+                name: state.chapters[id].name,
+                number: String(state.chapters[id].number),
+                description: state.chapters[id].description,
+                content: state.chapters[id].content,
                 isWritingChapter: true,
             };
             break;
@@ -86,13 +86,13 @@ export const chapterReducer = (state = INITIAL_STATE, action) => {
                 chapters: action.payload,
             };
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_CHAPTER_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_CHAPTER_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,
@@ -102,7 +102,7 @@ export const chapterReducer = (state = INITIAL_STATE, action) => {
             newState = state;
             break;
     }
-    
+
     return newState;
 };
 

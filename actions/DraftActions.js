@@ -1,5 +1,5 @@
 export const handleDescriptionChanged = payload => ({
-    type: 'HANDLE_DESCRIPTION_CHANGED',
+    type: 'HANDLE_DRAFT_DESCRIPTION_CHANGED',
     payload,
 });
 

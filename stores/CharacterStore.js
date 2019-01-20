@@ -16,37 +16,37 @@ export const characterReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
-        case 'HANDLE_NAME_CHANGED':
+        case 'HANDLE_CHARACTER_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
             };
             break;
-        case 'HANDLE_DESCRIPTION_CHANGED':
+        case 'HANDLE_CHARACTER_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
                 description: action.payload,
             };
             break;
-        case 'HANDLE_ATTRIBUTE_CHANGED':
+        case 'HANDLE_CHARACTER_ATTRIBUTE_CHANGED':
             newState = {
                 ...state,
                 attribute: action.payload,
             };
             break;
-        case 'HANDLE_IMAGE_CHANGED':
+        case 'HANDLE_CHARACTER_IMAGE_CHANGED':
             newState = {
                 ...state,
                 image: action.payload,
             };
             break;
-        case 'HANDLE_NUMBER_CHANGED':
+        case 'HANDLE_CHARACTER_NUMBER_CHANGED':
             newState = {
                 ...state,
                 number: action.payload,
             };
             break;
-        case 'HANDLE_TAG_CHANGED':
+        case 'HANDLE_CHARACTER_TAG_CHANGED':
             newState = {
                 ...state,
                 selectedTagId: action.payload,
@@ -77,25 +77,25 @@ export const characterReducer = (state = INITIAL_STATE, action) => {
                 selectedCharacterId: null,
             };
             break;
-        case 'NEW_CHAPTER':
+        case 'NEW_CHARACTER':
             newState = {
                 ...state,
                 selectedCharacterId: 'new',
             };
             break;
-        case 'SET_CHARACTER':
+        case 'SET_CHARACTERS':
             newState = {
                 ...state,
                 characters: action.payload,
             };
             break;
-        case 'OPEN_CONFIRMATION':
+        case 'OPEN_CHARACTER_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: true,
             };
             break;
-        case 'CLOSE_CONFIRMATION':
+        case 'CLOSE_CHARACTER_CONFIRMATION':
             newState = {
                 ...state,
                 isConfirmationModalOpen: false,

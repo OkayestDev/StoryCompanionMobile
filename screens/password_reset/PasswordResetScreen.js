@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'r
 import { connect } from 'react-redux';
 import { showAlert } from '../../actions/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import GlobalAlert from '../../components/GlobalAlert.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import PasswordResetUtils from './components/PasswordResetUtils.js';
 import STYLE from './components/PasswordResetStyle.js';
@@ -30,12 +29,6 @@ class PasswordResetScreen extends PasswordResetUtils {
     render() {
         return (
             <View style={STYLE.container}>
-                <GlobalAlert
-                    visible={this.state.globalAlertVisible}
-                    message={this.state.globalAlertMessage}
-                    type={this.state.globalAlertType}
-                    closeAlert={() => this.setState({ globalAlertVisible: false })}
-                />
                 <KeyboardAwareScrollView
                     style={STYLE.container}
                     enableOnAndroid={true}
