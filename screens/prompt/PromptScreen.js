@@ -106,9 +106,9 @@ class PromptScreen extends PromptUtils {
 function mapStateToProps(state) {
     return {
         ...state.promptStore,
-        apiKey: state.apiKey,
-        email: state.email,
-        userId: state.userId,
+        apiKey: state.appStore.apiKey,
+        email: state.appStore.email,
+        userId: state.appStore.userId,
     };
 }
 

@@ -9,6 +9,7 @@ import StoryCompanion from '../../utils/StoryCompanion.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import * as storyActions from '../../actions/StoryActions.js';
 import { showAlert } from '../../actions/Actions.js';
+import { setTags } from '../../actions/TagActions.js';
 import STYLE from './components/StoriesStyle.js';
 
 class StoriesScreen extends StoriesUtils {
@@ -116,7 +117,7 @@ class StoriesScreen extends StoriesUtils {
                         inputOneOnChange={this.props.handleNameChanged}
                         modalPicker="Tag"
                         modalPickerSelectedValue={
-                            this.props.selectedTagId in this.props.tags
+                            this.props.tags && this.props.selectedTagId in this.props.tags
                                 ? this.props.tags[this.props.selectedTagId].name
                                 : ''
                         }
@@ -146,16 +147,17 @@ class StoriesScreen extends StoriesUtils {
 function mapStateToProps(state) {
     return {
         ...state.storyStore,
-        tags: state.tagsStore.tags,
-        apiKey: state.apiKey,
-        email: state.email,
-        userId: state.userId,
+        tags: state.tagStore.tags,
+        apiKey: state.appStore.apiKey,
+        email: state.appStore.email,
+        userId: state.appStore.userId,
     };
 }
 
 const mapDispatchToProps = {
     ...storyActions,
     showAlert,
+    setTags,
 };
 
 export default connect(

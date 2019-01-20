@@ -71,9 +71,9 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
     return {
-        message: state.globalAlertMessage,
-        type: state.globalAlertType,
-        visible: state.globalAlertVisible,
+        message: state.appStore.globalAlertMessage,
+        type: state.appStore.globalAlertType,
+        visible: state.appStore.globalAlertVisible,
     };
 }
 

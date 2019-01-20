@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
@@ -125,9 +124,9 @@ class NotesScreen extends NotesUtils {
 function mapStateToProps(state) {
     return {
         ...state.noteStore,
-        email: state.email,
-        apiKey: state.apiKey,
-        userId: state.userId,
+        email: state.appStore.email,
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
         stories: state.storyStore.stories,
         selectedStoryId: state.storyStore.selectedStoryId,
     };

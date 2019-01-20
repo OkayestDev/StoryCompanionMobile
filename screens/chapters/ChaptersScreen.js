@@ -144,9 +144,9 @@ class ChaptersScreen extends ChapterUtils {
 function mapStateToProps(state) {
     return {
         ...state.chapterStore,
-        email: state.email,
-        apiKey: state.apiKey,
-        userId: state.userId,
+        email: state.appStore.email,
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
         stories: state.storyStore.stories,
         selectedStoryId: state.storyStore.selectedStoryId,
     };

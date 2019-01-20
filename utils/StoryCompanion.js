@@ -10,6 +10,10 @@ export default class StoryCompanion extends Component {
     }
 
     createParamsObject = () => {
+        if (this.state === null || typeof this.state === 'undefined') {
+            this.state = {};
+        }
+        
         const paramsObject = {
             plot: 'selectedPlotId' in this.props ? this.props.selectedPlotId : '',
             plotParent: 'plotParent' in this.props ? this.props.plotParent : '',
@@ -26,9 +30,19 @@ export default class StoryCompanion extends Component {
             description: 'description' in this.props ? this.props.description : '',
             attribute: 'attribute' in this.props ? this.props.attribute : '',
             name: 'name' in this.props ? this.props.name : '',
-            email: 'email' in this.props ? this.props.email : this.props.email,
+            email:
+                'email' in this.props
+                    ? this.props.email
+                    : 'email' in this.state
+                    ? this.state.email
+                    : '',
             confirmEmail: 'confirmEmail' in this.props ? this.props.confirmEmail : '',
-            password: 'password' in this.props ? this.props.password : '',
+            password:
+                'password' in this.props
+                    ? this.props.password
+                    : 'password' in this.state
+                    ? this.state.password
+                    : '',
             confirmPassword: 'confirmPassword' in this.props ? this.props.confirmPassword : '',
             apiKey: this.props.apiKey,
         };

@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     name: '',
@@ -9,7 +8,7 @@ const INITIAL_STATE = {
     isConfirmationModalOpen: false,
 };
 
-const noteReducer = (state = INITIAL_STATE, action) => {
+export const noteReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
     switch (action.type) {
         case 'HANDLE_NAME_CHANGED':
@@ -65,13 +64,9 @@ const noteReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: true,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating NoteStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

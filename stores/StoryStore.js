@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     name: '',
@@ -11,7 +10,7 @@ const INITIAL_STATE = {
     isConfirmationModalOpen: false,
 };
 
-const storyReducer = (state = INITIAL_STATE, action) => {
+export const storyReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
     switch (action.type) {
         case 'HANDLE_NAME_CHANGED':
@@ -48,12 +47,22 @@ const storyReducer = (state = INITIAL_STATE, action) => {
                 selectedStoryId: null,
             };
             break;
-        case 'SELECT_STORY':
+        case 'NEW_STORY':
             newState = {
                 ...state,
                 selectedStoryId: 'new',
             };
             break;
+        case 'SELECT_STORY':
+            let story = state.stories[action.payload];
+            newState = {
+                ...state,
+                name: story.name,
+                image: story.image,
+                description: story.image,
+                selectedTagId: story.tag,
+                selectedStoryId: action.payload,
+            };
         case 'SET_STORIES':
             newState = {
                 ...state,
@@ -72,13 +81,9 @@ const storyReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: false,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating StoryStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

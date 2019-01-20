@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     name: '',
@@ -12,8 +11,10 @@ const INITIAL_STATE = {
     isConfirmationModalOpen: false,
 };
 
-const chapterReducer = (state = INITIAL_STATE, action) => {
+export const chapterReducer = (state = INITIAL_STATE, action) => {
+    let id = null;
     let newState = state;
+
     switch (action.type) {
         case 'HANDLE_CONTENT_CHANGED':
             newState = {
@@ -46,7 +47,7 @@ const chapterReducer = (state = INITIAL_STATE, action) => {
             };
             break;
         case 'SELECT_CHAPTER':
-            let id = action.payload;
+            id = action.payload;
             newState = {
                 ...state,
                 selectedChapterId: id,
@@ -57,7 +58,7 @@ const chapterReducer = (state = INITIAL_STATE, action) => {
             };
             break;
         case 'SELECT_CHAPTER_TO_WRITE_CONTENT':
-            let id = action.payload;
+            id = action.payload;
             newState = {
                 ...state,
                 selectedChapterId: id,
@@ -97,15 +98,11 @@ const chapterReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: false,
             };
             break;
+        default:
+            newState = state;
+            break;
     }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating ChapterStore: ', {
-            state: newState,
-            action: action,
-        });
-    }
-
+    
     return newState;
 };
 

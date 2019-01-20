@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     name: '',
@@ -12,7 +11,7 @@ const INITIAL_STATE = {
     confirmationOnConfirm: null,
 };
 
-const promptReducer = (state = INITIAL_STATE, action) => {
+export const promptReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
@@ -63,13 +62,9 @@ const promptReducer = (state = INITIAL_STATE, action) => {
                 prompt: action.payload,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating PromptStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

@@ -77,9 +77,9 @@ class DraftsScreen extends DraftUtils {
 function mapStateToProps(state) {
     return {
         ...state.draftStore,
-        email: state.email,
-        apiKey: state.apiKey,
-        userId: state.userId,
+        email: state.appStore.email,
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
         stories: state.storyStore.stories,
         selectedStoryId: state.storyStore.selectedStoryId,
     };

@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     name: '',
@@ -13,7 +12,7 @@ const INITIAL_STATE = {
     isConfirmationModalOpen: false,
 };
 
-const characterReducer = (state = INITIAL_STATE, action) => {
+export const characterReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
@@ -102,13 +101,9 @@ const characterReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: false,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating CharacterStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

@@ -1,59 +1,49 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions } from 'react-native';
 
 export default class ConfirmationModal extends Component {
-    
     render() {
         return (
             <Modal
                 visible={this.props.isConfirmationModalOpen}
-                onRequestClose={() => this.props.closeConfirmationModal()}
+                onRequestClose={this.props.closeConfirmationModal}
                 transparent={true}
             >
                 <View style={styles.modalContent}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.modalText}>
-                            {this.props.confirmationTitle}
-                        </Text>
-                        {
-                            'note' in this.props && this.props.note !== null &&
-                            <Text style={styles.noteText}>
-                                {this.props.note}
-                            </Text>
-                        }
+                        <Text style={styles.modalText}>{this.props.confirmationTitle}</Text>
+                        {'note' in this.props && this.props.note !== null && (
+                            <Text style={styles.noteText}>{this.props.note}</Text>
+                        )}
                     </View>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
                             style={styles.cancelButton}
-                            onPress={() => this.props.closeConfirmationModal()}
+                            onPress={this.props.closeConfirmationModal}
                         >
-                            <Text style={styles.buttonText}>
-                                Cancel
-                            </Text>
+                            <Text style={styles.buttonText}>Cancel</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.confirmButton}
-                            onPress={() => this.props.onConfirm()}
+                            onPress={this.props.onConfirm}
                         >
-                            <Text style={styles.buttonText}>
-                                Confirm
-                            </Text>
+                            <Text style={styles.buttonText}>Confirm</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
-        )
+        );
     }
 }
 
 const styles = StyleSheet.create({
     modalContent: {
-        backgroundColor: "white",
+        backgroundColor: 'white',
         position: 'absolute',
-        top: "25%",
-        left: "10%",
+        top: '25%',
+        left: '10%',
         height: 175,
-        width: .8 * Dimensions.get('window').width,
+        width: 0.8 * Dimensions.get('window').width,
         padding: 20,
         borderRadius: 8,
         borderWidth: 2,
@@ -99,15 +89,15 @@ const styles = StyleSheet.create({
     modalText: {
         fontSize: 24,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
     },
     noteText: {
         fontSize: 16,
         fontWeight: 'bold',
-        textAlign: 'center'
+        textAlign: 'center',
     },
     buttonText: {
         color: 'white',
         fontSize: 20,
     },
-})
+});

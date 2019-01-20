@@ -122,11 +122,15 @@ class CreateAccountScreen extends CreateAccountUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {};
+}
+
 const mapDispatchToProps = {
     showAlert,
 };
 
 export default connect(
-    {},
+    mapStateToProps,
     mapDispatchToProps
 )(CreateAccountScreen);

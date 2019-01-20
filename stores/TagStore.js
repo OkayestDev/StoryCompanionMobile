@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     selectedTagId: null,
@@ -10,7 +9,7 @@ const INITIAL_STATE = {
     isConfirmationModalOpen: false,
 };
 
-const tagReducer = (state = INITIAL_STATE, action) => {
+export const tagReducer = (state = INITIAL_STATE, action) => {
     let newState = INITIAL_STATE;
 
     switch (action.type) {
@@ -51,6 +50,12 @@ const tagReducer = (state = INITIAL_STATE, action) => {
                 type: state.tags[id].type,
             };
             break;
+        case 'SET_TAGS':
+            newState = {
+                ...state,
+                tags: action.payload,
+            };
+            break;
         case 'NEW_TAG':
             newState = {
                 ...state,
@@ -69,13 +74,9 @@ const tagReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: false,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating TagStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

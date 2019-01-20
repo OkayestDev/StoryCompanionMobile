@@ -179,9 +179,9 @@ function mapStateToProps(state) {
         stories: state.storyStore.stories,
         tags: state.tagStore.tags,
         selectedStoryId: state.storyStore.selectedStoryId,
-        email: state.email,
-        apiKey: state.apiKey,
-        userId: state.userId,
+        email: state.appStore.email,
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
     };
 }
 

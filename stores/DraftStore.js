@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     description: '',
@@ -7,7 +6,7 @@ const INITIAL_STATE = {
     draft: null,
 };
 
-const draftReducer = (state = INITIAL_STATE, action) => {
+export const draftReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
@@ -27,13 +26,9 @@ const draftReducer = (state = INITIAL_STATE, action) => {
                         : state.description,
                 selectedDraftId: 'id' in action.payload ? action.payload.id : state.selectedDraftId,
             };
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating DraftStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

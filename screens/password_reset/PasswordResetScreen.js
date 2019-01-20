@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
-import { showAlert } from '../../store/Actions.js';
+import { showAlert } from '../../actions/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import StoryCompanion from '../../utils/StoryCompanion.js';
@@ -70,11 +70,15 @@ class PasswordResetScreen extends PasswordResetUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {};
+}
+
 const mapDispatchToProps = {
     showAlert,
 };
 
 export default connect(
-    {},
+    mapStateToProps,
     mapDispatchToProps
 )(PasswordResetScreen);

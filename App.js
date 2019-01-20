@@ -1,9 +1,9 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import { AdMobBanner } from 'expo';
 import { Provider } from 'react-redux';
-import { AppStore, Persistor } from './store/AppStore.js';
+import { AppStore, Persistor } from './stores/AppStore.js';
 import { PersistGate } from 'redux-persist/integration/react';
 import AppNavigator from './navigation/AppNavigator';
 

@@ -22,6 +22,11 @@ export const selectTag = id => ({
     payload: id,
 });
 
+export const setTags = payload => ({
+    type: 'SET_TAGS',
+    payload: payload,
+});
+
 export const newTag = () => ({
     type: 'NEW_TAG',
 });

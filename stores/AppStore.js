@@ -1,22 +1,21 @@
 import { AsyncStorage } from 'react-native';
 import { createStore, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
-import { chapterStore } from './ChapterStore.js';
-import { promptStore } from './PromptStore.js';
-import { storyStore } from './StoryStore.js';
-import { characterStore } from './CharacterStore.js';
-import { draftStore } from './DraftStore.js';
-import { noteStore } from './NoteStore.js';
-import { tagStore } from './TagStore.js';
-import { plotStore } from './PlotStore.js';
-import { settingsStore } from './SettingsStore.js';
-import { LOGS } from '../config/Logs.js';
+import { chapterReducer } from './ChapterStore.js';
+import { promptReducer } from './PromptStore.js';
+import { storyReducer } from './StoryStore.js';
+import { characterReducer } from './CharacterStore.js';
+import { draftReducer } from './DraftStore.js';
+import { noteReducer } from './NoteStore.js';
+import { tagReducer } from './TagStore.js';
+import { plotReducer } from './PlotStore.js';
+import { settingsReducer } from './SettingsStore.js';
 
 /**
  * Changing key will cause the storage to be reset
  */
 const PERSIST_CONFIG = {
-    key: '1.0.0',
+    key: '1.0.1',
     storage: AsyncStorage,
 };
 
@@ -57,29 +56,25 @@ const reducer = (state = INITIAL_STATE, action) => {
                 globalAlertVisible: false,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating AppStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;
 };
 
 const reducers = combineReducers({
-    ...reducer,
-    storyStore,
-    tagStore,
-    promptStore,
-    characterStore,
-    chapterStore,
-    draftStore,
-    noteStore,
-    plotStore,
-    settingsStore,
+    appStore: reducer,
+    storyStore: storyReducer,
+    tagStore: tagReducer,
+    promptStore: promptReducer,
+    characterStore: characterReducer,
+    chapterStore: chapterReducer,
+    draftStore: draftReducer,
+    noteStore: noteReducer,
+    plotStore: plotReducer,
+    settingsStore: settingsReducer,
 });
 
 const persistedReducer = persistReducer(PERSIST_CONFIG, reducers);

@@ -71,6 +71,8 @@ class TagsScreen extends TagsUtils {
     };
 
     render() {
+        console.info(this.props);
+
         if (this.props.selectedTagId === null) {
             return (
                 <View style={STYLE.container}>
@@ -118,9 +120,9 @@ class TagsScreen extends TagsUtils {
 function mapStateToProps(state) {
     return {
         ...state.tagStore,
-        apiKey: state.apiKey,
-        email: state.email,
-        userId: state.userId,
+        apiKey: state.appStore.apiKey,
+        email: state.appStore.email,
+        userId: state.appStore.userId,
     };
 }
 

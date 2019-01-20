@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'r
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import LoginUtils from './components/LoginUtils.js';
 import { connect } from 'react-redux';
-import { showAlert, login } from '../../store/Actions.js';
+import { showAlert, login } from '../../actions/Actions.js';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import STYLE from './components/LoginStyle.js';
@@ -78,12 +78,19 @@ class LoginScreen extends LoginUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
+    };
+}
+
 const mapDispatchToProps = {
     showAlert,
     login,
 };
 
 export default connect(
-    {},
+    mapStateToProps,
     mapDispatchToProps
 )(LoginScreen);

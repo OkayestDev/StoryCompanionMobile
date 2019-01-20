@@ -171,6 +171,7 @@ class SettingsScreen extends SettingsUtils {
                 </View>
             );
         } else {
+            console.info(this.props);
             return (
                 <View
                     style={[
@@ -212,9 +213,10 @@ class SettingsScreen extends SettingsUtils {
 
 function mapStateToProps(state) {
     return {
-        email: state.email,
-        apiKey: state.apiKey,
-        userId: state.userId,
+        ...state.settingsStore,
+        email: state.appStore.email,
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
     };
 }
 

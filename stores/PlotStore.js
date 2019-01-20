@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     name: '',
@@ -10,7 +9,7 @@ const INITIAL_STATE = {
     isConfirmationModalOpen: false,
 };
 
-const plotReducer = (state = INITIAL_STATE, action) => {
+export const plotReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
@@ -78,13 +77,9 @@ const plotReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: false,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating PlotStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;

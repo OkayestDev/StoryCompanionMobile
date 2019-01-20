@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
-import Actions from '../../store/Actions.js';
 import FloatingAddButton from '../../components/FloatingAddButton.js';
 import GlobalAlert from '../../components/GlobalAlert.js';
 import EditEntity from '../../components/EditEntity.js';
@@ -9,6 +8,8 @@ import { Icon } from 'react-native-elements';
 import StoryCompanion from '../../utils/StoryCompanion.js';
 import ConfirmationModal from '../../components/ConfirmationModal.js';
 import PlotsUtils from './components/PlotsUtils.js';
+import * as plotActions from '../../actions/PlotActions.js';
+import { showAlert } from '../../actions/Actions.js';
 import STYLE from './components/PlotsStyle.js';
 
 class PlotsScreen extends PlotsUtils {
@@ -144,7 +145,23 @@ class PlotsScreen extends PlotsUtils {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        ...state.plotStore,
+        email: state.appStore.email,
+        apiKey: state.appStore.apiKey,
+        userId: state.appStore.userId,
+        stories: state.storyStore.stories,
+        selectedStoryId: state.storyStore.selectedStoryId,
+    };
+}
+
+const mapDispatchToProps = {
+    showAlert,
+    ...plotActions,
+};
+
 export default connect(
-    Actions.mappropsToProps,
-    Actions.mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(PlotsScreen);

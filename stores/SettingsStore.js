@@ -1,5 +1,4 @@
 import { createStore } from 'redux';
-import { LOGS } from '../config/Logs.js';
 
 const INITIAL_STATE = {
     isConfirmationModalOpen: false,
@@ -11,7 +10,7 @@ const INITIAL_STATE = {
     confirmPassword: '',
 };
 
-const settingsReducer = (state = INITIAL_STATE, action) => {
+export const settingsReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
 
     switch (action.type) {
@@ -66,13 +65,9 @@ const settingsReducer = (state = INITIAL_STATE, action) => {
                 isConfirmationModalOpen: false,
             };
             break;
-    }
-
-    if (LOGS.ENABLE_LOGS) {
-        console.info('Updating ChapterStore: ', {
-            state: newState,
-            action: action,
-        });
+        default:
+            newState = state;
+            break;
     }
 
     return newState;
