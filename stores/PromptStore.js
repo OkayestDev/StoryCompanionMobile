@@ -24,7 +24,7 @@ export const promptReducer = (state = INITIAL_STATE, action) => {
         case 'HANDLE_PROMPT_DESCRIPTION_CHANGED':
             newState = {
                 ...state,
-                description: action.description,
+                description: action.payload,
             };
             break;
         case 'OPEN_PROMPT_CONFIRMATION':

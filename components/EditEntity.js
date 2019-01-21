@@ -36,7 +36,7 @@ export default class EditEntity extends Component {
     renderImage = () => {
         if ('image' in this.props) {
             // Display empty area to upload an image
-            if (this.props.image === '') {
+            if (this.props.image === '' || this.props.image === null) {
                 return (
                     <View style={styles.imageViewContainer}>
                         <TouchableOpacity

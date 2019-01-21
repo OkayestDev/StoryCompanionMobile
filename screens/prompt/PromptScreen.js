@@ -92,7 +92,7 @@ class PromptScreen extends PromptUtils {
                         note={this.props.confirmationNote}
                         onConfirm={this.props.confirmationOnConfirm}
                     />
-                    <FloatingAddButton onPress={this.props.newPrompt} />
+                    <FloatingAddButton onPress={this.newPrompt} />
                 </View>
             );
         }
