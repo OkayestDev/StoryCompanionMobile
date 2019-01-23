@@ -87,12 +87,12 @@ class TagsScreen extends TagsUtils {
                         inputOne={this.props.name}
                         inputOneName="Tag Name"
                         inputOneOnChange={this.props.handleNameChanged}
-                        modalPicker="Tag Type"
+                        modalPicker="Type"
                         modalPickerSelectedValue={this.props.type}
                         modalPickerList={tagTypes}
                         modalPickerOnChange={this.props.handleTypeChanged}
                         inputThree={this.props.description}
-                        inputThreeName="Tag Description"
+                        inputThreeName="Description"
                         inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal

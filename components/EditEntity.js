@@ -118,6 +118,7 @@ export default class EditEntity extends Component {
                                         {this.props.inputOneName}
                                     </Text>
                                     <TextInput
+                                        placeholder={this.props.inputOneName}
                                         style={styles.entityInput}
                                         value={this.props.inputOne}
                                         onChangeText={newName =>
@@ -133,6 +134,7 @@ export default class EditEntity extends Component {
                                         {this.props.inputTwoName}
                                     </Text>
                                     <TextInput
+                                        placeholder={this.props.inputTwoName}
                                         keyboardType="numeric"
                                         style={styles.entityInput}
                                         value={this.props.inputTwo}
@@ -152,14 +154,24 @@ export default class EditEntity extends Component {
                                         style={styles.modalPickerOpenButton}
                                         onPress={() => this.setState({ isModalPickerOpen: true })}
                                     >
-                                        <Text style={styles.modalPickerButtonText}>
-                                            {this.props.modalPickerSelectedValue}
-                                        </Text>
+                                        {this.props.modalPickerSelectedValue !== null &&
+                                        this.props.modalPickerSelectedValue !== '' ? (
+                                            <Text style={styles.modalPickerButtonText}>
+                                                {this.props.modalPickerSelectedValue}
+                                            </Text>
+                                        ) : (
+                                            <Text style={styles.placeholderText}>
+                                                Select a {this.props.modalPicker}
+                                            </Text>
+                                        )}
                                     </TouchableOpacity>
                                 </View>
                             )}
                             {'inputThree' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
+                                    <Text style={styles.entityInputLabel}>
+                                        {this.props.inputThreeName}
+                                    </Text>
                                     <TextInput
                                         placeholder={this.props.inputThreeName}
                                         multiline={true}
@@ -174,6 +186,9 @@ export default class EditEntity extends Component {
                             )}
                             {'inputFour' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
+                                    <Text style={styles.entityInputLabel}>
+                                        {this.props.inputFourName}
+                                    </Text>
                                     <TextInput
                                         placeholder={this.props.inputFourName}
                                         multiline={true}
@@ -208,8 +223,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     noImageSelectedView: {
-        width: 200,
-        height: 200,
+        minWidth: 250,
+        minHeight: 250,
         borderRadius: 4,
         borderWidth: 2,
         borderColor: '#CCCCCC',
@@ -222,29 +237,28 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     selectedImage: {
-        width: 200,
-        height: 200,
+        minWidth: 250,
+        minHeight: 250,
+        maxWidth: '98%',
         borderWidth: 2,
         borderColor: '#CCCCCC',
         borderRadius: 4,
     },
     entityInputAndLabel: {
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        marginBottom: 10,
         padding: 10,
     },
     entityInputLabel: {
         textAlign: 'left',
-        width: '49%',
-        marginRight: '1%',
+        width: '100%',
         fontSize: 24,
         fontWeight: 'bold',
     },
     entityInput: {
-        width: '50%',
+        width: '100%',
         height: 60,
         borderRadius: 4,
         borderWidth: 2,
@@ -267,7 +281,7 @@ const styles = StyleSheet.create({
     modalPickerOpenButton: {
         display: 'flex',
         justifyContent: 'center',
-        width: '50%',
+        width: '100%',
         height: 60,
         borderRadius: 4,
         borderWidth: 2,
@@ -276,6 +290,10 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     modalPickerButtonText: {
+        fontSize: 16,
+    },
+    placeholderText: {
+        color: '#cccccc',
         fontSize: 16,
     },
 });
