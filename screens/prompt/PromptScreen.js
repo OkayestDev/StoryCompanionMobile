@@ -45,23 +45,28 @@ class PromptScreen extends PromptUtils {
                         : '',
                 ]}
             >
-                <View style={STYLE.nameAndDownVoteContainer}>
+                <View style={STYLE.nameContainer}>
                     <Text numberOfLines={1} style={STYLE.name}>
                         {this.props.prompt.name}
                     </Text>
-                    <TouchableOpacity
-                        style={STYLE.promptToStory}
-                        onPress={this.handlePromptToStoryPressed}
-                    >
-                        <Icon color="#2f95dc" name="copy" type="font-awesome" size={32} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={STYLE.downVote} onPress={this.handleDownVotePressed}>
-                        <Icon color="#2f95dc" name="thumbs-down" type="font-awesome" size={32} />
-                    </TouchableOpacity>
                 </View>
                 <ScrollView style={STYLE.promptDescriptionContainer}>
                     <Text style={STYLE.promptDescription}>{this.props.prompt.description}</Text>
                 </ScrollView>
+                <View style={STYLE.buttonContainer}>
+                    <TouchableOpacity
+                        style={STYLE.promptToStoryButton}
+                        onPress={this.handlePromptToStoryPressed}
+                    >
+                        <Text style={STYLE.buttonText}>Create Story</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={STYLE.downVoteButton}
+                        onPress={this.handleDownVotePressed}
+                    >
+                        <Text style={STYLE.buttonText}>Down Vote</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     };

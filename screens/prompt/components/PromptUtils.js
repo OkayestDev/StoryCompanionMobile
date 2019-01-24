@@ -10,8 +10,8 @@ export default class PromptUtils extends StoryCompanion {
     componentDidMount() {
         this.props.resetPrompt();
         let now = new Date().getTime();
-        let anHour = 1000 * 60 * 60;
-        if (!this.props.prompt || this.props.prompt + anHour <= now) {
+        let tenMinutesInMs = 1000 * 60 * 10;
+        if (!this.props.prompt || this.props.updatedAt + tenMinutesInMs <= now) {
             this.getPrompt();
         }
     }

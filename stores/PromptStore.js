@@ -5,6 +5,7 @@ const INITIAL_STATE = {
     description: '',
     creatingPrompt: false,
     prompt: null,
+    updatedAt: null,
     isConfirmationModalOpen: false,
     confirmationTitle: '',
     confirmationNote: '',
@@ -13,7 +14,6 @@ const INITIAL_STATE = {
 
 export const promptReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
-
     switch (action.type) {
         case 'HANDLE_PROMPT_NAME_CHANGED':
             newState = {
@@ -58,9 +58,11 @@ export const promptReducer = (state = INITIAL_STATE, action) => {
             };
             break;
         case 'SET_PROMPT':
+            let now = new Date();
             newState = {
                 ...state,
                 prompt: action.payload,
+                updatedAt: now.getTime(),
             };
             break;
         default:
