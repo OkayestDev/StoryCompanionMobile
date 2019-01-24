@@ -50,7 +50,7 @@ export default class App extends React.Component {
                         <View style={styles.container}>
                             <GlobalAlert />
                             <AppNavigator />
-                            {/* <View style={styles.adContainer}>
+                            <View style={styles.adContainer}>
                                 <AdMobBanner
                                     bannerSize="smartBannerPortrait"
                                     adUnitID={
@@ -60,7 +60,7 @@ export default class App extends React.Component {
                                     }
                                     testDeviceID="EMULATOR"
                                 />
-                            </View> */}
+                            </View>
                         </View>
                     </PersistGate>
                 </Provider>
