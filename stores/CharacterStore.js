@@ -5,6 +5,9 @@ const INITIAL_STATE = {
     description: '',
     attribute: '',
     image: '',
+    age: 0,
+    storyRole: '',
+    goal: '',
     number: 0,
     characters: null,
     selectedCharacterId: null,
@@ -14,12 +17,29 @@ const INITIAL_STATE = {
 
 export const characterReducer = (state = INITIAL_STATE, action) => {
     let newState = state;
-
     switch (action.type) {
         case 'HANDLE_CHARACTER_NAME_CHANGED':
             newState = {
                 ...state,
                 name: action.payload,
+            };
+            break;
+        case 'HANDLE_CHARACTER_GOAL_CHANGED':
+            newState = {
+                ...state,
+                goal: action.payload,
+            };
+            break;
+        case 'HANDLE_CHARACTER_AGE_CHANGED':
+            newState = {
+                ...state,
+                age: action.payload,
+            };
+            break;
+        case 'HANDLE_CHARACTER_STORY_ROLE_CHANGED':
+            newState = {
+                ...state,
+                storyRole: action.payload,
             };
             break;
         case 'HANDLE_CHARACTER_DESCRIPTION_CHANGED':
@@ -62,6 +82,9 @@ export const characterReducer = (state = INITIAL_STATE, action) => {
                 attribute: character.attribute,
                 image: character.image,
                 number: character.number,
+                age: character.age,
+                goal: character.goal,
+                storyRole: character.storyRole,
                 selectedTagId: character.tag,
             };
             break;
@@ -73,6 +96,9 @@ export const characterReducer = (state = INITIAL_STATE, action) => {
                 attribute: '',
                 image: '',
                 number: 0,
+                age: 0,
+                storyRole: '',
+                goal: '',
                 selectedTagId: null,
                 selectedCharacterId: null,
             };
@@ -105,7 +131,6 @@ export const characterReducer = (state = INITIAL_STATE, action) => {
             newState = state;
             break;
     }
-
     return newState;
 };
 

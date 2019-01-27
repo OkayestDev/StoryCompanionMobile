@@ -80,6 +80,46 @@ export default class EditEntity extends Component {
         return null;
     };
 
+    renderOneLineInputs = () => {
+        let renderedInputs = [];
+        this.props.oneLineInputs.forEach(input => {
+            renderedInputs.push(
+                <View key={input.name} style={styles.entityInputAndLabel}>
+                    <Text style={styles.entityInputLabel}>{input.name}</Text>
+                    <TextInput
+                        placeholder={'Enter ' + input.name}
+                        style={styles.entityInput}
+                        keyboardType={input.type}
+                        value={input.value}
+                        onChangeText={input.onChange}
+                        underlineColorAndroid="rgba(0,0,0,0)"
+                    />
+                </View>
+            );
+        });
+        return renderedInputs;
+    };
+
+    renderMultiLineInputs = () => {
+        let renderedInputs = [];
+        this.props.multiLineInputs.forEach(input => {
+            renderedInputs.push(
+                <View key={input.name} style={styles.entityInputAndLabel}>
+                    <Text style={styles.entityInputLabel}>{input.name}</Text>
+                    <TextInput
+                        placeholder={'Enter ' + input.name}
+                        multiline={true}
+                        style={styles.entityDescription}
+                        value={input.value}
+                        onChangeText={input.onChange}
+                        underlineColorAndroid="rgba(0,0,0,0)"
+                    />
+                </View>
+            );
+        });
+        return renderedInputs;
+    };
+
     render() {
         return (
             <View
@@ -112,39 +152,7 @@ export default class EditEntity extends Component {
                     <KeyboardAvoidingView enabled={true} behavior="padding">
                         <View>
                             {this.renderImage()}
-                            {'inputOne' in this.props && (
-                                <View style={styles.entityInputAndLabel}>
-                                    <Text style={styles.entityInputLabel}>
-                                        {this.props.inputOneName}
-                                    </Text>
-                                    <TextInput
-                                        placeholder={this.props.inputOneName}
-                                        style={styles.entityInput}
-                                        value={this.props.inputOne}
-                                        onChangeText={newName =>
-                                            this.props.inputOneOnChange(newName)
-                                        }
-                                        underlineColorAndroid="rgba(0,0,0,0)"
-                                    />
-                                </View>
-                            )}
-                            {'inputTwo' in this.props && (
-                                <View style={styles.entityInputAndLabel}>
-                                    <Text style={styles.entityInputLabel}>
-                                        {this.props.inputTwoName}
-                                    </Text>
-                                    <TextInput
-                                        placeholder={this.props.inputTwoName}
-                                        keyboardType="numeric"
-                                        style={styles.entityInput}
-                                        value={this.props.inputTwo}
-                                        onChangeText={newNumber =>
-                                            this.props.inputTwoOnChange(newNumber)
-                                        }
-                                        underlineColorAndroid="rgba(0,0,0,0)"
-                                    />
-                                </View>
-                            )}
+                            {this.renderOneLineInputs()}
                             {'modalPickerList' in this.props && (
                                 <View style={styles.entityInputAndLabel}>
                                     <Text style={styles.entityInputLabel}>
@@ -167,40 +175,7 @@ export default class EditEntity extends Component {
                                     </TouchableOpacity>
                                 </View>
                             )}
-                            {'inputThree' in this.props && (
-                                <View style={styles.entityInputAndLabel}>
-                                    <Text style={styles.entityInputLabel}>
-                                        {this.props.inputThreeName}
-                                    </Text>
-                                    <TextInput
-                                        placeholder={this.props.inputThreeName}
-                                        multiline={true}
-                                        style={styles.entityDescription}
-                                        value={this.props.inputThree}
-                                        onChangeText={newDescription =>
-                                            this.props.inputThreeOnChange(newDescription)
-                                        }
-                                        underlineColorAndroid="rgba(0,0,0,0)"
-                                    />
-                                </View>
-                            )}
-                            {'inputFour' in this.props && (
-                                <View style={styles.entityInputAndLabel}>
-                                    <Text style={styles.entityInputLabel}>
-                                        {this.props.inputFourName}
-                                    </Text>
-                                    <TextInput
-                                        placeholder={this.props.inputFourName}
-                                        multiline={true}
-                                        style={styles.entityDescription}
-                                        value={this.props.inputFour}
-                                        onChangeText={newDescription =>
-                                            this.props.inputFourOnChange(newDescription)
-                                        }
-                                        underlineColorAndroid="rgba(0,0,0,0)"
-                                    />
-                                </View>
-                            )}
+                            {this.renderMultiLineInputs()}
                         </View>
                     </KeyboardAvoidingView>
                 </KeyboardAwareScrollView>

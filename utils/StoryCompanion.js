@@ -25,11 +25,15 @@ export default class StoryCompanion extends Component {
             content: 'content' in this.props ? this.props.content : '',
             user: 'userId' in this.props ? this.props.userId : '',
             story: 'selectedStoryId' in this.props ? this.props.selectedStoryId : '',
+            genre: 'genre' in this.props ? this.props.genre : '',
             tag: 'selectedTagId' in this.props ? this.props.selectedTagId : '',
             type: 'type' in this.props ? this.props.type : '',
             description: 'description' in this.props ? this.props.description : '',
             attribute: 'attribute' in this.props ? this.props.attribute : '',
             name: 'name' in this.props ? this.props.name : '',
+            age: 'age' in this.props ? this.props.age : '',
+            storyRole: 'storyRole' in this.props ? this.props.storyRole : '',
+            goal: 'goal' in this.props ? this.props.goal : '',
             email:
                 'email' in this.props
                     ? this.props.email

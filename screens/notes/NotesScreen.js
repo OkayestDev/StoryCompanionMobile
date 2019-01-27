@@ -37,6 +37,23 @@ class NotesScreen extends NotesUtils {
         });
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Note Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Description',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+    ];
+
     renderNotes = () => {
         if (this.props.notes === null) {
             return null;
@@ -94,12 +111,8 @@ class NotesScreen extends NotesUtils {
                         selectedEntityId={this.props.selectedNoteId}
                         isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Note"
-                        inputOne={this.props.name}
-                        inputOneName="Note Name"
-                        inputOneOnChange={this.props.handleNameChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Description"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}

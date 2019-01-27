@@ -35,6 +35,23 @@ class PlotsScreen extends PlotsUtils {
         props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Plot Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Description',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+    ];
+
     returnPlot = (styleName = 'parentPlots', id, addIcon = true) => {
         let plot = (
             <View key={id} style={STYLE.plotContainer}>
@@ -118,12 +135,8 @@ class PlotsScreen extends PlotsUtils {
                         isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Plot"
                         deleteNote="Note: all children will be deleted"
-                        inputOne={this.props.name}
-                        inputOneName="Plot Name"
-                        inputOneOnChange={this.props.handleNameChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Description"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}

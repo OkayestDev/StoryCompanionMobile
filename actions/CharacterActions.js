@@ -3,8 +3,23 @@ export const handleNameChanged = payload => ({
     payload,
 });
 
+export const handleAgeChanged = payload => ({
+    type: 'HANDLE_CHARACTER_AGE_CHANGED',
+    payload,
+});
+
+export const handleStoryRoleChanged = payload => ({
+    type: 'HANDLE_CHARACTER_STORY_ROLE_CHANGED',
+    payload,
+});
+
 export const handleDescriptionChanged = payload => ({
     type: 'HANDLE_CHARACTER_DESCRIPTION_CHANGED',
+    payload,
+});
+
+export const handleGoalChanged = payload => ({
+    type: 'HANDLE_CHARACTER_GOAL_CHANGED',
     payload,
 });
 

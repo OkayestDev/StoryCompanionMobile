@@ -31,6 +31,23 @@ class TagsScreen extends TagsUtils {
         super(props);
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Tag Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Description',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+    ];
+
     renderTags = () => {
         if (this.props.tags === null) {
             return null;
@@ -84,16 +101,12 @@ class TagsScreen extends TagsUtils {
                         selectedEntityId={this.props.selectedTagId}
                         isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Tag"
-                        inputOne={this.props.name}
-                        inputOneName="Tag Name"
-                        inputOneOnChange={this.props.handleNameChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                         modalPicker="Type"
                         modalPickerSelectedValue={this.props.type}
                         modalPickerList={tagTypes}
                         modalPickerOnChange={this.props.handleTypeChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Description"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}

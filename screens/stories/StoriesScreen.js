@@ -30,6 +30,29 @@ class StoriesScreen extends StoriesUtils {
         super(props);
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Story Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+        {
+            name: 'Genre',
+            value: this.props.genre,
+            onChange: this.props.handleGenreChanged,
+            type: 'default',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Summary',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+    ];
+
     renderStories = () => {
         if (this.props.stories === null) {
             return null;
@@ -109,9 +132,8 @@ class StoriesScreen extends StoriesUtils {
                         image={this.props.image}
                         imagePickerTitle="Add an image to this story"
                         imagePickerOnChange={this.props.handleImageChanged}
-                        inputOne={this.props.name}
-                        inputOneName="Story Name"
-                        inputOneOnChange={this.props.handleNameChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                         modalPicker="Tag"
                         modalPickerSelectedValue={
                             this.props.tags && this.props.selectedTagId in this.props.tags
@@ -120,9 +142,6 @@ class StoriesScreen extends StoriesUtils {
                         }
                         modalPickerList={this.filterTagsByType('Story')}
                         modalPickerOnChange={this.props.handleTagChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Summary"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}

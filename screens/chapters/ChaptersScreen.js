@@ -40,6 +40,29 @@ class ChaptersScreen extends ChapterUtils {
         });
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Chapter Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+        {
+            name: 'Chapter Number',
+            value: this.props.number,
+            onChange: this.props.handleNumberChanged,
+            type: 'numeric',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Description',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+    ];
+
     renderChapters = () => {
         if (this.props.chapters === null) {
             return null;
@@ -110,15 +133,8 @@ class ChaptersScreen extends ChapterUtils {
                         selectedEntityId={this.props.selectedChapterId}
                         isModalOpen={this.props.isConfirmationModalOpen}
                         entityType="Chapter"
-                        inputOne={this.props.name}
-                        inputOneName="Chapter Name"
-                        inputOneOnChange={this.props.handleNameChanged}
-                        inputTwo={this.props.number}
-                        inputTwoName="Chapter Number"
-                        inputTwoOnChange={this.props.handleNumberChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Description"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}

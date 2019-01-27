@@ -4,6 +4,7 @@ const INITIAL_STATE = {
     name: '',
     description: '',
     image: '',
+    genre: '',
     selectedTagId: null,
     selectedStoryId: null,
     stories: null,
@@ -17,6 +18,12 @@ export const storyReducer = (state = INITIAL_STATE, action) => {
             newState = {
                 ...state,
                 name: action.payload,
+            };
+            break;
+        case 'HANDLE_STORY_GENRE_CHANGED':
+            newState = {
+                ...state,
+                genre: action.payload,
             };
             break;
         case 'HANDLE_STORY_DESCRIPTION_CHANGED':
@@ -43,6 +50,7 @@ export const storyReducer = (state = INITIAL_STATE, action) => {
                 name: '',
                 description: '',
                 image: '',
+                genre: '',
                 selectedTagId: null,
                 selectedStoryId: null,
             };
@@ -59,6 +67,7 @@ export const storyReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 name: story.name,
                 image: story.image,
+                genre: story.genre,
                 description: story.description,
                 selectedTagId: story.tag,
                 selectedStoryId: action.payload,

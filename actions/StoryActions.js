@@ -3,6 +3,11 @@ export const handleNameChanged = payload => ({
     payload,
 });
 
+export const handleGenreChanged = payload => ({
+    type: 'HANDLE_STORY_GENRE_CHANGED',
+    payload,
+});
+
 export const handleDescriptionChanged = payload => ({
     type: 'HANDLE_STORY_DESCRIPTION_CHANGED',
     payload,

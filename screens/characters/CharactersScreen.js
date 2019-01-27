@@ -36,6 +36,45 @@ class CharactersScreen extends CharacterUtils {
         props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Character Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+        {
+            name: 'Age',
+            value: this.props.age,
+            onChange: this.props.handleAgeChanged,
+            type: 'numeric',
+        },
+        {
+            name: 'Story Role',
+            value: this.props.storyRole,
+            onChange: this.props.handleStoryRoleChanged,
+            type: 'default',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Goal',
+            value: this.props.goal,
+            onChange: this.props.handleGoalChanged,
+        },
+        {
+            name: 'Description',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+        {
+            name: 'Attributes',
+            value: this.props.attribute,
+            onChange: this.props.handleAttributeChanged,
+        },
+    ];
+
     renderCharacters = () => {
         if (this.props.characters === null) {
             return null;
@@ -136,9 +175,6 @@ class CharactersScreen extends CharacterUtils {
                         image={this.props.image}
                         imagePickerTitle="Add an image for this character"
                         imagePickerOnChange={this.props.handleImageChanged}
-                        inputOne={this.props.name}
-                        inputOneName="Character Name"
-                        inputOneOnChange={this.props.handleNameChanged}
                         modalPicker="Tag"
                         modalPickerSelectedValue={
                             this.props.selectedTagId in this.props.tags
@@ -147,12 +183,8 @@ class CharactersScreen extends CharacterUtils {
                         }
                         modalPickerList={this.filterTagsByType('Character')}
                         modalPickerOnChange={this.props.handleTagChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Description"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
-                        inputFour={this.props.attribute}
-                        inputFourName="Attributes"
-                        inputFourOnChange={this.props.handleAttributeChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}

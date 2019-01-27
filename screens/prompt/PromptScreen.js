@@ -31,6 +31,23 @@ class PromptScreen extends PromptUtils {
         super(props);
     }
 
+    oneLineInputs = () => [
+        {
+            name: 'Prompt Name',
+            value: this.props.name,
+            onChange: this.props.handleNameChanged,
+            type: 'default',
+        },
+    ];
+
+    multiLineInputs = () => [
+        {
+            name: 'Description',
+            value: this.props.description,
+            onChange: this.props.handleDescriptionChanged,
+        },
+    ];
+
     renderPrompt = () => {
         if (!this.props.prompt) {
             return null;
@@ -77,12 +94,8 @@ class PromptScreen extends PromptUtils {
                 <View style={STYLE.container}>
                     <EditEntity
                         selectedEntityId={this.props.creatingPrompt}
-                        inputOne={this.props.name}
-                        inputOneName="Prompt Name"
-                        inputOneOnChange={this.props.handleNameChanged}
-                        inputThree={this.props.description}
-                        inputThreeName="Summary"
-                        inputThreeOnChange={this.props.handleDescriptionChanged}
+                        oneLineInputs={this.oneLineInputs()}
+                        multiLineInputs={this.multiLineInputs()}
                     />
                 </View>
             );
