@@ -138,7 +138,7 @@ class ChaptersScreen extends ChapterUtils {
                     />
                     <ConfirmationModal
                         isConfirmationModalOpen={this.props.isConfirmationModalOpen}
-                        closeConfirmationModal={this.props.closeConfirmationModal}
+                        closeConfirmationModal={this.props.closeConfirmation}
                         confirmationTitle={'Delete Chapter?'}
                         entityDescription=""
                         onConfirm={() => {
