@@ -13,21 +13,6 @@ const validConnectionTypes = ['wifi', 'cellular', 'ethernet'];
 export default class App extends React.Component {
     state = {
         isLoadingComplete: false,
-        isConnected: true,
-    };
-
-    componentDidMount() {
-        this.testConnection();
-    }
-
-    testConnection = () => {
-        NetInfo.getConnectionInfo().then(connectionInfo => {
-            if (!validConnectionTypes.includes(connectionInfo.type)) {
-                this.setState({ isConnected: false });
-            } else if (!this.state.isConnected) {
-                this.setState({ isConnected: true });
-            }
-        });
     };
 
     renderLoading = () => {
@@ -43,45 +28,27 @@ export default class App extends React.Component {
     };
 
     render() {
-        if (this.state.isConnected) {
-            return (
-                <Provider store={AppStore}>
-                    <PersistGate persistor={Persistor} loading={this.renderLoading()}>
-                        <View style={styles.container}>
-                            <GlobalAlert />
-                            <AppNavigator />
-                            <View style={styles.adContainer}>
-                                <AdMobBanner
-                                    bannerSize="smartBannerPortrait"
-                                    adUnitID={
-                                        Platform.OS === 'android'
-                                            ? 'ca-app-pub-5830175342552944/7130625883'
-                                            : 'ca-app-pub-5830175342552944/4205993347'
-                                    }
-                                    testDeviceID="EMULATOR"
-                                />
-                            </View>
+        return (
+            <Provider store={AppStore}>
+                <PersistGate persistor={Persistor} loading={this.renderLoading()}>
+                    <View style={styles.container}>
+                        <GlobalAlert />
+                        <AppNavigator />
+                        <View style={styles.adContainer}>
+                            <AdMobBanner
+                                bannerSize="smartBannerPortrait"
+                                adUnitID={
+                                    Platform.OS === 'android'
+                                        ? 'ca-app-pub-5830175342552944/7130625883'
+                                        : 'ca-app-pub-5830175342552944/4205993347'
+                                }
+                                testDeviceID="EMULATOR"
+                            />
                         </View>
-                    </PersistGate>
-                </Provider>
-            );
-        } else {
-            return (
-                <View style={styles.noConnectionContainer}>
-                    <Image source={require('./assets/images/icon.png')} style={styles.logo} />
-                    <Text style={styles.noConnectionText}>
-                        Story Companion needs an internet connection, but it looks like you aren't
-                        connected.
-                    </Text>
-                    <TouchableOpacity
-                        onPress={this.testConnection}
-                        style={styles.testConnectionButton}
-                    >
-                        <Text style={styles.noConnectionText}>Test Connection</Text>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
+                    </View>
+                </PersistGate>
+            </Provider>
+        );
     }
 
     loadResourcesAsync = async () => {
