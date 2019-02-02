@@ -96,7 +96,7 @@ export const characterReducer = (state = INITIAL_STATE, action) => {
                 attribute: '',
                 image: '',
                 number: 0,
-                age: 0,
+                age: '',
                 storyRole: '',
                 goal: '',
                 selectedTagId: null,

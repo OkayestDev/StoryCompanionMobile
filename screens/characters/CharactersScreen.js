@@ -47,7 +47,7 @@ class CharactersScreen extends CharacterUtils {
             name: 'Age',
             value: this.props.age,
             onChange: this.props.handleAgeChanged,
-            type: 'numeric',
+            type: 'default',
         },
         {
             name: 'Story Role',
