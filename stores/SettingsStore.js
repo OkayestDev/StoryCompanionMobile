@@ -6,8 +6,11 @@ const INITIAL_STATE = {
     isSubmittingFeature: false,
     description: '',
     isChangingPassword: false,
+    isChangingEmail: false,
     password: '',
     confirmPassword: '',
+    newEmail: '',
+    confirmEmail: '',
 };
 
 export const settingsReducer = (state = INITIAL_STATE, action) => {
@@ -31,6 +34,18 @@ export const settingsReducer = (state = INITIAL_STATE, action) => {
                 confirmPassword: action.payload,
             };
             break;
+        case 'HANDLE_NEW_EMAIL_CHANGED':
+            newState = {
+                ...state,
+                newEmail: action.payload,
+            };
+            break;
+        case 'HANDLE_CONFIRM_EMAIL_CHANGED':
+            newState = {
+                ...state,
+                confirmEmail: action.payload,
+            };
+            break;
         case 'SUBMITTING_FEATURE':
             newState = {
                 ...state,
@@ -47,6 +62,12 @@ export const settingsReducer = (state = INITIAL_STATE, action) => {
             newState = {
                 ...state,
                 isChangingPassword: true,
+            };
+            break;
+        case 'CHANGING_EMAIL':
+            newState = {
+                ...state,
+                isChangingEmail: true,
             };
             break;
         case 'RESET_SETTINGS':

@@ -31,13 +31,6 @@ export default class CreateAccountUtils extends StoryCompanion {
         return false;
     };
 
-    isEmailValid = email => {
-        if (PATTERNS.email.test(email)) {
-            return true;
-        }
-        return false;
-    };
-
     isPasswordValid = password => {
         if (password.length > 6) {
             return true;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { PATTERNS } from '../config/Patterns.js'
 import TagRequests from '../utils/TagRequests.js';
 
 export default class StoryCompanion extends Component {
@@ -56,6 +57,13 @@ export default class StoryCompanion extends Component {
             apiKey: 'apiKey' in this.props ? this.props.apiKey : '',
         };
         return paramsObject;
+    };
+
+    isEmailValid = email => {
+        if (PATTERNS.email.test(email)) {
+            return true;
+        }
+        return false;
     };
 
     sortEntitiesByNumber = entities => {

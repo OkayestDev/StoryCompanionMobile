@@ -13,6 +13,16 @@ export const handleConfirmPasswordChanged = payload => ({
     payload,
 });
 
+export const handleNewEmailChanged = payload => ({
+    type: 'HANDLE_NEW_EMAIL_CHANGED',
+    payload,
+});
+
+export const handleConfirmEmailChanged = payload => ({
+    type: 'HANDLE_CONFIRM_EMAIL_CHANGED',
+    payload,
+});
+
 export const submittingFeature = () => ({
     type: 'SUBMITTING_FEATURE',
 });
@@ -23,6 +33,10 @@ export const submittingBug = () => ({
 
 export const changingPassword = () => ({
     type: 'CHANGING_PASSWORD',
+});
+
+export const changingEmail = () => ({
+    type: 'CHANGING_EMAIL',
 });
 
 export const resetSettings = () => ({

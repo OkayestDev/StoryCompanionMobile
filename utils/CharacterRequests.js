@@ -26,4 +26,8 @@ export default class CharacterRequests extends Utilities {
     deleteCharacter = paramsObject => {
         return postRequestWithFormData(paramsObject, 'person/delete', {}).then(res => res);
     };
+
+    exportCharacters = paramsObject => {
+        return postRequestWithFormData(paramsObject, 'person/export', {}).then(res => res);
+    };
 }

@@ -18,4 +18,8 @@ export default class PlotRequests {
     deletePlot = (paramsObject) => {
         return postRequestWithFormData(paramsObject, 'plot/delete', {}).then(res => res);
     }
+
+    exportPlots = paramsObject => {
+        return postRequestWithFormData(paramsObject, 'plot/export', {}).then(res => res);
+    }
 }

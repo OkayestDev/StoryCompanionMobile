@@ -7,7 +7,7 @@ const STYLES = StyleSheet.create({
     },
     characterContainer: {
         width: '100%',
-        padding: 10,
+        padding: 5,
         height: 125,
         borderBottomWidth: 2,
         borderBottomColor: '#CCCCCC',
@@ -18,11 +18,11 @@ const STYLES = StyleSheet.create({
         flexDirection: 'row',
     },
     characterPictureContainer: {
-        width: '24%',
+        width: '23%',
         marginRight: '1%',
     },
     characterNameAndDescription: {
-        width: '62%',
+        width: '60%',
         marginLeft: '3%',
     },
     characterPicture: {

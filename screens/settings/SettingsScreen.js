@@ -81,6 +81,14 @@ class SettingsScreen extends SettingsUtils {
         this.props.changingPassword();
     };
 
+    changingEmail = () => {
+        this.setNavigationActions(() => {
+            this.removeNavigationActions();
+            this.props.resetSettings();
+        });
+        this.props.changingEmail();
+    };
+
     render() {
         if (this.props.isSubmittingBug) {
             return (
@@ -155,11 +163,55 @@ class SettingsScreen extends SettingsUtils {
                                 </View>
                                 <TouchableOpacity
                                     style={STYLE.resetPasswordButton}
-                                    onPress={() => this.changePassword()}
+                                    onPress={this.changePassword}
                                 >
                                     <Text style={STYLE.resetPasswordButtonText}>
                                         Change Password
                                     </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </KeyboardAvoidingView>
+                    </KeyboardAwareScrollView>
+                </View>
+            );
+        } else if (this.props.isChangingEmail) {
+            return (
+                <View style={STYLE.container}>
+                    <KeyboardAwareScrollView
+                        enableOnAndroid={true}
+                        keyboardShouldPersistTaps="handled"
+                        scrollEnabled={true}
+                    >
+                        <KeyboardAvoidingView enabled={true} behavior="position">
+                            <View style={STYLE.resetPasswordView}>
+                                <Text style={STYLE.forgotPassword}>Change Your Email</Text>
+                                <View style={STYLE.resetPasswordLabelAndInputContainer}>
+                                    <Text style={STYLE.resetPasswordInputLabel}>New Email</Text>
+                                    <TextInput
+                                        autoCapitalize="none"
+                                        keyboardType="email-address"
+                                        style={STYLE.resetPasswordInput}
+                                        underlineColorAndroid="rgba(0,0,0,0)"
+                                        value={this.props.newEmail}
+                                        onChangeText={this.props.handleNewEmailChanged}
+                                    />
+                                </View>
+                                <View style={STYLE.resetPasswordLabelAndInputContainer}>
+                                    <Text style={STYLE.resetPasswordInputLabel}>Confirm Email</Text>
+                                    <TextInput
+                                        autoCapitalize="none"
+                                        keyboardType="email-address"
+                                        style={STYLE.resetPasswordInput}
+                                        underlineColorAndroid="rgba(0,0,0,0)"
+                                        value={this.props.confirmEmail}
+                                        onChangeText={this.props.handleConfirmEmailChanged}
+                                    />
+                                </View>
+                                <TouchableOpacity
+                                    style={STYLE.resetPasswordButton}
+                                    onPress={this.changeEmail}
+                                >
+                                    <Text style={STYLE.resetPasswordButtonText}>Change Email</Text>
                                 </TouchableOpacity>
                             </View>
                         </KeyboardAvoidingView>
@@ -188,6 +240,9 @@ class SettingsScreen extends SettingsUtils {
                         </TouchableOpacity>
                         <TouchableOpacity style={STYLE.button} onPress={this.submittingFeature}>
                             <Text style={STYLE.buttonText}>Submit a Feature Request</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={STYLE.button} onPress={this.changingEmail}>
+                            <Text style={STYLE.buttonText}>Change Email</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={STYLE.button} onPress={this.changingPassword}>
                             <Text style={STYLE.buttonText}>Change Password</Text>

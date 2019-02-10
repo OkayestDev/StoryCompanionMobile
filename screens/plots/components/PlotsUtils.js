@@ -99,4 +99,20 @@ export default class PlotsUtils extends StoryCompanion {
                 this.props.showAlert('Unable to get response from server', 'danger');
             });
     };
+
+    exportPlots = () => {
+        let paramsObject = this.createParamsObject();
+        this.PlotRequests.exportPlots(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.props.showAlert(res.error, 'warning');
+                } else {
+                    this.props.showAlert(
+                        'Successfully emailed plots to ' + paramsObject.email,
+                        'success'
+                    );
+                }
+            })
+            .catch(() => this.props.showAlert("Unable to export plots at this time", 'danger'))
+    }
 }

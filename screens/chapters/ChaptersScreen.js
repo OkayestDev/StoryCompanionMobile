@@ -10,7 +10,6 @@ import ConfirmationModal from '../../components/ConfirmationModal.js';
 import ChapterContent from './components/ChapterContent.js';
 import * as ChapterActions from '../../actions/ChapterActions.js';
 import { showAlert } from '../../actions/Actions.js';
-
 import STYLE from './components/ChaptersStyle.js';
 
 class ChaptersScreen extends ChapterUtils {
@@ -77,20 +76,20 @@ class ChaptersScreen extends ChapterUtils {
                         style={STYLE.chapterViewChapterContainer}
                         onPress={() => this.selectChapter(id)}
                     >
-                        <View style={STYLE.chapterNameContainer}>
-                            <Text style={STYLE.chapterNumber}>
-                                {this.props.chapters[id].number + '.'}
-                            </Text>
-                            <Text style={STYLE.chapterName} numberOfLines={1}>
-                                {this.props.chapters[id].name}
-                            </Text>
-                        </View>
                         <TouchableOpacity
                             style={STYLE.chapterWriteIconButton}
                             onPress={() => this.selectChapterToWriteContent(id)}
                         >
-                            <Icon color="#2f95dc" type="font-awesome" name="pencil" size={28} />
+                            <Icon color="#2f95dc" type="material" name="edit" size={30} />
                         </TouchableOpacity>
+                        <View style={STYLE.chapterNameContainer}>
+                            <Text style={STYLE.chapterNumber}>
+                                {this.props.chapters[id].number + '.'}
+                            </Text>
+                            <Text style={STYLE.chapterName} numberOfLines={2}>
+                                {this.props.chapters[id].name}
+                            </Text>
+                        </View>
                     </TouchableOpacity>
                 );
             });

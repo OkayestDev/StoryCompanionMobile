@@ -32,7 +32,10 @@ class PlotsScreen extends PlotsUtils {
 
     constructor(props) {
         super(props);
-        props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
+        props.navigation.setParams({
+            title: this.props.stories[this.props.selectedStoryId].name,
+            onExport: this.exportPlots,
+        });
     }
 
     oneLineInputs = () => [
@@ -55,11 +58,6 @@ class PlotsScreen extends PlotsUtils {
     returnPlot = (styleName = 'parentPlots', id, addIcon = true) => {
         let plot = (
             <View key={id} style={STYLE.plotContainer}>
-                <TouchableOpacity onPress={() => this.selectPlot(id)} style={STYLE[styleName]}>
-                    <Text numberOfLines={1} style={STYLE.plotsText}>
-                        {this.props.plots[id].name}
-                    </Text>
-                </TouchableOpacity>
                 {addIcon && (
                     <View style={STYLE.plotIconContainer}>
                         <Icon
@@ -71,6 +69,11 @@ class PlotsScreen extends PlotsUtils {
                         />
                     </View>
                 )}
+                <TouchableOpacity onPress={() => this.selectPlot(id)} style={STYLE[styleName]}>
+                    <Text numberOfLines={2} style={STYLE.plotsText}>
+                        {this.props.plots[id].name}
+                    </Text>
+                </TouchableOpacity>
             </View>
         );
         return plot;

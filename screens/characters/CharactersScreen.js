@@ -33,7 +33,10 @@ class CharactersScreen extends CharacterUtils {
 
     constructor(props) {
         super(props);
-        props.navigation.setParams({ title: this.props.stories[this.props.selectedStoryId].name });
+        props.navigation.setParams({
+            title: this.props.stories[this.props.selectedStoryId].name,
+            onExport: this.exportCharacters,
+        });
     }
 
     oneLineInputs = () => [
@@ -93,24 +96,6 @@ class CharactersScreen extends CharacterUtils {
                         style={STYLE.characterContainer}
                     >
                         <View style={STYLE.characterPictureAndName}>
-                            <View styles={STYLE.characterPictureContainer}>
-                                {this.props.characters[id].image !== '' ? (
-                                    <Image
-                                        source={{ uri: this.props.characters[id].image }}
-                                        style={STYLE.characterPicture}
-                                    />
-                                ) : (
-                                    <View style={STYLE.noPicture} />
-                                )}
-                            </View>
-                            <View style={STYLE.characterNameAndDescription}>
-                                <Text numberOfLines={1} style={STYLE.characterName}>
-                                    {this.props.characters[id].name}
-                                </Text>
-                                <Text numberOfLines={2} style={STYLE.characterDescription}>
-                                    {this.props.characters[id].description}
-                                </Text>
-                            </View>
                             <View style={STYLE.moveCharacterContainer}>
                                 <TouchableOpacity
                                     style={STYLE.moveUp}
@@ -137,6 +122,24 @@ class CharactersScreen extends CharacterUtils {
                                         size={32}
                                     />
                                 </TouchableOpacity>
+                            </View>
+                            <View styles={STYLE.characterPictureContainer}>
+                                {this.props.characters[id].image !== '' ? (
+                                    <Image
+                                        source={{ uri: this.props.characters[id].image }}
+                                        style={STYLE.characterPicture}
+                                    />
+                                ) : (
+                                    <View style={STYLE.noPicture} />
+                                )}
+                            </View>
+                            <View style={STYLE.characterNameAndDescription}>
+                                <Text numberOfLines={1} style={STYLE.characterName}>
+                                    {this.props.characters[id].name}
+                                </Text>
+                                <Text numberOfLines={2} style={STYLE.characterDescription}>
+                                    {this.props.characters[id].description}
+                                </Text>
                             </View>
                         </View>
                     </TouchableOpacity>

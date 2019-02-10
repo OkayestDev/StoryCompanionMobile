@@ -163,4 +163,22 @@ export default class CharactersUtils extends StoryCompanion {
                 this.props.showAlert('Unable to get a response from server', 'danger');
             });
     };
+
+    exportCharacters = () => {
+        let paramsObject = this.createParamsObject();
+        this.CharacterRequests.exportCharacters(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.props.showAlert(res.error, 'warning');
+                } else {
+                    this.props.showAlert(
+                        'Successfully emailed chapters to ' + paramsObject.email,
+                        'success'
+                    );
+                }
+            })
+            .catch(() =>
+                this.prop.showAlert('Unable to export characters at this time', 'warning')
+            );
+    };
 }

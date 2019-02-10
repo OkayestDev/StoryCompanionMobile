@@ -10,6 +10,38 @@ export default class SettingsUtils extends StoryCompanion {
         this.props.resetSettings();
     }
 
+    resetSettings = () => {
+        this.removeNavigationActions();
+        this.props.resetSettings();
+    };
+
+    changeEmail = () => {
+        if (this.props.newEmail !== this.props.confirmEmail) {
+            this.props.showAlert('Ensure emails match', 'warning');
+            return;
+        }
+
+        if (!this.isEmailValid(this.props.newEmail)) {
+            this.props.showAlert('Please provide a valid email', 'warning');
+        }
+
+        let paramsObject = this.createParamsObject();
+        paramsObject['email'] = this.props.confirmEmail;
+        this.UserRequests.changeEmail(paramsObject)
+            .then(res => {
+                if ('error' in res) {
+                    this.props.showAlert(res.error, 'warning');
+                } else {
+                    this.props.showAlert(
+                        'Successfully updated email to ' + this.props.confirmEmail,
+                        'success'
+                    );
+                    this.resetSettings();
+                }
+            })
+            .catch(() => this.props.showAlert('Unable to update email at this time', 'danger'));
+    };
+
     changePassword = () => {
         if (this.props.password.length < 6) {
             this.props.showAlert('Ensure passwords are at least 6 characters long', 'warning');
@@ -33,7 +65,7 @@ export default class SettingsUtils extends StoryCompanion {
                     this.props.showAlert(res.error, 'warning');
                 } else {
                     this.props.showAlert('Successfully updated password!', 'success');
-                    this.props.resetSettings();
+                    this.resetSettings();
                 }
             })
             .catch(() => {
@@ -48,7 +80,7 @@ export default class SettingsUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.props.resetSettings();
+                    this.resetSettings();
                     this.props.showAlert('Successfully submitted bug. Thank you!', 'success');
                 }
             })
@@ -64,7 +96,7 @@ export default class SettingsUtils extends StoryCompanion {
                 if ('error' in res) {
                     this.props.showAlert(res.error, 'warning');
                 } else {
-                    this.props.resetSettings();
+                    this.resetSettings();
                     this.props.showAlert('Successfully submitted feature. Thank you!', 'success');
                 }
             })
@@ -75,7 +107,7 @@ export default class SettingsUtils extends StoryCompanion {
 
     logout = () => {
         this.props.logout();
-        this.props.resetSettings();
+        this.resetSettings();
         this.props.closeConfirmation();
         this.props.navigation.navigate('LoginTab');
     };

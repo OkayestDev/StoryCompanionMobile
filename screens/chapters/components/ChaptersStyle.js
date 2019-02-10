@@ -7,7 +7,7 @@ const STYLE = StyleSheet.create({
     },
     chapterViewChapterContainer: {
         width: '100%',
-        padding: 10,
+        padding: 5,
         height: 75,
         display: 'flex',
         flexDirection: 'row',
@@ -28,18 +28,13 @@ const STYLE = StyleSheet.create({
         alignItems: 'center',
     },
     chapterNumber: {
-        fontSize: 36,
+        fontSize: 28,
         fontWeight: 'bold',
         marginRight: 10,
     },
     chapterName: {
         fontSize: 24,
-    },
-    chapterEditIcon: {
-        flex: 2,
-        display: 'flex',
-        paddingRight: 20,
-        justifyContent: 'flex-end',
+        fontWeight: 'bold',
     },
     noChaptersContainer: {
         flex: 1,
