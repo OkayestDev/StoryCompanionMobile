@@ -97,6 +97,7 @@ export default class NotesUtils extends StoryCompanion {
 
     exportNotes = () => {
         const paramsObject = this.createParamsObject();
+        console.info(paramsObject);
         this.NoteRequests.exportNotes(paramsObject)
             .then(res => {
                 if ('error' in res) {

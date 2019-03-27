@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 const STYLE = StyleSheet.create({
     container: {
         flex: 1,
+        paddingBottom: 25,
         backgroundColor: '#fff',
     },
     storyContainer: {

@@ -28,7 +28,7 @@ const STYLE = StyleSheet.create({
         marginBottom: 20,
     },
     loginInputLabel: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
         width: 0.3 * screenX,
         marginRight: 0.05 * screenX,
