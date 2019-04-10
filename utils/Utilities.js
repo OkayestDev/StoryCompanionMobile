@@ -4,8 +4,8 @@ const options = {
     keyPrefix: "",
     bucket: "story-companion",
     region: "us-east-1",
-    accessKey: "AKIAJXWONLPYBWQPEAKQ",
-    secretKey: "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",
+    accessKey: "",
+    secretKey: "",
     successActionStatus: 201
 };
 
